@@ -1,0 +1,2 @@
+import React from 'react'
+export const PWAPrompt: React.FC<{ isInstallable: boolean; onInstall: () => void }> = ({ isInstallable, onInstall }) => isInstallable ? <div className="fixed bottom-4 left-4 right-4 max-w-[900px] mx-auto bg-gradient-to-r from-primary to-primary-light text-white shadow-lg2 rounded-xl p-3 z-40"><div className="flex items-center justify-between"><span className="text-sm">📱 Install app</span><button onClick={onInstall} className="btn bg-white text-primary text-sm">Install</button></div></div> : null

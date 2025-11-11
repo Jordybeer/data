@@ -1,0 +1,3 @@
+import React from 'react'
+import { Drug } from '../App'
+export const DrugItem: React.FC<{ drug: Drug; onClick: () => void }> = ({ drug, onClick }) => <button onClick={onClick} className="w-full text-left px-3 py-3 rounded-md border border-transparent hover:border-primary hover:bg-bg-hover transition flex items-center justify-between"><span className="text-sm">{drug.name}</span><span className="text-textc/60 hover:text-primary">→</span></button>
