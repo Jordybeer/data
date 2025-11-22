@@ -1,17 +1,20 @@
 import { useState, useMemo } from 'react'
 import { getAllDrugs } from './data/drugs'
-// ✅ Fix 1: Use relative paths (standard practice)
 import CategoryList from './components/CategoryList'
-// ✅ Fix 2: Remove '.tsx' extension in imports for better compatibility
-import DisclaimerSection from './components/DisclaimerSection'
-// ✅ Fix 3: Use { } for Named Import
-import { AuthSection } from './components/AuthSection'
-import PWAPrompt from './components/PWAPrompt'
+
+// ✅ Fix 1: Check DisclaimerSection (if this errors next, add { } around it too)
+import DisclaimerSection from './components/DisclaimerSection' 
+
+// ✅ Fix 2: Named import for AuthSection
+import { AuthSection } from './components/AuthSection' 
+
+// ✅ Fix 3: Named import for PWAPrompt (Fixes your build error)
+import { PWAPrompt } from './components/PWAPrompt' 
 
 function App() {
   const [search, setSearch] = useState('')
   
-  // ✅ Fix 4: Add state to manage AuthSection props
+  // ✅ Fix 4: State for AuthSection props
   const [isAdmin, setIsAdmin] = useState(false)
   const [isPushEnabled, setIsPushEnabled] = useState(false)
   
@@ -62,7 +65,6 @@ function App() {
         </main>
 
         <footer className="pt-8 mt-12 border-t border-borderc/50">
-          {/* ✅ Fix 5: Pass all required props */}
           <AuthSection 
             isAdmin={isAdmin}
             onAuthChange={() => setIsAdmin(!isAdmin)}
