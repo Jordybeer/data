@@ -59,7 +59,7 @@ function App() {
       <PWAPrompt isInstallable={isInstallable} onInstall={handleInstall} />
       <div className="max-w-[900px] mx-auto w-full px-4 sm:px-6">
         <header className="text-center mb-8">
-          <h1 className="text-3xl font-semibold mb-1">💊 Psychonaut DB</h1>
+          <h1 className="text-3xl font-semibold mb-1">🧠 No animals were harmed during these self studies</h1>
           <p className="text-textc/70">Totaal: {drugs.length} substances ✔</p>
         </header>
         <main className="flex flex-col gap-6">
