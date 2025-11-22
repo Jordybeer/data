@@ -38,7 +38,7 @@ export const USEFUL_LINKS: UsefulLink[] = [
   },
   {
     name: "PsyLog",
-    description: "Logboek & statistieken",
+    description: "Gratis app om gebruik te loggen",
     url: "https://www.psylog.net",
     color: "#4F46E5", 
     icon: "clipboard"
@@ -52,7 +52,7 @@ export const USEFUL_LINKS: UsefulLink[] = [
   },
   {
     name: "Safe 'n Sound (BE)",
-    description: "Peer support & info",
+    description: "Schadebeperking in het uitgaansleven",
     url: "https://safensound.be",
     color: "#E94E1B", 
     icon: "heart"
