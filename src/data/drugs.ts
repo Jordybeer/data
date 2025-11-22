@@ -1,6 +1,8 @@
-export const DISCLAIMER = `Alle psychoactieve stoffen in deze lijst zijn persoonlijk getest.
-De informatie die je hier leest is voornamelijk gebaseerd op persoonlijke ervaringen en observaties.
-Doe daarom altijd zelf onderzoek voordat je iets aanneemt als feit.`
+export const DISCLAIMER = `Alle psychoactieve stoffen in deze lijst zijn persoonlijk getest. De informatie die je hier leest is voornamelijk gebaseerd op persoonlijke ervaringen en observaties. Doe daarom altijd zelf onderzoek voordat je iets aanneemt als feit.
+
+Top websites voor info & tools:
+
+`
 
 export const ADMIN_EMAIL = 'magic@jordy.beer'
 export const CATEGORY_ORDER = ['Street drugs', 'Research chemicals']
