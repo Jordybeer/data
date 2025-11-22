@@ -3,9 +3,9 @@ import { getAllDrugs } from './data/drugs'
 // Restore your original interactive component
 import CategoryList from './components/CategoryList'
 // Keep the new disclaimer component
-import DisclaimerSection from './components/DisclaimerSection'
-import { AuthSection } from './components/AuthSection'
-import { PWAPrompt } from './components/PWAPrompt'
+import DisclaimerSection from '/src/components/DisclaimerSection'
+import AuthSection from '/src/components/AuthSection'
+import PWAPrompt from '/src/components/PWAPrompt'
 
 
 function App() {
