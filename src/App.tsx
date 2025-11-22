@@ -1,36 +1,22 @@
 import { useState, useMemo } from 'react'
-import { getAllDrugs, CATEGORY_ORDER, Drug } from './data/drugs'
-// Import the new component
+import { getAllDrugs } from './data/drugs'
+// Restore your original interactive component
+import CategoryList from './components/CategoryList'
+// Keep the new disclaimer component
 import DisclaimerSection from './components/DisclaimerSection'
 
 function App() {
   const [search, setSearch] = useState('')
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
-
+  
+  // Load drugs from the new data file
   const drugs = useMemo(() => getAllDrugs(), [])
 
+  // Filter logic
   const filteredDrugs = useMemo(() => {
-    return drugs.filter((drug) => {
-      const matchesSearch = drug.name.toLowerCase().includes(search.toLowerCase())
-      const matchesCategory = selectedCategory ? drug.category === selectedCategory : true
-      return matchesSearch && matchesCategory
-    })
-  }, [drugs, search, selectedCategory])
-
-  const groupedDrugs = useMemo(() => {
-    const groups: Record<string, Drug[]> = {}
-    
-    // Initialize groups based on order preference
-    CATEGORY_ORDER.forEach(cat => { groups[cat] = [] })
-    
-    // Sort drugs into groups
-    filteredDrugs.forEach(drug => {
-      if (!groups[drug.category]) groups[drug.category] = []
-      groups[drug.category].push(drug)
-    })
-
-    return groups
-  }, [filteredDrugs])
+    return drugs.filter((drug) => 
+      drug.name.toLowerCase().includes(search.toLowerCase())
+    )
+  }, [drugs, search])
 
   return (
     <div className="min-h-screen bg-bg p-4 md:p-8">
@@ -39,67 +25,35 @@ function App() {
         {/* Header & Search */}
         <header className="space-y-6">
           <h1 className="text-4xl font-bold text-primary text-center tracking-tight">
-            Drug Tier List
+            Notes from my mind
           </h1>
           
-          <div className="space-y-4">
+          <div className="relative">
             <input
               type="text"
               placeholder="Search substances..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="input"
+              className="input w-full pl-12"
             />
-            
-            {/* Category Filter Chips */}
-            <div className="flex flex-wrap gap-2 justify-center">
-              <button
-                onClick={() => setSelectedCategory(null)}
-                className={`btn ${!selectedCategory ? 'btn-primary' : 'btn-muted'}`}
-              >
-                All
-              </button>
-              {CATEGORY_ORDER.map(cat => (
-                <button
-                  key={cat}
-                  onClick={() => setSelectedCategory(cat === selectedCategory ? null : cat)}
-                  className={`btn ${selectedCategory === cat ? 'btn-primary' : 'btn-muted'}`}
-                >
-                  {cat}
-                </button>
-              ))}
-            </div>
+            <svg 
+              className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-textc/40"
+              fill="none" 
+              stroke="currentColor" 
+              viewBox="0 0 24 24"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
           </div>
         </header>
 
-        {/* Main Content List */}
-        <main className="space-y-8">
-          {CATEGORY_ORDER.map(category => {
-            const categoryDrugs = groupedDrugs[category]
-            if (!categoryDrugs?.length) return null
-
-            return (
-              <section key={category} className="space-y-4">
-                <h2 className="text-xl font-semibold text-textc/80 border-b border-borderc pb-2">
-                  {category}
-                </h2>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {categoryDrugs.map(drug => (
-                    <div key={drug.id} className="card p-4 hover:border-primary/50 transition-colors">
-                      <div className="font-medium text-textc">{drug.name}</div>
-                      {drug.notes && (
-                        <div className="text-sm text-textc/60 mt-1">{drug.notes}</div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </section>
-            )
-          })}
-
-          {filteredDrugs.length === 0 && (
-            <div className="text-center py-12 text-textc/50">
-              No substances found matching your search.
+        {/* Main Content - Using your original CategoryList for clickability */}
+        <main>
+          {filteredDrugs.length > 0 ? (
+            <CategoryList drugs={filteredDrugs} />
+          ) : (
+            <div className="text-center py-12 text-textc/50 italic">
+              No substances found matching "{search}"
             </div>
           )}
         </main>
