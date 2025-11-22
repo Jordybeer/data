@@ -4,6 +4,8 @@ import { getAllDrugs } from './data/drugs'
 import CategoryList from './components/CategoryList'
 // Keep the new disclaimer component
 import DisclaimerSection from './components/DisclaimerSection'
+import AuthSection from './components/AuthSection'
+
 
 function App() {
   const [search, setSearch] = useState('')
