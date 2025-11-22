@@ -1,23 +1,47 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { getAllDrugs } from './data/drugs'
 import CategoryList from './components/CategoryList'
+import DisclaimerSection from './components/DisclaimerSection'
 
-// ✅ Fix 1: Check DisclaimerSection (if this errors next, add { } around it too)
-import DisclaimerSection from './components/DisclaimerSection' 
-
-// ✅ Fix 2: Named import for AuthSection
-import { AuthSection } from './components/AuthSection' 
-
-// ✅ Fix 3: Named import for PWAPrompt (Fixes your build error)
-import { PWAPrompt } from './components/PWAPrompt' 
+// ✅ Named Imports (Fixes "No default export" errors)
+import { AuthSection } from './components/AuthSection'
+import { PWAPrompt } from './components/PWAPrompt'
 
 function App() {
   const [search, setSearch] = useState('')
   
-  // ✅ Fix 4: State for AuthSection props
+  // --- Auth State ---
   const [isAdmin, setIsAdmin] = useState(false)
   const [isPushEnabled, setIsPushEnabled] = useState(false)
-  
+
+  // --- PWA Install State (New Logic) ---
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null)
+
+  useEffect(() => {
+    const handler = (e: any) => {
+      // Prevent Chrome 67 and earlier from automatically showing the prompt
+      e.preventDefault()
+      // Stash the event so it can be triggered later
+      setDeferredPrompt(e)
+    }
+    window.addEventListener('beforeinstallprompt', handler)
+    return () => window.removeEventListener('beforeinstallprompt', handler)
+  }, [])
+
+  const handleInstallClick = () => {
+    if (!deferredPrompt) return
+    // Show the install prompt
+    deferredPrompt.prompt()
+    // Wait for the user to respond to the prompt
+    deferredPrompt.userChoice.then((choiceResult: any) => {
+      if (choiceResult.outcome === 'accepted') {
+        console.log('User accepted the install prompt')
+      }
+      setDeferredPrompt(null)
+    })
+  }
+
+  // --- Data Logic ---
   const drugs = useMemo(() => getAllDrugs(), [])
 
   const filteredDrugs = useMemo(() => {
@@ -65,6 +89,7 @@ function App() {
         </main>
 
         <footer className="pt-8 mt-12 border-t border-borderc/50">
+          {/* ✅ AuthSection with required props */}
           <AuthSection 
             isAdmin={isAdmin}
             onAuthChange={() => setIsAdmin(!isAdmin)}
@@ -72,7 +97,11 @@ function App() {
             onPushChange={(b) => setIsPushEnabled(b)}
           />
 
-          <PWAPrompt />
+          {/* ✅ PWAPrompt with required props */}
+          <PWAPrompt 
+            isInstallable={!!deferredPrompt} 
+            onInstall={handleInstallClick} 
+          />
         </footer>
       </div>
     </div>
