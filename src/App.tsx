@@ -4,8 +4,8 @@ import { getAllDrugs } from './data/drugs'
 import CategoryList from './components/CategoryList'
 // Keep the new disclaimer component
 import DisclaimerSection from './components/DisclaimerSection'
-import AuthSection from './components/AuthSection'
-import PWAPrompt from './components/PWAPrompt'
+import { AuthSection } from './components/AuthSection'
+import { PWAPrompt } from './components/PWAPrompt'
 
 
 function App() {
