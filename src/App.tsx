@@ -5,6 +5,7 @@ import CategoryList from './components/CategoryList'
 // Keep the new disclaimer component
 import DisclaimerSection from './components/DisclaimerSection'
 import AuthSection from './components/AuthSection'
+import PWAPrompt from './components/PWAPrompt'
 
 
 function App() {
@@ -62,7 +63,9 @@ function App() {
 
         {/* Footer: Disclaimer & Links */}
         <footer className="pt-8 mt-12 border-t border-borderc/50">
+          <AuthSection />
 
+          <PWAPrompt />
         </footer>
       </div>
     </div>
