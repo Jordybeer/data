@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-// FIX: Import Drug from the new data file
+// CHANGE THIS LINE:
 import { Drug } from '../data/drugs'
 
 interface DrugDetailsProps {
@@ -8,7 +8,6 @@ interface DrugDetailsProps {
 }
 
 const DrugDetails = ({ drug, onClose }: DrugDetailsProps) => {
-  // Close on escape key
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose()
