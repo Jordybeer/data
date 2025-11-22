@@ -1,8 +1,59 @@
-import React, { useState } from 'react'
-import { Category, Drug } from '../App'
-import { DrugItem } from './DrugItem'
-export const CategoryList: React.FC<{ categories: Category[]; onDrugClick: (d: Drug) => void }> = ({ categories, onDrugClick }) => {
-  const [open, setOpen] = useState<Set<string>>(new Set(categories.map(c => c.name)))
-  const toggle = (n: string) => setOpen(p => { const s = new Set(p); s.has(n) ? s.delete(n) : s.add(n); return s })
-  return <div className="flex flex-col gap-4">{categories.map(cat => <div key={cat.name} className="card overflow-hidden"><button className="w-full flex items-center justify-between px-4 py-3 hover:bg-bg-hover" onClick={() => toggle(cat.name)}><h3 className="font-semibold">{cat.name}</h3><div className="flex items-center gap-3"><span className="text-xs font-semibold bg-primary text-white px-2 py-0.5 rounded-full">{cat.drugs.length}</span><span className={`transition-transform ${open.has(cat.name) ? 'rotate-180' : ''}`}>▼</span></div></button>{open.has(cat.name) && <div className="border-t border-borderc p-2 flex flex-col gap-1">{cat.drugs.map(d => <DrugItem key={d.id} drug={d} onClick={() => onDrugClick(d)} />)}</div>}</div>)}</div>
+import { useState } from 'react'
+// FIX 1: Import types from the new location
+import { Drug, CATEGORY_ORDER } from '../data/drugs'
+import DrugItem from './DrugItem'
+
+interface CategoryListProps {
+  drugs: Drug[]
 }
+
+const CategoryList = ({ drugs }: CategoryListProps) => {
+  const [expandedCategory, setExpandedCategory] = useState<string | null>(null)
+
+  const toggleCategory = (category: string) => {
+    setExpandedCategory(expandedCategory === category ? null : category)
+  }
+
+  // Group drugs by category
+  const drugsByCategory = drugs.reduce((acc, drug) => {
+    if (!acc[drug.category]) {
+      acc[drug.category] = []
+    }
+    acc[drug.category].push(drug)
+    return acc
+  }, {} as Record<string, Drug[]>)
+
+  return (
+    <div className="space-y-4">
+      {CATEGORY_ORDER.map((category) => {
+        const categoryDrugs = drugsByCategory[category] || []
+        // Skip empty categories if you want, or keep them
+        if (categoryDrugs.length === 0) return null
+
+        return (
+          <div key={category} className="border border-borderc rounded-xl overflow-hidden bg-bg-light">
+            <button
+              onClick={() => toggleCategory(category)}
+              className="w-full px-6 py-4 flex items-center justify-between bg-bg-light hover:bg-bg-hover transition-colors text-left"
+            >
+              <span className="text-lg font-semibold text-textc">{category}</span>
+              <span className="text-sm text-textc/60 bg-bg px-2 py-1 rounded-md">
+                {categoryDrugs.length}
+              </span>
+            </button>
+            
+            {expandedCategory === category && (
+              <div className="px-6 pb-6 pt-2 grid gap-4 sm:grid-cols-1 lg:grid-cols-2">
+                {categoryDrugs.map((drug) => (
+                  <DrugItem key={drug.id} drug={drug} />
+                ))}
+              </div>
+            )}
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+
+export default CategoryList
