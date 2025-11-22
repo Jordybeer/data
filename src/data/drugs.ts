@@ -2,7 +2,7 @@ export const DISCLAIMER = `Alle psychoactieve stoffen in deze lijst zijn persoon
 De informatie die je hier leest is voornamelijk gebaseerd op persoonlijke ervaringen en observaties.
 Doe daarom altijd zelf onderzoek voordat je iets aanneemt als feit.`
 
-export const ADMIN_EMAIL = 'subscribe'
+export const ADMIN_EMAIL = 'magic@jordy.beer'
 export const CATEGORY_ORDER = ['Street drugs', 'Research chemicals']
 
 const STREET_DRUGS = ['11-OH-THC', 'Alcohol', 'Caffeine', 'Changa', 'Clonazepam', 'Cocaïne', 'Crack', 'Crystal meth', 'Dexamfetamine', 'Diazepam', 'Flurazepam', 'GHB', 'Heroïne', 'Ketamine', 'Lachgas', 'Lisdexamfetamine', 'Lormetazepam', 'Lorazepam', 'LSD-25', 'Methylfenidaat hcl', 'Methylfenidaat XR', 'MDMA', 'Mirtazapine', 'NN-DMT', 'Nicotine', 'Olanzapine', 'Oxycodone', 'Paddos', 'Poppers', 'Pregabalin', 'Rohypnol', 'Salvia Divinorum', 'Sisa', 'Speed', 'Trazodone', 'Tucci (pink cocaine)', 'Truffels', 'Wiet', 'XTC']
