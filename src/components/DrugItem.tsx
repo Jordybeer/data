@@ -1,5 +1,5 @@
 import { useState } from 'react'
-// FIX: Import Drug from the new data file
+// CHANGE THIS LINE:
 import { Drug } from '../data/drugs'
 import DrugDetails from './DrugDetails'
 
@@ -20,7 +20,6 @@ const DrugItem = ({ drug }: DrugItemProps) => {
           <h3 className="font-medium text-textc group-hover:text-primary transition-colors">
             {drug.name}
           </h3>
-          {/* Status indicator or simple arrow could go here */}
         </div>
       </div>
 
