@@ -1,7 +1,7 @@
 import React from 'react';
-import { USEFUL_LINKS, DISCLAIMER, DISCLAIMER_SUBTEXT } from './constants';
+// UPDATED IMPORT PATH:
+import { USEFUL_LINKS, DISCLAIMER, DISCLAIMER_SUBTEXT } from '../data/drugs';
 
-// Simple inline SVGs to avoid external dependencies
 const Icons = {
   eye: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>,
   clipboard: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>,
@@ -27,16 +27,12 @@ const DisclaimerSection = () => {
             href={site.url}
             target="_blank"
             rel="noopener noreferrer"
-            // Uses `bg-bg` for default card color
-            // Uses `hover:bg-bg-lighter` and `hover:border-primary` from your theme system
             className="group flex items-center gap-3 p-3 bg-bg border border-borderc rounded-lg hover:border-primary/30 hover:bg-bg-lighter hover:shadow-md transition-all duration-300 ease-out hover:-translate-y-0.5"
           >
-            {/* Icon Box */}
             <div 
               className="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-full transition-colors"
               style={{ 
-                // Uses the hex color from constants + '15' for ~8% opacity
-                backgroundColor: `${site.color}15`,
+                backgroundColor: `${site.color}15`, 
                 color: site.color 
               }} 
             >
@@ -45,7 +41,6 @@ const DisclaimerSection = () => {
               </span>
             </div>
             
-            {/* Text Content */}
             <div className="flex flex-col">
               <span className="text-sm font-bold text-textc group-hover:text-primary transition-colors">
                 {site.name}
