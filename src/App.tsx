@@ -1,20 +1,22 @@
 import { useState, useMemo } from 'react'
 import { getAllDrugs } from './data/drugs'
-// Restore your original interactive component
+// ✅ Fix 1: Use relative paths (standard practice)
 import CategoryList from './components/CategoryList'
-// Keep the new disclaimer component
-import DisclaimerSection from '/src/components/DisclaimerSection.tsx'
-import AuthSection from '/src/components/AuthSection.tsx'
-import PWAPrompt from '/src/components/PWAPrompt.tsx'
-
+// ✅ Fix 2: Remove '.tsx' extension in imports for better compatibility
+import DisclaimerSection from './components/DisclaimerSection'
+// ✅ Fix 3: Use { } for Named Import
+import { AuthSection } from './components/AuthSection'
+import PWAPrompt from './components/PWAPrompt'
 
 function App() {
   const [search, setSearch] = useState('')
   
-  // Load drugs from the new data file
+  // ✅ Fix 4: Add state to manage AuthSection props
+  const [isAdmin, setIsAdmin] = useState(false)
+  const [isPushEnabled, setIsPushEnabled] = useState(false)
+  
   const drugs = useMemo(() => getAllDrugs(), [])
 
-  // Filter logic
   const filteredDrugs = useMemo(() => {
     return drugs.filter((drug) => 
       drug.name.toLowerCase().includes(search.toLowerCase())
@@ -25,12 +27,11 @@ function App() {
     <div className="min-h-screen bg-bg p-4 md:p-8">
       <div className="max-w-3xl mx-auto space-y-8">
         
-        {/* Header & Search */}
         <header className="space-y-6">
           <h1 className="text-4xl font-bold text-primary text-center tracking-tight">
             Subconscious Safari
           </h1>
-                    <DisclaimerSection />
+          <DisclaimerSection />
           <div className="relative">
             <input
               type="text"
@@ -50,7 +51,6 @@ function App() {
           </div>
         </header>
 
-        {/* Main Content - Using your original CategoryList for clickability */}
         <main>
           {filteredDrugs.length > 0 ? (
             <CategoryList drugs={filteredDrugs} />
@@ -61,9 +61,14 @@ function App() {
           )}
         </main>
 
-        {/* Footer: Disclaimer & Links */}
         <footer className="pt-8 mt-12 border-t border-borderc/50">
-          <AuthSection />
+          {/* ✅ Fix 5: Pass all required props */}
+          <AuthSection 
+            isAdmin={isAdmin}
+            onAuthChange={() => setIsAdmin(!isAdmin)}
+            isPushEnabled={isPushEnabled}
+            onPushChange={(b) => setIsPushEnabled(b)}
+          />
 
           <PWAPrompt />
         </footer>
