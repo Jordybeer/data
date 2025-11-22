@@ -25,9 +25,9 @@ function App() {
         {/* Header & Search */}
         <header className="space-y-6">
           <h1 className="text-4xl font-bold text-primary text-center tracking-tight">
-            Notes from my mind
+            Subconscious Safari
           </h1>
-          
+                    <DisclaimerSection />
           <div className="relative">
             <input
               type="text"
@@ -60,7 +60,7 @@ function App() {
 
         {/* Footer: Disclaimer & Links */}
         <footer className="pt-8 mt-12 border-t border-borderc/50">
-          <DisclaimerSection />
+
         </footer>
       </div>
     </div>
