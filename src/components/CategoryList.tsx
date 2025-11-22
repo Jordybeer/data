@@ -1,6 +1,6 @@
 import { useState } from 'react'
-// FIX 1: Import types from the new location
-import { Drug, CATEGORY_ORDER } from '../data/drugs'
+// CHANGE THIS LINE:
+import { Drug, CATEGORY_ORDER } from '../data/drugs' 
 import DrugItem from './DrugItem'
 
 interface CategoryListProps {
@@ -27,7 +27,6 @@ const CategoryList = ({ drugs }: CategoryListProps) => {
     <div className="space-y-4">
       {CATEGORY_ORDER.map((category) => {
         const categoryDrugs = drugsByCategory[category] || []
-        // Skip empty categories if you want, or keep them
         if (categoryDrugs.length === 0) return null
 
         return (
