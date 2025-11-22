@@ -1,11 +1,12 @@
-import { ReactNode } from 'react';
+// src/data/drugs.ts
 
-// --- Interfaces ---
+// 1. INTERFACES
+// ============
 export interface UsefulLink {
   name: string;
   description: string;
   url: string;
-  color: string; // 6-digit Hex code
+  color: string; // 6-digit Hex code (e.g. #FF0000)
   icon: 'eye' | 'clipboard' | 'chart' | 'heart';
 }
 
@@ -16,15 +17,17 @@ export interface Drug {
   notes: string 
 }
 
-// --- Config & Constants ---
+// 2. CONFIG & TEXT
+// ===============
 export const ADMIN_EMAIL = 'magic@jordy.beer';
 export const CATEGORY_ORDER = ['Street drugs', 'Research chemicals'];
 
-// --- Disclaimer Content ---
 export const DISCLAIMER = `Alle psychoactieve stoffen in deze lijst zijn persoonlijk getest. De informatie die je hier leest is voornamelijk gebaseerd op persoonlijke ervaringen en observaties. Doe daarom altijd zelf onderzoek voordat je iets aanneemt als feit.`;
 
 export const DISCLAIMER_SUBTEXT = "Top websites voor info & tools:";
 
+// 3. LINKS CONFIGURATION
+// =====================
 export const USEFUL_LINKS: UsefulLink[] = [
   {
     name: "PsychonautWiki",
@@ -56,7 +59,8 @@ export const USEFUL_LINKS: UsefulLink[] = [
   }
 ];
 
-// --- Drug Lists ---
+// 4. DRUG DATA
+// ===========
 const STREET_DRUGS = [
   '11-OH-THC', 'Alcohol', 'Caffeine', 'Changa', 'Clonazepam', 'Cocaïne', 'Crack', 
   'Crystal meth', 'Dexamfetamine', 'Diazepam', 'Flurazepam', 'GHB', 'Heroïne', 
@@ -82,7 +86,6 @@ const RESEARCH_CHEMICALS = [
   'Phenibut', 'Pink star', 'SL-164', 'Yellow Mandala'
 ];
 
-// --- Helper Function ---
 export const getAllDrugs = (): Drug[] => {
   let id = 1;
   const out: Drug[] = [];
