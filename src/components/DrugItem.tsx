@@ -1,13 +1,15 @@
 import { useState } from 'react'
-// CHANGE THIS LINE:
 import { Drug } from '../data/drugs'
 import DrugDetails from './DrugDetails'
 
+// ✅ UPDATE: Interface to accept admin props
 interface DrugItemProps {
   drug: Drug
+  isAdmin?: boolean
+  onUpdateDrug?: (drug: Drug) => void
 }
 
-const DrugItem = ({ drug }: DrugItemProps) => {
+const DrugItem = ({ drug, isAdmin, onUpdateDrug }: DrugItemProps) => {
   const [showDetails, setShowDetails] = useState(false)
 
   return (
@@ -26,7 +28,10 @@ const DrugItem = ({ drug }: DrugItemProps) => {
       {showDetails && (
         <DrugDetails 
           drug={drug} 
-          onClose={() => setShowDetails(false)} 
+          onClose={() => setShowDetails(false)}
+          // ✅ UPDATE: Pass props down to the modal
+          isAdmin={isAdmin}
+          onUpdateDrug={onUpdateDrug}
         />
       )}
     </>
