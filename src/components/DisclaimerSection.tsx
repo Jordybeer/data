@@ -1,59 +1,111 @@
 import React from 'react';
-// UPDATED IMPORT PATH:
-import { USEFUL_LINKS, DISCLAIMER, DISCLAIMER_SUBTEXT } from '../data/drugs';
+import { DISCLAIMER, DISCLAIMER_SUBTEXT, USEFUL_LINKS } from '@/data/drugs';
 
-const Icons = {
-  eye: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>,
-  clipboard: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>,
-  chart: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>,
-  heart: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+const iconMap = {
+  eye: (
+    <svg
+      className="w-5 h-5"
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+      />
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+      />
+    </svg>
+  ),
+  clipboard: (
+    <svg
+      className="w-5 h-5"
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+      />
+    </svg>
+  ),
+  chart: (
+    <svg
+      className="w-5 h-5"
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+      />
+    </svg>
+  ),
+  heart: (
+    <svg
+      className="w-5 h-5"
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+      />
+    </svg>
+  ),
 };
 
-const DisclaimerSection = () => {
-  return (
-    <div className="card p-6 max-w-2xl shadow-sm mx-auto">
-      <p className="mb-6 text-textc/90 leading-relaxed">
-        {DISCLAIMER}
-      </p>
-      
-      <p className="font-bold text-xs text-textc/50 uppercase tracking-widest mb-4 ml-1">
-        {DISCLAIMER_SUBTEXT}
-      </p>
+export const DisclaimerSection = () => (
+  <div className="card p-6">
+    <h3 className="text-sm font-bold text-textc/80 mb-3 uppercase tracking-wider">
+      ⚠️ Disclaimer
+    </h3>
+    <p className="text-sm text-textc/80 leading-relaxed mb-6">{DISCLAIMER}</p>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        {USEFUL_LINKS.map((site) => (
-          <a
-            key={site.name}
-            href={site.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="group flex items-center gap-3 p-3 bg-bg border border-borderc rounded-lg hover:border-primary/30 hover:bg-bg-lighter hover:shadow-md transition-all duration-300 ease-out hover:-translate-y-0.5"
+    <h4 className="text-sm font-semibold text-textc/90 mb-3">
+      {DISCLAIMER_SUBTEXT}
+    </h4>
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+      {USEFUL_LINKS.map((link) => (
+        <a
+          key={link.name}
+          href={link.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-start gap-3 p-3 rounded-lg border border-borderc hover:border-primary/50 transition-all group bg-bg/30 hover:bg-bg/50"
+          style={{ borderLeftColor: link.color, borderLeftWidth: '3px' }}
+        >
+          <div
+            className="p-2 rounded-lg flex-shrink-0"
+            style={{ backgroundColor: `${link.color}20`, color: link.color }}
           >
-            <div 
-              className="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-full transition-colors"
-              style={{ 
-                backgroundColor: `${site.color}15`, 
-                color: site.color 
-              }} 
-            >
-               <span className="w-5 h-5">
-                {Icons[site.icon]}
-              </span>
+            {iconMap[link.icon]}
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="font-semibold text-sm group-hover:text-primary transition-colors">
+              {link.name}
             </div>
-            
-            <div className="flex flex-col">
-              <span className="text-sm font-bold text-textc group-hover:text-primary transition-colors">
-                {site.name}
-              </span>
-              <span className="text-xs text-textc/60 font-medium">
-                {site.description}
-              </span>
+            <div className="text-xs text-textc/60 mt-0.5">
+              {link.description}
             </div>
-          </a>
-        ))}
-      </div>
+          </div>
+        </a>
+      ))}
     </div>
-  );
-};
-
-export default DisclaimerSection;
+  </div>
+);

@@ -19,7 +19,7 @@ export interface Drug {
 
 // 2. CONFIG & TEXT
 // ===============
-export const ADMIN_EMAIL = 'magic@jordy.beer';
+export const ADMIN_EMAIL = 'contact@jordy.beer';
 export const CATEGORY_ORDER = ['Street drugs', 'Research chemicals'];
 
 export const DISCLAIMER = `Alle psychoactieve stoffen in deze lijst zijn persoonlijk getest. De informatie die je hier leest is voornamelijk gebaseerd op persoonlijke ervaringen en observaties. Doe daarom altijd zelf onderzoek voordat je iets aanneemt als feit.`;

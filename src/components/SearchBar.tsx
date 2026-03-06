@@ -1,2 +1,16 @@
-import React from 'react'
-export const SearchBar: React.FC<{ value: string; onChange: (v: string) => void }> = ({ value, onChange }) => <div className="sticky top-4 z-20"><div className="card flex items-center gap-2 px-4"><span className="text-textc/60">🔍</span><input type="text" className="flex-1 py-3 bg-transparent border-0 outline-none text-textc" placeholder="Zoek..." value={value} onChange={(e) => onChange(e.target.value)} />{value && <button onClick={() => onChange('')} className="text-textc/60 px-2">✕</button>}</div></div>
+import React from 'react';
+
+interface SearchBarProps {
+  value: string;
+  onChange: (value: string) => void;
+}
+
+export const SearchBar: React.FC<SearchBarProps> = ({ value, onChange }) => (
+  <input
+    type="text"
+    placeholder="Search substances..."
+    className="input w-full"
+    value={value}
+    onChange={(e) => onChange(e.target.value)}
+  />
+);
