@@ -1,41 +1,24 @@
-import { useState } from 'react'
-import { Drug } from '../data/drugs'
-import DrugDetails from './DrugDetails'
+import React from 'react';
+import { Drug } from '@/data/drugs';
 
-// ✅ UPDATE: Interface to accept admin props
 interface DrugItemProps {
-  drug: Drug
-  isAdmin?: boolean
-  onUpdateDrug?: (drug: Drug) => void
+  drug: Drug;
+  onClick: () => void;
 }
 
-const DrugItem = ({ drug, isAdmin, onUpdateDrug }: DrugItemProps) => {
-  const [showDetails, setShowDetails] = useState(false)
-
-  return (
-    <>
-      <div 
-        onClick={() => setShowDetails(true)}
-        className="cursor-pointer p-4 rounded-lg border border-borderc bg-bg hover:border-primary/50 hover:shadow-sm transition-all group"
-      >
-        <div className="flex justify-between items-start">
-          <h3 className="font-medium text-textc group-hover:text-primary transition-colors">
-            {drug.name}
-          </h3>
-        </div>
-      </div>
-
-      {showDetails && (
-        <DrugDetails 
-          drug={drug} 
-          onClose={() => setShowDetails(false)}
-          // ✅ UPDATE: Pass props down to the modal
-          isAdmin={isAdmin}
-          onUpdateDrug={onUpdateDrug}
-        />
-      )}
-    </>
-  )
-}
-
-export default DrugItem
+export const DrugItem: React.FC<DrugItemProps> = ({ drug, onClick }) => (
+  <button
+    onClick={onClick}
+    className="card p-4 text-left hover:border-primary/50 transition-all group"
+  >
+    <h3 className="font-semibold text-lg mb-1 group-hover:text-primary transition-colors">
+      {drug.name}
+    </h3>
+    <span className="text-xs text-textc/60 bg-bg px-2 py-0.5 rounded border border-borderc inline-block">
+      {drug.category}
+    </span>
+    {drug.notes && (
+      <p className="text-sm text-textc/70 mt-2 line-clamp-2">{drug.notes}</p>
+    )}
+  </button>
+);

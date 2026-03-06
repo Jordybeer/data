@@ -1,58 +1,42 @@
-import { useState } from 'react'
-// CHANGE THIS LINE:
-import { Drug, CATEGORY_ORDER } from '../data/drugs' 
-import DrugItem from './DrugItem'
+import React from 'react';
+import { CATEGORY_ORDER } from '@/data/drugs';
 
 interface CategoryListProps {
-  drugs: Drug[]
+  categories: string[];
+  selected: string | null;
+  onSelect: (category: string | null) => void;
 }
 
-const CategoryList = ({ drugs }: CategoryListProps) => {
-  const [expandedCategory, setExpandedCategory] = useState<string | null>(null)
-
-  const toggleCategory = (category: string) => {
-    setExpandedCategory(expandedCategory === category ? null : category)
-  }
-
-  // Group drugs by category
-  const drugsByCategory = drugs.reduce((acc, drug) => {
-    if (!acc[drug.category]) {
-      acc[drug.category] = []
-    }
-    acc[drug.category].push(drug)
-    return acc
-  }, {} as Record<string, Drug[]>)
+export const CategoryList: React.FC<CategoryListProps> = ({
+  categories,
+  selected,
+  onSelect,
+}) => {
+  const sortedCategories = [...categories].sort(
+    (a, b) => CATEGORY_ORDER.indexOf(a) - CATEGORY_ORDER.indexOf(b)
+  );
 
   return (
-    <div className="space-y-4">
-      {CATEGORY_ORDER.map((category) => {
-        const categoryDrugs = drugsByCategory[category] || []
-        if (categoryDrugs.length === 0) return null
-
-        return (
-          <div key={category} className="border border-borderc rounded-xl overflow-hidden bg-bg-light">
-            <button
-              onClick={() => toggleCategory(category)}
-              className="w-full px-6 py-4 flex items-center justify-between bg-bg-light hover:bg-bg-hover transition-colors text-left"
-            >
-              <span className="text-lg font-semibold text-textc">{category}</span>
-              <span className="text-sm text-textc/60 bg-bg px-2 py-1 rounded-md">
-                {categoryDrugs.length}
-              </span>
-            </button>
-            
-            {expandedCategory === category && (
-              <div className="px-6 pb-6 pt-2 grid gap-4 sm:grid-cols-1 lg:grid-cols-2">
-                {categoryDrugs.map((drug) => (
-                  <DrugItem key={drug.id} drug={drug} />
-                ))}
-              </div>
-            )}
-          </div>
-        )
-      })}
+    <div className="flex gap-2 mb-6 overflow-x-auto pb-2">
+      <button
+        onClick={() => onSelect(null)}
+        className={`btn whitespace-nowrap ${
+          selected === null ? 'btn-primary' : ''
+        }`}
+      >
+        All
+      </button>
+      {sortedCategories.map((cat) => (
+        <button
+          key={cat}
+          onClick={() => onSelect(cat)}
+          className={`btn whitespace-nowrap ${
+            selected === cat ? 'btn-primary' : ''
+          }`}
+        >
+          {cat}
+        </button>
+      ))}
     </div>
-  )
-}
-
-export default CategoryList
+  );
+};
