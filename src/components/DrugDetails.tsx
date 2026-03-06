@@ -1,1 +1,150 @@
-import { useEffect, useState } from 'react'\nimport { Drug } from '../data/drugs'\nimport { supabase } from '../lib/supabase'\n\ninterface DrugDetailsProps {\n  drug: Drug\n  onClose: () => void\n  isAdmin: boolean\n  onNoteUpdate: (drugId: string, newNote: string) => void\n}\n\nconst DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps) => {\n  const [isEditing, setIsEditing] = useState(false)\n  const [editNote, setEditNote] = useState(drug.notes || '')\n  const [isSaving, setIsSaving] = useState(false)\n\n  useEffect(() => {\n    const handleEsc = (e: KeyboardEvent) => {\n      if (e.key === 'Escape') onClose()\n    }\n    window.addEventListener('keydown', handleEsc)\n    return () => window.removeEventListener('keydown', handleEsc)\n  }, [onClose])\n\n  const handleSave = async () => {\n    setIsSaving(true)\n    try {\n      const { error } = await supabase\n        .from('notes')\n        .upsert({ \n          drug_id: drug.id || drug.name, \n          content: editNote \n        }, { onConflict: 'drug_id' })\n\n      if (error) throw error\n      \n      onNoteUpdate(drug.id || drug.name, editNote)\n      setIsEditing(false)\n    } catch (err) {\n      console.error('Error saving note:', err)\n      alert('Failed to save note')\n    } finally {\n      setIsSaving(false)\n    }\n  }\n\n  return (\n    <div className=\"modal-overlay show\" onClick={onClose}>\n      <div \n        className=\"modal show\" \n        onClick={e => e.stopPropagation()}\n      >\n        <div className=\"flex justify-between items-start mb-6\">\n          <div>\n            <h2 className=\"text-2xl font-bold text-primary\">{drug.name}</h2>\n            <span className=\"text-sm text-textc/60 bg-bg px-2 py-0.5 rounded mt-2 inline-block border border-borderc\">\n              {drug.category}\n            </span>\n          </div>\n          <button \n            onClick={onClose}\n            className=\"p-2 hover:bg-bg-hover rounded-full transition-colors text-textc/60 hover:text-textc\"\n          >\n            <svg className=\"w-6 h-6\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\">\n              <path strokeLinecap=\"round\" strokeLinejoin=\"round\" strokeWidth={2} d=\"M6 18L18 6M6 6l12 12\" />\n            </svg>\n          </button>\n        </div>\n\n        <div className=\"space-y-6\">\n          <div className=\"bg-bg/50 p-4 rounded-lg border border-borderc/50\">\n            <div className=\"flex justify-between items-center mb-2\">\n              <h3 className=\"text-sm font-semibold text-textc/80 uppercase tracking-wider\">\n                Notes\n              </h3>\n              {isAdmin && !isEditing && (\n                <button \n                  onClick={() => setIsEditing(true)}\n                  className=\"text-xs text-primary hover:underline\"\n                >\n                  Edit\n                </button>\n              )}\n            </div>\n            \n            {isEditing ? (\n              <div className=\"flex flex-col gap-3\">\n                <textarea \n                  className=\"input w-full min-h-[150px] p-3\"\n                  value={editNote}\n                  onChange={(e) => setEditNote(e.target.value)}\n                  placeholder=\"Enter notes here...\"\n                />\n                <div className=\"flex justify-end gap-2\">\n                  <button \n                    onClick={() => {\n                      setIsEditing(false)\n                      setEditNote(drug.notes || '')\n                    }}\n                    className=\"btn\"\n                  >\n                    Cancel\n                  </button>\n                  <button \n                    onClick={handleSave}\n                    disabled={isSaving}\n                    className=\"btn btn-primary\"\n                  >\n                    {isSaving ? 'Saving...' : 'Save'}\n                  </button>\n                </div>\n              </div>\n            ) : (\n              <p className=\"text-textc leading-relaxed whitespace-pre-wrap\">\n                {drug.notes || <span className=\"text-textc/40 italic\">No specific notes recorded for this substance.</span>}\n              </p>\n            )}\n          </div>\n        </div>\n\n        <div className=\"mt-8 pt-6 border-t border-borderc flex justify-end\">\n          <button onClick={onClose} className=\"btn btn-primary\">\n            Close\n          </button>\n        </div>\n      </div>\n    </div>\n  )\n}\n\nexport default DrugDetails\n
+'use client';
+
+import { useEffect, useState } from 'react';
+import { Drug } from '@/data/drugs';
+
+interface DrugDetailsProps {
+  drug: Drug;
+  onClose: () => void;
+  isAdmin: boolean;
+  onNoteUpdate: (drugId: string, newNote: string) => void;
+}
+
+const DrugDetails = ({
+  drug,
+  onClose,
+  isAdmin,
+  onNoteUpdate,
+}: DrugDetailsProps) => {
+  const [isEditing, setIsEditing] = useState(false);
+  const [editNote, setEditNote] = useState(drug.notes || '');
+  const [isSaving, setIsSaving] = useState(false);
+
+  useEffect(() => {
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', handleEsc);
+    return () => window.removeEventListener('keydown', handleEsc);
+  }, [onClose]);
+
+  const handleSave = async () => {
+    setIsSaving(true);
+    try {
+      const res = await fetch('/api/notes', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          drug_id: String(drug.id),
+          content: editNote,
+        }),
+      });
+
+      if (!res.ok) throw new Error('Failed to save');
+
+      onNoteUpdate(String(drug.id), editNote);
+      setIsEditing(false);
+    } catch (err) {
+      console.error('Error saving note:', err);
+      alert('Failed to save note');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  return (
+    <div className="modal-overlay show" onClick={onClose}>
+      <div className="modal show" onClick={(e) => e.stopPropagation()}>
+        <div className="flex justify-between items-start mb-6">
+          <div>
+            <h2 className="text-2xl font-bold text-primary">{drug.name}</h2>
+            <span className="text-sm text-textc/60 bg-bg px-2 py-0.5 rounded mt-2 inline-block border border-borderc">
+              {drug.category}
+            </span>
+          </div>
+          <button
+            onClick={onClose}
+            className="p-2 hover:bg-bg-hover rounded-full transition-colors text-textc/60 hover:text-textc"
+          >
+            <svg
+              className="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </button>
+        </div>
+
+        <div className="space-y-6">
+          <div className="bg-bg/50 p-4 rounded-lg border border-borderc/50">
+            <div className="flex justify-between items-center mb-2">
+              <h3 className="text-sm font-semibold text-textc/80 uppercase tracking-wider">
+                Notes
+              </h3>
+              {isAdmin && !isEditing && (
+                <button
+                  onClick={() => setIsEditing(true)}
+                  className="text-xs text-primary hover:underline"
+                >
+                  Edit
+                </button>
+              )}
+            </div>
+
+            {isEditing ? (
+              <div className="flex flex-col gap-3">
+                <textarea
+                  className="input w-full min-h-[150px] p-3"
+                  value={editNote}
+                  onChange={(e) => setEditNote(e.target.value)}
+                  placeholder="Enter notes here..."
+                />
+                <div className="flex justify-end gap-2">
+                  <button
+                    onClick={() => {
+                      setIsEditing(false);
+                      setEditNote(drug.notes || '');
+                    }}
+                    className="btn"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleSave}
+                    disabled={isSaving}
+                    className="btn btn-primary"
+                  >
+                    {isSaving ? 'Saving...' : 'Save'}
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <p className="text-textc leading-relaxed whitespace-pre-wrap">
+                {drug.notes || (
+                  <span className="text-textc/40 italic">
+                    No specific notes recorded for this substance.
+                  </span>
+                )}
+              </p>
+            )}
+          </div>
+        </div>
+
+        <div className="mt-8 pt-6 border-t border-borderc flex justify-end">
+          <button onClick={onClose} className="btn btn-primary">
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default DrugDetails;
