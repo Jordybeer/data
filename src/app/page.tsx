@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useSession } from '@/components/SessionProvider';
 import { SearchBar } from '@/components/SearchBar';
 import { CategoryList } from '@/components/CategoryList';
@@ -9,6 +10,16 @@ import { DisclaimerSection } from '@/components/DisclaimerSection';
 import { AuthSection } from '@/components/AuthSection';
 import DrugDetails from '@/components/DrugDetails';
 import type { Drug } from '@/data/drugs';
+
+const containerVariants = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.05 } },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 16 },
+  visible: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 380, damping: 26 } },
+};
 
 export default function Home() {
   const { session } = useSession();
@@ -79,19 +90,33 @@ export default function Home() {
           onSelect={setCategory}
         />
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
-          {filteredDrugs.map((drug) => (
-            <DrugItem
-              key={drug.id}
-              drug={drug}
-              onClick={() => setSelectedDrug(drug)}
-            />
-          ))}
-        </div>
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={`${search}-${category}`}
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8"
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+          >
+            {filteredDrugs.map((drug) => (
+              <motion.div key={drug.id} variants={itemVariants}>
+                <DrugItem
+                  drug={drug}
+                  onClick={() => setSelectedDrug(drug)}
+                />
+              </motion.div>
+            ))}
+          </motion.div>
+        </AnimatePresence>
+
         {filteredDrugs.length === 0 && (
-          <div className="text-center py-12 text-textc/60">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="text-center py-12 text-textc/60"
+          >
             No substances found matching your criteria.
-          </div>
+          </motion.div>
         )}
 
         <div className="space-y-6">
@@ -100,14 +125,16 @@ export default function Home() {
         </div>
       </main>
 
-      {selectedDrug && (
-        <DrugDetails
-          drug={selectedDrug}
-          onClose={() => setSelectedDrug(null)}
-          isAdmin={isAdmin}
-          onNoteUpdate={handleNoteUpdate}
-        />
-      )}
+      <AnimatePresence>
+        {selectedDrug && (
+          <DrugDetails
+            drug={selectedDrug}
+            onClose={() => setSelectedDrug(null)}
+            isAdmin={isAdmin}
+            onNoteUpdate={handleNoteUpdate}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 }
