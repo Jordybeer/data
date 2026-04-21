@@ -1,62 +1,41 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useSession } from 'next-auth/react';
+import { useSession } from '@/components/SessionProvider';
 import { SearchBar } from '@/components/SearchBar';
 import { CategoryList } from '@/components/CategoryList';
 import { DrugItem } from '@/components/DrugItem';
 import { DisclaimerSection } from '@/components/DisclaimerSection';
 import { AuthSection } from '@/components/AuthSection';
 import DrugDetails from '@/components/DrugDetails';
-import { getAllDrugs, Drug } from '@/data/drugs';
+import type { Drug } from '@/data/drugs';
 
 export default function Home() {
-  const { data: session } = useSession();
-  const [drugs, setDrugs] = useState<Drug[]>(getAllDrugs());
+  const { session } = useSession();
+  const [drugs, setDrugs] = useState<Drug[]>([]);
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState<string | null>(null);
   const [selectedDrug, setSelectedDrug] = useState<Drug | null>(null);
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [userEmail, setUserEmail] = useState<string | undefined>(undefined);
   const [isLoading, setIsLoading] = useState(true);
+  const isAdmin = session.isAdmin;
 
   useEffect(() => {
-    const initializeApp = async () => {
-      if (session?.user?.email) {
-        setUserEmail(session.user.email);
-        setIsAdmin(session.user.email === 'contact@jordy.beer');
-      } else {
-        setUserEmail(undefined);
-        setIsAdmin(false);
-      }
-
+    (async () => {
       try {
-        const res = await fetch('/api/notes');
-        const notes = await res.json();
-
-        if (Array.isArray(notes)) {
-          setDrugs((currentDrugs) =>
-            currentDrugs.map((drug) => {
-              const note = notes.find((n: any) => n.drug_id === String(drug.id));
-              return note ? { ...drug, notes: note.content } : drug;
-            })
-          );
-        }
+        const res = await fetch('/api/drugs', { cache: 'no-store' });
+        const data = await res.json();
+        if (Array.isArray(data)) setDrugs(data);
       } catch (err) {
-        console.error('Error fetching notes:', err);
+        console.error('Error fetching drugs:', err);
       } finally {
         setIsLoading(false);
       }
-    };
-
-    initializeApp();
-  }, [session]);
+    })();
+  }, []);
 
   const handleNoteUpdate = (drugId: string, newNote: string) => {
-    setDrugs((currentDrugs) =>
-      currentDrugs.map((drug) =>
-        String(drug.id) === drugId ? { ...drug, notes: newNote } : drug
-      )
+    setDrugs((cur) =>
+      cur.map((d) => (String(d.id) === drugId ? { ...d, notes: newNote } : d)),
     );
     if (selectedDrug && String(selectedDrug.id) === drugId) {
       setSelectedDrug({ ...selectedDrug, notes: newNote });
@@ -64,11 +43,10 @@ export default function Home() {
   };
 
   const categories = Array.from(new Set(drugs.map((d) => d.category)));
-
   const filteredDrugs = drugs.filter((drug) => {
+    const q = search.toLowerCase();
     const matchesSearch =
-      drug.name.toLowerCase().includes(search.toLowerCase()) ||
-      drug.category.toLowerCase().includes(search.toLowerCase());
+      drug.name.toLowerCase().includes(q) || drug.category.toLowerCase().includes(q);
     const matchesCategory = !category || drug.category === category;
     return matchesSearch && matchesCategory;
   });
@@ -117,7 +95,7 @@ export default function Home() {
         )}
 
         <div className="space-y-6">
-          <AuthSection isAdmin={isAdmin} userEmail={userEmail} />
+          <AuthSection />
           <DisclaimerSection />
         </div>
       </main>
