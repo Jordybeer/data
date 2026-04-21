@@ -11,13 +11,15 @@ interface DrugDetailsProps {
   onNoteUpdate: (drugId: string, newNote: string) => void;
 }
 
+type WikiResult = { url: string; source: 'psychonautwiki' | 'wikipedia' } | null;
+
 const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editNote, setEditNote] = useState(drug.notes || '');
   const [isSaving, setIsSaving] = useState(false);
   const [saveError, setSaveError] = useState('');
+  const [wiki, setWiki] = useState<WikiResult>(null);
 
-  // Scroll lock while open
   useEffect(() => {
     const prev = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
@@ -29,6 +31,31 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
     window.addEventListener('keydown', handleEsc);
     return () => window.removeEventListener('keydown', handleEsc);
   }, [onClose]);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch(
+          `https://psychonautwiki.org/w/api.php?action=query&titles=${encodeURIComponent(drug.name)}&format=json&origin=*`,
+        );
+        const json = await res.json();
+        const pages = json?.query?.pages ?? {};
+        const page = Object.values(pages)[0] as { missing?: string } | undefined;
+        if (cancelled) return;
+        if (page && !('missing' in page)) {
+          setWiki({ url: `https://psychonautwiki.org/wiki/${encodeURIComponent(drug.name)}`, source: 'psychonautwiki' });
+        } else {
+          setWiki({ url: `https://en.wikipedia.org/wiki/${encodeURIComponent(drug.name)}`, source: 'wikipedia' });
+        }
+      } catch {
+        if (!cancelled) {
+          setWiki({ url: `https://en.wikipedia.org/wiki/${encodeURIComponent(drug.name)}`, source: 'wikipedia' });
+        }
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [drug.name]);
 
   const handleSave = async () => {
     setIsSaving(true);
@@ -49,7 +76,6 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
     }
   };
 
-  // No inner AnimatePresence — parent page.tsx wraps this in AnimatePresence
   return (
     <motion.div
       className="modal-overlay"
@@ -68,12 +94,39 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
         transition={{ type: 'spring' as const, stiffness: 400, damping: 30 }}
       >
         {/* Header */}
-        <div className="flex justify-between items-start mb-6 gap-3">
-          <div>
-            <h2 className="text-2xl font-bold text-primary">{drug.name}</h2>
-            <span className="text-xs text-textc/60 bg-bg/60 px-2 py-0.5 rounded-full mt-2 inline-block border border-borderc">
-              {drug.category}
-            </span>
+        <div className="flex justify-between items-start mb-5 gap-3">
+          <div className="min-w-0">
+            <h2 className="text-2xl font-bold text-primary leading-snug">{drug.name}</h2>
+            <div className="flex flex-wrap gap-1.5 mt-2">
+              <span className="text-[11px] font-medium text-primary/80 bg-primary/10 border border-primary/20 px-2 py-0.5 rounded-md">
+                {drug.category}
+              </span>
+              {drug.category2 && (
+                <span className="text-[11px] font-medium text-blue-300/80 bg-blue-400/10 border border-blue-400/20 px-2 py-0.5 rounded-md">
+                  {drug.category2}
+                </span>
+              )}
+              {wiki && (
+                <a
+                  href={wiki.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 text-[11px] font-medium text-textc/70 bg-white/[0.07] border border-white/10 px-2 py-0.5 rounded-md hover:text-textc hover:bg-white/[0.12] transition-colors"
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={wiki.source === 'psychonautwiki'
+                      ? 'https://www.google.com/s2/favicons?domain=psychonautwiki.org&sz=16'
+                      : 'https://www.google.com/s2/favicons?domain=en.wikipedia.org&sz=16'}
+                    alt=""
+                    width={12}
+                    height={12}
+                    className="rounded-sm opacity-80"
+                  />
+                  Wiki
+                </a>
+              )}
+            </div>
           </div>
           <motion.button
             onClick={onClose}
@@ -145,7 +198,7 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
           </AnimatePresence>
         </div>
 
-        <div className="mt-6 flex justify-end">
+        <div className="mt-5 flex justify-end">
           <motion.button onClick={onClose} className="btn btn-primary" whileTap={{ scale: 0.97 }}>
             Sluiten
           </motion.button>
