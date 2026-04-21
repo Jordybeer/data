@@ -10,7 +10,7 @@ interface DrugItemProps {
 export const DrugItem: React.FC<DrugItemProps> = ({ drug, onClick }) => (
   <motion.button
     onClick={onClick}
-    className="card p-4 text-left hover:border-primary/50 transition-all group"
+    className="card p-4 text-left w-full block hover:border-primary/50 transition-all group"
     whileTap={{ scale: 0.97 }}
     whileHover={{ y: -2 }}
     transition={{ type: 'spring', stiffness: 400, damping: 25 }}
