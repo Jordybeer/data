@@ -79,6 +79,10 @@ body::after {
   to   { transform: translate(-10vw, 8vw) scale(1.1); }
 }
 
+@media (prefers-reduced-motion: reduce) {
+  body::before, body::after { animation: none; }
+}
+
 body {
   overflow-x: hidden;
 }
@@ -503,7 +507,7 @@ button {
   background: rgba(0, 0, 0, 0.7);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  z-index: 50;
+  z-index: 200;
   display: flex;
   align-items: center;
   justify-content: center;

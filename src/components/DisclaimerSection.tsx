@@ -29,7 +29,7 @@ const iconMap = {
 };
 
 export const DisclaimerSection = () => {
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
 
   return (
     <div className="card overflow-hidden">

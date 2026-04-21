@@ -102,7 +102,7 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
                 {drug.category}
               </span>
               {drug.category2 && (
-                <span className="text-[11px] font-medium text-blue-300/80 bg-blue-400/10 border border-blue-400/20 px-2 py-0.5 rounded-md">
+                <span className="text-[11px] font-medium text-cyan-300/80 bg-cyan-400/10 border border-cyan-400/20 px-2 py-0.5 rounded-md">
                   {drug.category2}
                 </span>
               )}
@@ -145,7 +145,10 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
           <div className="flex justify-between items-center mb-3">
             <h3 className="text-xs font-bold text-textc/60 uppercase tracking-widest">Notities</h3>
             {isAdmin && !isEditing && (
-              <button onClick={() => setIsEditing(true)} className="text-xs text-primary hover:underline">
+              <button
+                onClick={() => setIsEditing(true)}
+                className="btn text-xs px-3 min-h-[32px]"
+              >
                 Bewerken
               </button>
             )}

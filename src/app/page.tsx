@@ -107,6 +107,10 @@ export default function Home() {
           )}
         </div>
 
+        {(search || category || category2) && filteredDrugs.length > 0 && (
+          <p className="text-xs text-textc/40 -mb-1">{filteredDrugs.length} resultaten</p>
+        )}
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {filteredDrugs.map((drug) => (
             <DrugItem key={drug.id} drug={drug} onClick={() => setSelectedDrug(drug)} />
@@ -114,8 +118,16 @@ export default function Home() {
         </div>
 
         {filteredDrugs.length === 0 && (
-          <div className="text-center py-12 text-textc/60">
-            Geen stoffen gevonden.
+          <div className="text-center py-12 space-y-3">
+            <p className="text-textc/60">Geen stoffen gevonden.</p>
+            {(search || category || category2) && (
+              <button
+                onClick={() => { setSearch(''); setCategory(null); setCategory2(null); }}
+                className="btn text-sm"
+              >
+                Filters wissen
+              </button>
+            )}
           </div>
         )}
 
