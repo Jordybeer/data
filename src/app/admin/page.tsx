@@ -1,8 +1,10 @@
 'use client';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import type { Drug } from '@/data/drugs';
+import { useSession } from '@/components/SessionProvider';
 
 type Row = Drug & {
   _notesDirty?: string;
@@ -12,6 +14,13 @@ type Row = Drug & {
 };
 
 export default function AdminPage() {
+  const { session, loading } = useSession();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!loading && !session.isAdmin) router.replace('/?auth=required');
+  }, [loading, session, router]);
+
   const [drugs, setDrugs] = useState<Row[]>([]);
   const [q, setQ] = useState('');
   const [filterCat, setFilterCat] = useState<string>('all');
@@ -189,10 +198,10 @@ export default function AdminPage() {
               const nameDirty = d._nameDraft !== undefined && d._nameDraft !== d.name;
               const catDirty = d._catDraft !== undefined && d._catDraft !== d.category;
               return (
-                <div key={d.id} className="py-4 flex flex-col gap-2">
+                <div key={d.id} className="py-3 flex flex-col gap-2">
                   {/* Name + category row */}
-                  <div className="flex flex-wrap items-center gap-2">
-                    <div className="relative flex-1 min-w-[180px]">
+                  <div className="flex items-start gap-2">
+                    <div className="relative flex-1 min-w-0">
                       <input
                         className={`input w-full font-semibold ${nameDirty ? 'border-primary/60' : ''}`}
                         value={d._nameDraft ?? d.name}
@@ -207,7 +216,7 @@ export default function AdminPage() {
                         </div>
                       )}
                     </div>
-                    <div className="relative w-44">
+                    <div className="relative w-36 flex-shrink-0">
                       <input
                         className={`input w-full text-sm ${catDirty ? 'border-primary/60' : ''}`}
                         list="admin-cats"
@@ -288,7 +297,7 @@ export default function AdminPage() {
       </main>
 
       {toast && (
-        <div className={`fixed bottom-6 left-1/2 -translate-x-1/2 card px-5 py-2.5 text-sm font-medium transition-all ${toast.ok ? 'text-green-400' : 'text-red-400'}`}>
+        <div className={`fixed bottom-6 left-1/2 -translate-x-1/2 z-[300] card px-5 py-2.5 text-sm font-medium ${toast.ok ? 'text-green-400' : 'text-red-400'}`}>
           {toast.msg}
         </div>
       )}
