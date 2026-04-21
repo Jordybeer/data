@@ -11,7 +11,7 @@ export const DrugItem: React.FC<DrugItemProps> = ({ drug, onClick }) => (
     onClick={onClick}
     className={
       'card p-4 text-left w-full block transition-all duration-200 group ' +
-      'hover:border-primary/40 hover:shadow-[0_24px_64px_rgba(2,6,23,0.55)] ' +
+      'hover:border-blue-400/25 hover:bg-[rgba(20,40,80,0.55)] ' +
       'active:scale-[0.98] active:brightness-95'
     }
   >

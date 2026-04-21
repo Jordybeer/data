@@ -101,12 +101,14 @@ button {
 
 @layer components {
   .card {
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    background: rgba(15, 23, 42, 0.78);
-    backdrop-filter: blur(22px);
-    -webkit-backdrop-filter: blur(22px);
+    border: 1px solid rgba(96, 165, 250, 0.10);
+    background: rgba(14, 26, 52, 0.42);
+    backdrop-filter: blur(28px);
+    -webkit-backdrop-filter: blur(28px);
     border-radius: 24px;
-    box-shadow: 0 20px 60px rgba(2, 6, 23, 0.4);
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.06) inset,
+      0 16px 48px rgba(2, 6, 23, 0.35);
   }
 
   .btn {
