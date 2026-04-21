@@ -31,30 +31,52 @@ html,
 body {
   margin: 0;
   min-height: 100%;
-  background: #08101d;
+  background:
+    radial-gradient(ellipse 70% 50% at 15% 0%, rgba(96, 165, 250, 0.18), transparent),
+    radial-gradient(ellipse 60% 45% at 85% 5%, rgba(167, 139, 250, 0.16), transparent),
+    radial-gradient(ellipse 50% 60% at 50% 100%, rgba(109, 40, 217, 0.10), transparent),
+    linear-gradient(180deg, #0c1628 0%, #0d1a2e 35%, #0b1628 65%, #0b1220 100%);
   color: var(--pd-text);
   font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Inter', 'Segoe UI', sans-serif;
 }
 
-/* Animated ambient gradient — rendered as a fixed layer behind everything */
-body::before {
+/* Slow-drifting ambient orbs — transform-based so the animation actually moves */
+body::before,
+body::after {
   content: '';
   position: fixed;
-  inset: 0;
+  border-radius: 50%;
+  pointer-events: none;
   z-index: -1;
-  background:
-    radial-gradient(ellipse 80% 60% at 20% 10%, rgba(96, 165, 250, 0.13), transparent),
-    radial-gradient(ellipse 70% 50% at 80% 5%, rgba(167, 139, 250, 0.11), transparent),
-    radial-gradient(ellipse 60% 80% at 50% 100%, rgba(109, 40, 217, 0.07), transparent),
-    linear-gradient(180deg, #08101d 0%, #0a1428 40%, #0b1220 100%);
-  animation: ambientShift 18s ease-in-out infinite alternate;
+  filter: blur(80px);
 }
 
-@keyframes ambientShift {
-  0%   { background-position: 0% 0%, 100% 0%, 50% 100%, center; opacity: 1; }
-  33%  { background-position: 5% 8%, 88% 4%, 45% 95%, center; }
-  66%  { background-position: 12% 3%, 78% 10%, 55% 105%, center; }
-  100% { background-position: 6% 12%, 92% 2%, 48% 98%, center; }
+body::before {
+  width: 60vw;
+  height: 55vw;
+  top: -20vw;
+  left: -10vw;
+  background: rgba(96, 165, 250, 0.09);
+  animation: driftA 22s ease-in-out infinite alternate;
+}
+
+body::after {
+  width: 50vw;
+  height: 45vw;
+  top: -15vw;
+  right: -15vw;
+  background: rgba(167, 139, 250, 0.09);
+  animation: driftB 26s ease-in-out infinite alternate;
+}
+
+@keyframes driftA {
+  from { transform: translate(0, 0) scale(1); }
+  to   { transform: translate(8vw, 12vw) scale(1.15); }
+}
+
+@keyframes driftB {
+  from { transform: translate(0, 0) scale(1); }
+  to   { transform: translate(-10vw, 8vw) scale(1.1); }
 }
 
 body {
