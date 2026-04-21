@@ -68,7 +68,7 @@ export default function Home() {
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center text-textc">
-        Loading database...
+        Database laden...
       </div>
     );
   }
@@ -76,25 +76,28 @@ export default function Home() {
   if (fetchError) {
     return (
       <div className="min-h-screen flex items-center justify-center text-textc/60">
-        Could not load substances — database unavailable.
+        Kon stoffen niet laden — database niet beschikbaar.
       </div>
     );
   }
 
   return (
     <div className="min-h-screen pb-20">
-      <header className="bg-card border-b border-borderc sticky top-0 z-10">
+      <header className="sticky top-0 z-10" style={{ background: 'rgba(11,18,32,0.92)', backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)', borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
         <div className="container mx-auto px-4 py-4">
-          <div className="flex justify-between items-center mb-4">
-            <h1 className="text-2xl font-bold text-primary">
-              <span className="text-textc">Psychonaut</span> DB
+          <div className="flex justify-between items-center mb-3">
+            <h1 className="text-2xl font-bold">
+              <span className="text-textc">Psychonaut</span>{' '}
+              <span className="text-primary">DB</span>
             </h1>
           </div>
           <SearchBar value={search} onChange={setSearch} />
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-6">
+      <main className="container mx-auto px-4 py-6 space-y-5">
+        <DisclaimerSection />
+
         <CategoryList
           categories={categories}
           selected={category}
@@ -104,17 +107,14 @@ export default function Home() {
         <AnimatePresence mode="wait">
           <motion.div
             key={`${search}-${category}`}
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8"
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
             variants={containerVariants}
             initial="hidden"
             animate="visible"
           >
             {filteredDrugs.map((drug) => (
               <motion.div key={drug.id} variants={itemVariants}>
-                <DrugItem
-                  drug={drug}
-                  onClick={() => setSelectedDrug(drug)}
-                />
+                <DrugItem drug={drug} onClick={() => setSelectedDrug(drug)} />
               </motion.div>
             ))}
           </motion.div>
@@ -126,14 +126,11 @@ export default function Home() {
             animate={{ opacity: 1 }}
             className="text-center py-12 text-textc/60"
           >
-            No substances found matching your criteria.
+            Geen stoffen gevonden.
           </motion.div>
         )}
 
-        <div className="space-y-6">
-          <AuthSection />
-          <DisclaimerSection />
-        </div>
+        <AuthSection />
       </main>
 
       <AnimatePresence>
