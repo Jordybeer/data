@@ -12,10 +12,15 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     category?: string;
     notes?: string;
   };
+
   const update: Record<string, unknown> = { updated_at: new Date().toISOString() };
   if (typeof body.name === 'string') update.name = body.name.trim();
   if (typeof body.category === 'string') update.category = body.category.trim();
   if (typeof body.notes === 'string') update.notes = body.notes;
+
+  if (Object.keys(update).length === 1) {
+    return NextResponse.json({ error: 'No fields to update' }, { status: 400 });
+  }
 
   const { data, error } = await supabaseAdmin
     .from('drugs')

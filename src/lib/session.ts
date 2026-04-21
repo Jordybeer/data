@@ -1,7 +1,13 @@
 import { cookies } from 'next/headers';
-import { createHmac, timingSafeEqual } from 'crypto';
+import { createHash, createHmac, timingSafeEqual } from 'crypto';
 
 const SECRET = process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET || '';
+
+function requireSecret() {
+  if (!SECRET) throw new Error('AUTH_SECRET (or NEXTAUTH_SECRET) env var is not set');
+  return SECRET;
+}
+
 const COOKIE = 'psy_session';
 const SESSION_TTL = 60 * 60 * 24 * 30;
 
@@ -20,8 +26,11 @@ export function sign(payload: Record<string, unknown>, ttlSec: number) {
 }
 
 export function verify<T = Record<string, unknown>>(token: string): T | null {
-  if (!SECRET || !token || !token.includes('.')) return null;
-  const [data, sig] = token.split('.');
+  if (!SECRET || !token) return null;
+  const lastDot = token.lastIndexOf('.');
+  if (lastDot < 1) return null;
+  const data = token.slice(0, lastDot);
+  const sig = token.slice(lastDot + 1);
   const expected = b64url(createHmac('sha256', SECRET).update(data).digest());
   const a = Buffer.from(sig);
   const b = Buffer.from(expected);
@@ -33,6 +42,10 @@ export function verify<T = Record<string, unknown>>(token: string): T | null {
   } catch {
     return null;
   }
+}
+
+export function tokenHash(token: string) {
+  return createHash('sha256').update(token).digest('hex');
 }
 
 export async function setSessionCookie(email: string) {

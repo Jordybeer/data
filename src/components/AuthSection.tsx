@@ -3,17 +3,16 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useSession } from '@/components/SessionProvider';
-import { ADMIN_EMAIL } from '@/data/drugs';
 
 export const AuthSection: React.FC = () => {
-  const { session, refresh } = useSession();
+  const { session } = useSession();
   const [email, setEmail] = useState('');
   const [status, setStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
   const [errorMsg, setErrorMsg] = useState<string>('');
 
   const signOut = async () => {
     await fetch('/api/auth/signout', { method: 'POST' });
-    await refresh();
+    window.location.href = '/';
   };
 
   const request = async (e: React.FormEvent) => {
@@ -57,15 +56,16 @@ export const AuthSection: React.FC = () => {
     );
   }
 
+  // Don't expose admin email as placeholder — just use generic label
   return (
     <form onSubmit={request} className="card p-6 flex flex-col gap-3">
-      <p className="text-sm text-textc/80">Enter the admin email to receive a magic sign-in link.</p>
+      <p className="text-sm text-textc/80">Admin sign-in: enter your email to receive a magic link.</p>
       <input
         type="email"
         required
         autoComplete="email"
         className="input w-full p-3"
-        placeholder={ADMIN_EMAIL}
+        placeholder="you@example.com"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
       />
@@ -81,3 +81,4 @@ export const AuthSection: React.FC = () => {
     </form>
   );
 };
+

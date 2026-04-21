@@ -18,7 +18,7 @@ const containerVariants = {
 
 const itemVariants = {
   hidden: { opacity: 0, y: 16 },
-  visible: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 380, damping: 26 } },
+  visible: { opacity: 1, y: 0, transition: { type: 'spring' as const, stiffness: 380, damping: 26 } },
 };
 
 export default function Home() {
@@ -28,16 +28,19 @@ export default function Home() {
   const [category, setCategory] = useState<string | null>(null);
   const [selectedDrug, setSelectedDrug] = useState<Drug | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [fetchError, setFetchError] = useState(false);
   const isAdmin = session.isAdmin;
 
   useEffect(() => {
     (async () => {
       try {
         const res = await fetch('/api/drugs', { cache: 'no-store' });
+        if (!res.ok) throw new Error(`${res.status}`);
         const data = await res.json();
         if (Array.isArray(data)) setDrugs(data);
-      } catch (err) {
-        console.error('Error fetching drugs:', err);
+        else setFetchError(true);
+      } catch {
+        setFetchError(true);
       } finally {
         setIsLoading(false);
       }
@@ -66,6 +69,14 @@ export default function Home() {
     return (
       <div className="min-h-screen flex items-center justify-center text-textc">
         Loading database...
+      </div>
+    );
+  }
+
+  if (fetchError) {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-textc/60">
+        Could not load substances — database unavailable.
       </div>
     );
   }
