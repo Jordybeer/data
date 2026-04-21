@@ -1,4 +1,5 @@
 import React from 'react';
+import { motion } from 'framer-motion';
 import { Drug } from '@/data/drugs';
 
 interface DrugItemProps {
@@ -7,9 +8,12 @@ interface DrugItemProps {
 }
 
 export const DrugItem: React.FC<DrugItemProps> = ({ drug, onClick }) => (
-  <button
+  <motion.button
     onClick={onClick}
     className="card p-4 text-left hover:border-primary/50 transition-all group"
+    whileTap={{ scale: 0.97 }}
+    whileHover={{ y: -2 }}
+    transition={{ type: 'spring', stiffness: 400, damping: 25 }}
   >
     <h3 className="font-semibold text-lg mb-1 group-hover:text-primary transition-colors">
       {drug.name}
@@ -20,5 +24,5 @@ export const DrugItem: React.FC<DrugItemProps> = ({ drug, onClick }) => (
     {drug.notes && (
       <p className="text-sm text-textc/70 mt-2 line-clamp-2">{drug.notes}</p>
     )}
-  </button>
+  </motion.button>
 );

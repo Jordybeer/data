@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { SearchBar } from './components/SearchBar'
 import { CategoryList } from './components/CategoryList'
 import { DrugItem } from './components/DrugItem'
@@ -19,17 +20,14 @@ export default function App() {
   const [isPushEnabled, setIsPushEnabled] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
 
-  // Check auth and fetch global notes on load
   useEffect(() => {
     const initializeApp = async () => {
-      // 1. Check Auth
       const { data: { session } } = await supabase.auth.getSession()
       if (session?.user) {
         setUserEmail(session.user.email)
         setIsAdmin(session.user.email === 'contact@jordy.beer')
       }
 
-      // Listen for auth changes
       supabase.auth.onAuthStateChange((_event, session) => {
         if (session?.user) {
           setUserEmail(session.user.email)
@@ -40,14 +38,13 @@ export default function App() {
         }
       })
 
-      // 2. Fetch Global Notes
       try {
         const { data: notes, error } = await supabase
           .from('notes')
           .select('drug_id, content')
 
         if (!error && notes) {
-          setDrugs(currentDrugs => 
+          setDrugs(currentDrugs =>
             currentDrugs.map(drug => {
               const note = notes.find(n => n.drug_id === (drug.id || drug.name))
               return note ? { ...drug, notes: note.content } : drug
@@ -65,8 +62,8 @@ export default function App() {
   }, [])
 
   const handleNoteUpdate = (drugId: string, newNote: string) => {
-    setDrugs(currentDrugs => 
-      currentDrugs.map(drug => 
+    setDrugs(currentDrugs =>
+      currentDrugs.map(drug =>
         (drug.id || drug.name) === drugId ? { ...drug, notes: newNote } : drug
       )
     )
@@ -76,7 +73,7 @@ export default function App() {
   }
 
   const categories = Array.from(new Set(drugs.map(d => d.category)))
-  
+
   const filteredDrugs = drugs.filter(drug => {
     const matchesSearch = drug.name.toLowerCase().includes(search.toLowerCase()) ||
                          drug.category.toLowerCase().includes(search.toLowerCase())
@@ -86,6 +83,16 @@ export default function App() {
 
   if (isLoading) {
     return <div className="min-h-screen flex items-center justify-center text-textc">Loading database...</div>
+  }
+
+  const containerVariants = {
+    hidden: {},
+    visible: { transition: { staggerChildren: 0.05 } },
+  }
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 16 },
+    visible: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 380, damping: 26 } },
   }
 
   return (
@@ -102,48 +109,64 @@ export default function App() {
       </header>
 
       <main className="container mx-auto px-4 py-6">
-        <CategoryList 
-          categories={categories} 
-          selected={category} 
-          onSelect={setCategory} 
+        <CategoryList
+          categories={categories}
+          selected={category}
+          onSelect={setCategory}
         />
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
-          {filteredDrugs.map(drug => (
-            <DrugItem 
-              key={drug.id || drug.name} 
-              drug={drug} 
-              onClick={() => setSelectedDrug(drug)}
-            />
-          ))}
-        </div>
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={`${search}-${category}`}
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8"
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+          >
+            {filteredDrugs.map(drug => (
+              <motion.div key={drug.id || drug.name} variants={itemVariants}>
+                <DrugItem
+                  drug={drug}
+                  onClick={() => setSelectedDrug(drug)}
+                />
+              </motion.div>
+            ))}
+          </motion.div>
+        </AnimatePresence>
+
         {filteredDrugs.length === 0 && (
-          <div className="text-center py-12 text-textc/60">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="text-center py-12 text-textc/60"
+          >
             No substances found matching your criteria.
-          </div>
+          </motion.div>
         )}
 
         <div className="space-y-6">
-          <AuthSection 
-            isAdmin={isAdmin} 
+          <AuthSection
+            isAdmin={isAdmin}
             userEmail={userEmail}
-            onAuthChange={() => {}} 
-            isPushEnabled={isPushEnabled} 
-            onPushChange={setIsPushEnabled} 
+            onAuthChange={() => {}}
+            isPushEnabled={isPushEnabled}
+            onPushChange={setIsPushEnabled}
           />
           <DisclaimerSection />
         </div>
       </main>
 
-      {selectedDrug && (
-        <DrugDetails 
-          drug={selectedDrug} 
-          onClose={() => setSelectedDrug(null)}
-          isAdmin={isAdmin}
-          onNoteUpdate={handleNoteUpdate}
-        />
-      )}
-      
+      <AnimatePresence>
+        {selectedDrug && (
+          <DrugDetails
+            drug={selectedDrug}
+            onClose={() => setSelectedDrug(null)}
+            isAdmin={isAdmin}
+            onNoteUpdate={handleNoteUpdate}
+          />
+        )}
+      </AnimatePresence>
+
       <PWAPrompt />
     </div>
   )
