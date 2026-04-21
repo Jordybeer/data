@@ -12,6 +12,7 @@ export interface Drug {
   id: number;
   name: string;
   category: string;
+  category2: string | null;
   notes: string;
 }
 

@@ -22,6 +22,11 @@ export const DrugItem: React.FC<DrugItemProps> = ({ drug, onClick }) => (
       <span className="text-[11px] font-medium text-primary/80 bg-primary/10 border border-primary/20 px-2 py-0.5 rounded-lg flex-shrink-0">
         {drug.category}
       </span>
+      {drug.category2 && (
+        <span className="text-[11px] font-medium text-blue-300/80 bg-blue-400/10 border border-blue-400/20 px-2 py-0.5 rounded-lg flex-shrink-0">
+          {drug.category2}
+        </span>
+      )}
     </div>
     {drug.notes && (
       <p className="text-sm text-textc/60 line-clamp-2 mt-1">{drug.notes}</p>

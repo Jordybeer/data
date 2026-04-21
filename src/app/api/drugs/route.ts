@@ -5,7 +5,7 @@ import { requireAdmin } from '@/lib/auth';
 export async function GET() {
   const { data, error } = await supabase
     .from('drugs')
-    .select('id, name, category, notes')
+    .select('id, name, category, category2, notes')
     .order('category', { ascending: true })
     .order('name', { ascending: true });
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
