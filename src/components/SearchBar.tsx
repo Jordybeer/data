@@ -7,8 +7,9 @@ interface SearchBarProps {
 
 export const SearchBar: React.FC<SearchBarProps> = ({ value, onChange }) => (
   <input
-    type="text"
-    placeholder="Search substances..."
+    type="search"
+    placeholder="Zoek stoffen..."
+    aria-label="Zoek stoffen"
     className="input w-full"
     value={value}
     onChange={(e) => onChange(e.target.value)}

@@ -1,10 +1,15 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import type { Drug } from '@/data/drugs';
 
-type Row = Drug & { _dirty?: string };
+type Row = Drug & {
+  _notesDirty?: string;
+  _nameDraft?: string;
+  _catDraft?: string;
+  _confirmDelete?: boolean;
+};
 
 export default function AdminPage() {
   const [drugs, setDrugs] = useState<Row[]>([]);
@@ -12,11 +17,13 @@ export default function AdminPage() {
   const [filterCat, setFilterCat] = useState<string>('all');
   const [newRow, setNewRow] = useState({ name: '', category: 'Street drugs' });
   const [busy, setBusy] = useState<string | null>(null);
-  const [toast, setToast] = useState<string>('');
+  const [toast, setToast] = useState<{ msg: string; ok: boolean } | null>(null);
+  const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const flash = (m: string) => {
-    setToast(m);
-    setTimeout(() => setToast(''), 2500);
+  const flash = (msg: string, ok = true) => {
+    if (toastTimer.current) clearTimeout(toastTimer.current);
+    setToast({ msg, ok });
+    toastTimer.current = setTimeout(() => setToast(null), 2500);
   };
 
   const load = async () => {
@@ -24,9 +31,7 @@ export default function AdminPage() {
     const j = await r.json();
     setDrugs(Array.isArray(j) ? j : []);
   };
-  useEffect(() => {
-    load();
-  }, []);
+  useEffect(() => { load(); }, []);
 
   const categories = useMemo(
     () => Array.from(new Set(drugs.map((d) => d.category))).sort(),
@@ -37,16 +42,16 @@ export default function AdminPage() {
     const s = q.toLowerCase().trim();
     return drugs.filter((d) => {
       const matchesCat = filterCat === 'all' || d.category === filterCat;
-      const matchesQ =
-        !s || d.name.toLowerCase().includes(s) || (d.notes || '').toLowerCase().includes(s);
+      const matchesQ = !s || d.name.toLowerCase().includes(s) || (d.notes || '').toLowerCase().includes(s);
       return matchesCat && matchesQ;
     });
   }, [drugs, q, filterCat]);
 
-  const stats = useMemo(() => {
-    const withNotes = drugs.filter((d) => (d.notes || '').trim().length > 0).length;
-    return { total: drugs.length, withNotes, categories: categories.length };
-  }, [drugs, categories]);
+  const stats = useMemo(() => ({
+    total: drugs.length,
+    withNotes: drugs.filter((d) => (d.notes || '').trim().length > 0).length,
+    categories: categories.length,
+  }), [drugs, categories]);
 
   const patch = async (id: number, payload: Partial<Drug>, label: string) => {
     setBusy(`${label}-${id}`);
@@ -56,34 +61,33 @@ export default function AdminPage() {
       body: JSON.stringify(payload),
     });
     setBusy(null);
-    if (!r.ok) {
-      flash('Save failed');
-      return false;
-    }
-    flash('Saved');
+    if (!r.ok) { flash('Opslaan mislukt', false); return false; }
+    flash('Opgeslagen');
     return true;
   };
 
-  const saveNote = async (row: Row) => {
-    const ok = await patch(row.id, { notes: row._dirty ?? '' }, 'note');
-    if (ok) {
-      setDrugs((cur) =>
-        cur.map((d) => (d.id === row.id ? { ...d, notes: row._dirty ?? '', _dirty: undefined } : d)),
-      );
-    }
+  const saveNotes = async (row: Row) => {
+    const ok = await patch(row.id, { notes: row._notesDirty ?? '' }, 'note');
+    if (ok) setDrugs((cur) => cur.map((d) => d.id === row.id ? { ...d, notes: row._notesDirty ?? '', _notesDirty: undefined } : d));
   };
 
-  const remove = async (id: number, name: string) => {
-    if (!confirm(`Delete "${name}"? This cannot be undone.`)) return;
+  const saveName = async (id: number, name: string) => {
+    const ok = await patch(id, { name }, 'name');
+    if (ok) setDrugs((cur) => cur.map((d) => d.id === id ? { ...d, name, _nameDraft: undefined } : d));
+  };
+
+  const saveCat = async (id: number, category: string) => {
+    const ok = await patch(id, { category }, 'cat');
+    if (ok) setDrugs((cur) => cur.map((d) => d.id === id ? { ...d, category, _catDraft: undefined } : d));
+  };
+
+  const remove = async (id: number) => {
     setBusy(`del-${id}`);
     const r = await fetch(`/api/drugs/${id}`, { method: 'DELETE' });
     setBusy(null);
-    if (!r.ok) {
-      flash('Delete failed');
-      return;
-    }
+    if (!r.ok) { flash('Verwijderen mislukt', false); return; }
     setDrugs((cur) => cur.filter((d) => d.id !== id));
-    flash('Deleted');
+    flash('Verwijderd');
   };
 
   const add = async (e: React.FormEvent) => {
@@ -96,165 +100,180 @@ export default function AdminPage() {
       body: JSON.stringify({ name: newRow.name.trim(), category: newRow.category.trim() || 'Street drugs' }),
     });
     setBusy(null);
-    if (!r.ok) {
-      flash('Add failed');
-      return;
-    }
+    if (!r.ok) { flash('Toevoegen mislukt', false); return; }
     const created = (await r.json()) as Drug;
     setDrugs((cur) => [created, ...cur]);
     setNewRow({ name: '', category: newRow.category });
-    flash('Added');
+    flash('Toegevoegd');
   };
 
   return (
     <div className="min-h-screen pb-20">
-      <header className="bg-card border-b border-borderc sticky top-0 z-10">
+      <header className="card rounded-none border-x-0 border-t-0 sticky top-0 z-10">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between gap-3 flex-wrap">
           <div>
-            <h1 className="text-2xl font-bold text-primary">
-              <span className="text-textc">Psychonaut</span> Admin
+            <h1 className="text-2xl font-bold">
+              <span className="text-textc">Psychonaut</span>{' '}
+              <span className="text-primary">Admin</span>
             </h1>
-            <p className="text-xs text-textc/60 mt-1">
-              {stats.total} substances · {stats.withNotes} with notes · {stats.categories} categories
+            <p className="text-xs text-textc/50 mt-0.5">
+              {stats.total} stoffen · {stats.withNotes} met notities · {stats.categories} categorieën
             </p>
           </div>
           <div className="flex gap-2">
-            <Link href="/" className="btn">← Back to site</Link>
+            <Link href="/" className="btn">← Terug</Link>
             <button
-              className="btn bg-red-600 text-white hover:brightness-110"
-              onClick={async () => {
-                await fetch('/api/auth/signout', { method: 'POST' });
-                window.location.href = '/';
-              }}
+              className="btn"
+              style={{ color: '#fb7185', borderColor: 'rgba(251,113,133,0.3)' }}
+              onClick={async () => { await fetch('/api/auth/signout', { method: 'POST' }); window.location.href = '/'; }}
             >
-              Logout
+              Uitloggen
             </button>
           </div>
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-6 space-y-6">
-        <section className="card p-4">
-          <h2 className="text-sm font-semibold text-textc/80 uppercase tracking-wider mb-3">Add substance</h2>
+      <main className="container mx-auto px-4 py-6 space-y-4">
+        {/* Add substance */}
+        <section className="card p-5">
+          <h2 className="text-xs font-bold text-textc/50 uppercase tracking-widest mb-3">Stof toevoegen</h2>
           <form onSubmit={add} className="flex flex-wrap gap-2 items-end">
-            <div className="flex-1 min-w-[220px]">
-              <label className="text-xs text-textc/60 block mb-1">Name</label>
+            <div className="flex-1 min-w-[200px]">
+              <label className="text-xs text-textc/50 block mb-1">Naam</label>
               <input
-                className="input w-full p-2"
+                className="input w-full"
                 value={newRow.name}
                 onChange={(e) => setNewRow({ ...newRow, name: e.target.value })}
-                placeholder="e.g. 4-HO-MET"
+                placeholder="bijv. 4-HO-MET"
               />
             </div>
-            <div className="min-w-[180px]">
-              <label className="text-xs text-textc/60 block mb-1">Category</label>
+            <div className="min-w-[160px]">
+              <label className="text-xs text-textc/50 block mb-1">Categorie</label>
               <input
-                className="input w-full p-2"
+                className="input w-full"
                 list="admin-cats"
                 value={newRow.category}
                 onChange={(e) => setNewRow({ ...newRow, category: e.target.value })}
               />
-              <datalist id="admin-cats">
-                {categories.map((c) => (
-                  <option key={c} value={c} />
-                ))}
-              </datalist>
+              <datalist id="admin-cats">{categories.map((c) => <option key={c} value={c} />)}</datalist>
             </div>
             <button className="btn btn-primary" type="submit" disabled={busy === 'add'}>
-              {busy === 'add' ? 'Adding…' : 'Add'}
+              {busy === 'add' ? 'Bezig…' : 'Toevoegen'}
             </button>
           </form>
         </section>
 
+        {/* List */}
         <section className="card p-4">
           <div className="flex flex-wrap gap-2 items-center mb-4">
             <input
-              className="input p-2 flex-1 min-w-[200px]"
-              placeholder="Search name or notes…"
+              className="input flex-1 min-w-[180px]"
+              placeholder="Zoek naam of notities…"
               value={q}
               onChange={(e) => setQ(e.target.value)}
             />
             <select
-              className="input p-2"
+              className="input"
               value={filterCat}
               onChange={(e) => setFilterCat(e.target.value)}
             >
-              <option value="all">All categories</option>
-              {categories.map((c) => (
-                <option key={c} value={c}>
-                  {c}
-                </option>
-              ))}
+              <option value="all">Alle categorieën</option>
+              {categories.map((c) => <option key={c} value={c}>{c}</option>)}
             </select>
-            <span className="text-xs text-textc/60 ml-auto">{filtered.length} shown</span>
+            <span className="text-xs text-textc/40 ml-auto">{filtered.length} getoond</span>
           </div>
 
           <div className="divide-y divide-borderc">
             {filtered.map((d) => {
-              const dirty = d._dirty !== undefined && d._dirty !== (d.notes ?? '');
-              const noteVal = d._dirty ?? d.notes ?? '';
+              const notesDirty = d._notesDirty !== undefined && d._notesDirty !== (d.notes ?? '');
+              const nameDirty = d._nameDraft !== undefined && d._nameDraft !== d.name;
+              const catDirty = d._catDraft !== undefined && d._catDraft !== d.category;
               return (
                 <div key={d.id} className="py-4 flex flex-col gap-2">
+                  {/* Name + category row */}
                   <div className="flex flex-wrap items-center gap-2">
-                    <input
-                      className="input p-2 flex-1 min-w-[200px] font-semibold"
-                      defaultValue={d.name}
-                      onBlur={async (e) => {
-                        const v = e.target.value.trim();
-                        if (v && v !== d.name) {
-                          const ok = await patch(d.id, { name: v }, 'name');
-                          if (ok) setDrugs((cur) => cur.map((r) => (r.id === d.id ? { ...r, name: v } : r)));
-                        }
-                      }}
-                    />
-                    <input
-                      className="input p-2 w-48"
-                      list="admin-cats"
-                      defaultValue={d.category}
-                      onBlur={async (e) => {
-                        const v = e.target.value.trim();
-                        if (v && v !== d.category) {
-                          const ok = await patch(d.id, { category: v }, 'cat');
-                          if (ok) setDrugs((cur) => cur.map((r) => (r.id === d.id ? { ...r, category: v } : r)));
-                        }
-                      }}
-                    />
-                    <button
-                      onClick={() => remove(d.id, d.name)}
-                      className="btn bg-red-600 text-white hover:brightness-110"
-                      disabled={busy === `del-${d.id}`}
-                    >
-                      {busy === `del-${d.id}` ? '…' : 'Delete'}
-                    </button>
+                    <div className="relative flex-1 min-w-[180px]">
+                      <input
+                        className={`input w-full font-semibold ${nameDirty ? 'border-primary/60' : ''}`}
+                        value={d._nameDraft ?? d.name}
+                        onChange={(e) => setDrugs((cur) => cur.map((r) => r.id === d.id ? { ...r, _nameDraft: e.target.value } : r))}
+                      />
+                      {nameDirty && (
+                        <div className="flex gap-1 mt-1">
+                          <button className="btn text-xs py-0 px-2 h-7" onClick={() => setDrugs((cur) => cur.map((r) => r.id === d.id ? { ...r, _nameDraft: undefined } : r))}>Reset</button>
+                          <button className="btn btn-primary text-xs py-0 px-2 h-7" disabled={busy === `name-${d.id}`} onClick={() => saveName(d.id, d._nameDraft!.trim())}>
+                            {busy === `name-${d.id}` ? '…' : 'Opslaan'}
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                    <div className="relative w-44">
+                      <input
+                        className={`input w-full text-sm ${catDirty ? 'border-primary/60' : ''}`}
+                        list="admin-cats"
+                        value={d._catDraft ?? d.category}
+                        onChange={(e) => setDrugs((cur) => cur.map((r) => r.id === d.id ? { ...r, _catDraft: e.target.value } : r))}
+                      />
+                      {catDirty && (
+                        <div className="flex gap-1 mt-1">
+                          <button className="btn text-xs py-0 px-2 h-7" onClick={() => setDrugs((cur) => cur.map((r) => r.id === d.id ? { ...r, _catDraft: undefined } : r))}>Reset</button>
+                          <button className="btn btn-primary text-xs py-0 px-2 h-7" disabled={busy === `cat-${d.id}`} onClick={() => saveCat(d.id, d._catDraft!.trim())}>
+                            {busy === `cat-${d.id}` ? '…' : 'Opslaan'}
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                    {/* Delete with inline confirm */}
+                    {d._confirmDelete ? (
+                      <div className="flex items-center gap-1">
+                        <span className="text-xs text-textc/60">Zeker?</span>
+                        <button
+                          className="btn text-xs py-0 px-2 h-8"
+                          onClick={() => setDrugs((cur) => cur.map((r) => r.id === d.id ? { ...r, _confirmDelete: false } : r))}
+                        >
+                          Nee
+                        </button>
+                        <button
+                          className="btn text-xs py-0 px-2 h-8"
+                          style={{ color: '#fb7185', borderColor: 'rgba(251,113,133,0.3)' }}
+                          disabled={busy === `del-${d.id}`}
+                          onClick={() => remove(d.id)}
+                        >
+                          {busy === `del-${d.id}` ? '…' : 'Ja, verwijder'}
+                        </button>
+                      </div>
+                    ) : (
+                      <button
+                        className="btn text-xs"
+                        style={{ color: '#fb7185', borderColor: 'rgba(251,113,133,0.2)' }}
+                        onClick={() => setDrugs((cur) => cur.map((r) => r.id === d.id ? { ...r, _confirmDelete: true } : r))}
+                      >
+                        Verwijder
+                      </button>
+                    )}
                   </div>
+
+                  {/* Notes */}
                   <textarea
-                    className="input w-full p-2 min-h-[60px]"
-                    placeholder="Notes…"
-                    value={noteVal}
-                    onChange={(e) =>
-                      setDrugs((cur) =>
-                        cur.map((r) => (r.id === d.id ? { ...r, _dirty: e.target.value } : r)),
-                      )
-                    }
+                    className="input w-full min-h-[56px] text-sm"
+                    placeholder="Notities…"
+                    value={d._notesDirty ?? d.notes ?? ''}
+                    onChange={(e) => setDrugs((cur) => cur.map((r) => r.id === d.id ? { ...r, _notesDirty: e.target.value } : r))}
                   />
-                  {dirty && (
+                  {notesDirty && (
                     <div className="flex justify-end gap-2">
                       <button
-                        className="btn"
-                        onClick={() =>
-                          setDrugs((cur) =>
-                            cur.map((r) => (r.id === d.id ? { ...r, _dirty: undefined } : r)),
-                          )
-                        }
+                        className="btn text-xs"
+                        onClick={() => setDrugs((cur) => cur.map((r) => r.id === d.id ? { ...r, _notesDirty: undefined } : r))}
                       >
                         Reset
                       </button>
                       <button
-                        className="btn btn-primary"
-                        onClick={() => saveNote(d)}
+                        className="btn btn-primary text-xs"
+                        onClick={() => saveNotes(d)}
                         disabled={busy === `note-${d.id}`}
                       >
-                        {busy === `note-${d.id}` ? 'Saving…' : 'Save note'}
+                        {busy === `note-${d.id}` ? 'Opslaan…' : 'Notitie opslaan'}
                       </button>
                     </div>
                   )}
@@ -262,15 +281,15 @@ export default function AdminPage() {
               );
             })}
             {filtered.length === 0 && (
-              <div className="py-8 text-center text-textc/60">No substances match.</div>
+              <div className="py-8 text-center text-textc/40">Geen stoffen gevonden.</div>
             )}
           </div>
         </section>
       </main>
 
       {toast && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-card border border-borderc px-4 py-2 rounded shadow-lg text-sm">
-          {toast}
+        <div className={`fixed bottom-6 left-1/2 -translate-x-1/2 card px-5 py-2.5 text-sm font-medium transition-all ${toast.ok ? 'text-green-400' : 'text-red-400'}`}>
+          {toast.msg}
         </div>
       )}
     </div>
