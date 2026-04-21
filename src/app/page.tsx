@@ -9,6 +9,7 @@ import { DrugItem } from '@/components/DrugItem';
 import { DisclaimerSection } from '@/components/DisclaimerSection';
 import { AuthSection } from '@/components/AuthSection';
 import { LoadingScreen } from '@/components/LoadingScreen';
+import { ScrollToTop } from '@/components/ScrollToTop';
 import DrugDetails from '@/components/DrugDetails';
 import type { Drug } from '@/data/drugs';
 
@@ -17,6 +18,7 @@ export default function Home() {
   const [drugs, setDrugs] = useState<Drug[]>([]);
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState<string | null>(null);
+  const [category2, setCategory2] = useState<string | null>(null);
   const [selectedDrug, setSelectedDrug] = useState<Drug | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [fetchError, setFetchError] = useState(false);
@@ -48,12 +50,17 @@ export default function Home() {
   };
 
   const categories = Array.from(new Set(drugs.map((d) => d.category)));
+  const categories2 = Array.from(new Set(drugs.map((d) => d.category2).filter(Boolean))) as string[];
+
   const filteredDrugs = drugs.filter((drug) => {
     const q = search.toLowerCase();
     const matchesSearch =
-      drug.name.toLowerCase().includes(q) || drug.category.toLowerCase().includes(q);
+      drug.name.toLowerCase().includes(q) ||
+      drug.category.toLowerCase().includes(q) ||
+      (drug.category2 ?? '').toLowerCase().includes(q);
     const matchesCategory = !category || drug.category === category;
-    return matchesSearch && matchesCategory;
+    const matchesCategory2 = !category2 || drug.category2 === category2;
+    return matchesSearch && matchesCategory && matchesCategory2;
   });
 
   if (isLoading) return <LoadingScreen />;
@@ -83,11 +90,22 @@ export default function Home() {
       <main className="container mx-auto px-4 py-6 space-y-5">
         <DisclaimerSection />
 
-        <CategoryList
-          categories={categories}
-          selected={category}
-          onSelect={setCategory}
-        />
+        <div className="space-y-3">
+          <CategoryList
+            categories={categories}
+            selected={category}
+            onSelect={setCategory}
+            label="Categorie"
+          />
+          {categories2.length > 0 && (
+            <CategoryList
+              categories={categories2}
+              selected={category2}
+              onSelect={setCategory2}
+              label="Subcategorie"
+            />
+          )}
+        </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {filteredDrugs.map((drug) => (
@@ -114,6 +132,8 @@ export default function Home() {
           />
         )}
       </AnimatePresence>
+
+      <ScrollToTop />
     </div>
   );
 }
