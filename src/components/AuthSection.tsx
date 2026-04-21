@@ -75,10 +75,13 @@ export const AuthSection: React.FC = () => {
             <p className="text-sm font-semibold text-textc/80">Admin inloggen</p>
             <button
               type="button"
+              aria-label="Sluiten"
               onClick={() => { setOpen(false); setStatus('idle'); setEmail(''); }}
-              className="text-textc/40 hover:text-textc/70 text-xs"
+              className="flex items-center justify-center w-11 h-11 -mr-2 rounded-full text-textc/40 hover:text-textc/70 transition-colors"
             >
-              ✕
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
             </button>
           </div>
           <input
