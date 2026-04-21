@@ -1,5 +1,4 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 import { Drug } from '@/data/drugs';
 
 interface DrugItemProps {
@@ -8,23 +7,24 @@ interface DrugItemProps {
 }
 
 export const DrugItem: React.FC<DrugItemProps> = ({ drug, onClick }) => (
-  <motion.button
+  <button
     onClick={onClick}
-    className="card p-4 text-left w-full block hover:border-primary/50 transition-all group"
-    whileTap={{ scale: 0.97 }}
-    whileHover={{ y: -2 }}
-    transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+    className={
+      'card p-4 text-left w-full block transition-all duration-200 group ' +
+      'hover:border-primary/40 hover:shadow-[0_24px_64px_rgba(2,6,23,0.55)] ' +
+      'active:scale-[0.98] active:brightness-95'
+    }
   >
     <div className="flex items-center justify-between gap-2 mb-1">
-      <h3 className="font-semibold text-base group-hover:text-primary transition-colors truncate">
+      <h3 className="font-semibold text-base text-textc group-hover:text-primary transition-colors truncate">
         {drug.name}
       </h3>
-      <span className="text-xs text-textc/60 bg-bg px-2 py-0.5 rounded border border-borderc flex-shrink-0">
+      <span className="text-[11px] font-medium text-primary/80 bg-primary/10 border border-primary/20 px-2 py-0.5 rounded-lg flex-shrink-0">
         {drug.category}
       </span>
     </div>
     {drug.notes && (
-      <p className="text-sm text-textc/70 line-clamp-2">{drug.notes}</p>
+      <p className="text-sm text-textc/60 line-clamp-2 mt-1">{drug.notes}</p>
     )}
-  </motion.button>
+  </button>
 );

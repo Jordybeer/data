@@ -1,25 +1,16 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence } from 'framer-motion';
 import { useSession } from '@/components/SessionProvider';
 import { SearchBar } from '@/components/SearchBar';
 import { CategoryList } from '@/components/CategoryList';
 import { DrugItem } from '@/components/DrugItem';
 import { DisclaimerSection } from '@/components/DisclaimerSection';
 import { AuthSection } from '@/components/AuthSection';
+import { LoadingScreen } from '@/components/LoadingScreen';
 import DrugDetails from '@/components/DrugDetails';
 import type { Drug } from '@/data/drugs';
-
-const containerVariants = {
-  hidden: {},
-  visible: { transition: { staggerChildren: 0.05 } },
-};
-
-const itemVariants = {
-  hidden: { opacity: 0, y: 16 },
-  visible: { opacity: 1, y: 0, transition: { type: 'spring' as const, stiffness: 380, damping: 26 } },
-};
 
 export default function Home() {
   const { session } = useSession();
@@ -65,13 +56,7 @@ export default function Home() {
     return matchesSearch && matchesCategory;
   });
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center text-textc">
-        Database laden...
-      </div>
-    );
-  }
+  if (isLoading) return <LoadingScreen />;
 
   if (fetchError) {
     return (
@@ -83,7 +68,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen pb-20">
-      <header className="sticky top-0 z-10" style={{ background: 'rgba(11,18,32,0.92)', backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)', borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
+      <header className="sticky top-0 z-10" style={{ background: 'rgba(8,16,29,0.72)', backdropFilter: 'blur(24px)', WebkitBackdropFilter: 'blur(24px)', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
         <div className="container mx-auto px-4 py-4">
           <div className="flex justify-between items-center mb-3">
             <h1 className="text-2xl font-bold">
@@ -104,30 +89,16 @@ export default function Home() {
           onSelect={setCategory}
         />
 
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={`${search}-${category}`}
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
-            variants={containerVariants}
-            initial="hidden"
-            animate="visible"
-          >
-            {filteredDrugs.map((drug) => (
-              <motion.div key={drug.id} variants={itemVariants}>
-                <DrugItem drug={drug} onClick={() => setSelectedDrug(drug)} />
-              </motion.div>
-            ))}
-          </motion.div>
-        </AnimatePresence>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {filteredDrugs.map((drug) => (
+            <DrugItem key={drug.id} drug={drug} onClick={() => setSelectedDrug(drug)} />
+          ))}
+        </div>
 
         {filteredDrugs.length === 0 && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="text-center py-12 text-textc/60"
-          >
+          <div className="text-center py-12 text-textc/60">
             Geen stoffen gevonden.
-          </motion.div>
+          </div>
         )}
 
         <AuthSection />

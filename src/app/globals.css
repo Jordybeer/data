@@ -31,12 +31,30 @@ html,
 body {
   margin: 0;
   min-height: 100%;
-  background:
-    radial-gradient(circle at top left, rgba(96, 165, 250, 0.16), transparent 26%),
-    radial-gradient(circle at top right, rgba(167, 139, 250, 0.14), transparent 22%),
-    linear-gradient(180deg, #08101d 0%, #0b1220 100%);
+  background: #08101d;
   color: var(--pd-text);
   font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Inter', 'Segoe UI', sans-serif;
+}
+
+/* Animated ambient gradient — rendered as a fixed layer behind everything */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(ellipse 80% 60% at 20% 10%, rgba(96, 165, 250, 0.13), transparent),
+    radial-gradient(ellipse 70% 50% at 80% 5%, rgba(167, 139, 250, 0.11), transparent),
+    radial-gradient(ellipse 60% 80% at 50% 100%, rgba(109, 40, 217, 0.07), transparent),
+    linear-gradient(180deg, #08101d 0%, #0a1428 40%, #0b1220 100%);
+  animation: ambientShift 18s ease-in-out infinite alternate;
+}
+
+@keyframes ambientShift {
+  0%   { background-position: 0% 0%, 100% 0%, 50% 100%, center; opacity: 1; }
+  33%  { background-position: 5% 8%, 88% 4%, 45% 95%, center; }
+  66%  { background-position: 12% 3%, 78% 10%, 55% 105%, center; }
+  100% { background-position: 6% 12%, 92% 2%, 48% 98%, center; }
 }
 
 body {
@@ -88,11 +106,10 @@ button {
 
   .btn:hover:not(:disabled) {
     background: rgba(255, 255, 255, 0.11);
-    transform: translateY(-1px);
   }
 
   .btn:active:not(:disabled) {
-    transform: translateY(0);
+    filter: brightness(0.9);
   }
 
   .btn:disabled {
@@ -109,7 +126,6 @@ button {
 
   .btn-primary:hover:not(:disabled) {
     box-shadow: 0 12px 32px rgba(139, 92, 246, 0.4);
-    transform: translateY(-2px);
   }
 
   .input {
