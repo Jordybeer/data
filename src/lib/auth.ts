@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server';
 import { getSession, isAdmin } from './session';
 
-export function requireAdmin() {
-  const session = getSession();
+export async function requireAdmin() {
+  const session = await getSession();
   if (!isAdmin(session)) {
     return {
       ok: false as const,

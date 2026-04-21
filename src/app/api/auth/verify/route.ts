@@ -7,6 +7,6 @@ export async function GET(req: NextRequest) {
   if (!payload || payload.kind !== 'magic' || payload.email.toLowerCase() !== ADMIN_EMAIL) {
     return NextResponse.redirect(new URL('/?auth=invalid', req.url));
   }
-  setSessionCookie(payload.email);
+  await setSessionCookie(payload.email);
   return NextResponse.redirect(new URL('/admin', req.url));
 }

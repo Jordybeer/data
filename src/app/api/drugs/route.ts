@@ -13,7 +13,7 @@ export async function GET() {
 }
 
 export async function POST(req: NextRequest) {
-  const guard = requireAdmin();
+  const guard = await requireAdmin();
   if (!guard.ok) return guard.response;
 
   const { name, category, notes } = (await req.json().catch(() => ({}))) as {

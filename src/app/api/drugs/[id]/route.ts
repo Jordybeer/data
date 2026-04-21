@@ -2,10 +2,11 @@ import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
 import { requireAdmin } from '@/lib/auth';
 
-export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
-  const guard = requireAdmin();
+export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const guard = await requireAdmin();
   if (!guard.ok) return guard.response;
 
+  const { id } = await params;
   const body = (await req.json().catch(() => ({}))) as {
     name?: string;
     category?: string;
@@ -19,7 +20,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
   const { data, error } = await supabaseAdmin
     .from('drugs')
     .update(update)
-    .eq('id', params.id)
+    .eq('id', id)
     .select()
     .single();
 
@@ -27,11 +28,12 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
   return NextResponse.json(data);
 }
 
-export async function DELETE(_req: NextRequest, { params }: { params: { id: string } }) {
-  const guard = requireAdmin();
+export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const guard = await requireAdmin();
   if (!guard.ok) return guard.response;
 
-  const { error } = await supabaseAdmin.from('drugs').delete().eq('id', params.id);
+  const { id } = await params;
+  const { error } = await supabaseAdmin.from('drugs').delete().eq('id', id);
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
   return NextResponse.json({ ok: true });
 }

@@ -35,9 +35,10 @@ export function verify<T = Record<string, unknown>>(token: string): T | null {
   }
 }
 
-export function setSessionCookie(email: string) {
+export async function setSessionCookie(email: string) {
   const token = sign({ email: email.toLowerCase() }, SESSION_TTL);
-  cookies().set(COOKIE, token, {
+  const jar = await cookies();
+  jar.set(COOKIE, token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax',
@@ -46,12 +47,14 @@ export function setSessionCookie(email: string) {
   });
 }
 
-export function clearSessionCookie() {
-  cookies().delete(COOKIE);
+export async function clearSessionCookie() {
+  const jar = await cookies();
+  jar.delete(COOKIE);
 }
 
-export function getSession(): { email: string } | null {
-  const token = cookies().get(COOKIE)?.value;
+export async function getSession(): Promise<{ email: string } | null> {
+  const jar = await cookies();
+  const token = jar.get(COOKIE)?.value;
   if (!token) return null;
   const payload = verify<{ email: string }>(token);
   return payload?.email ? { email: payload.email } : null;
