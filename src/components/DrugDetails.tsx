@@ -240,7 +240,7 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
         {/* Header — outside scroll container so content can never bleed above it */}
         <div
           className="pd-modalStickyHeader flex justify-between items-start gap-3 pb-4 border-b border-borderc/40"
-          style={{ padding: '20px 28px', flexShrink: 0 }}
+          style={{ padding: '20px 28px', flexShrink: 0, background: 'rgba(15,23,42,0.98)' }}
         >
           <div className="min-w-0">
             <h2 className="text-2xl font-bold text-primary leading-snug">{drug.name}</h2>
@@ -277,30 +277,8 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
             </div>
           </div>
         </div>
-        <div className="overflow-y-auto p-7 pt-5">
+        <div className="overflow-y-auto p-7 pt-5" style={{ flex: '1 1 0', minHeight: 0 }}>
 
-        {/* Spinner — stays until both wiki and interactions resolve */}
-        <AnimatePresence>
-          {(wiki === null || interactions === null) && (
-            <motion.div
-              key="spinner"
-              className="mt-5 flex justify-center py-6"
-              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-              transition={{ duration: 0.15 }}
-            >
-              <motion.svg
-                className="w-8 h-8 text-primary/60"
-                viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round"
-                animate={{ rotate: 360 }}
-                transition={{ duration: 0.9, repeat: Infinity, ease: 'linear' }}
-              >
-                <path d="M12 2a10 10 0 0 1 10 10" />
-              </motion.svg>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        {/* All sections fade in once both fetches complete */}
         {wiki !== null && interactions !== null && (
           <motion.div variants={containerVariants} initial="hidden" animate="visible">
               {/* Notes */}
