@@ -18,6 +18,7 @@ export async function GET(req: NextRequest) {
           offset { min max units } total { min max units } afterglow { min max units }
         }
       }
+      interactions { name status }
     }
   }`;
 
