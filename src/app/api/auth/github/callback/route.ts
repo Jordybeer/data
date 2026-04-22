@@ -1,41 +1,37 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { setSessionCookie, ADMIN_EMAIL } from '@/lib/session';
+import { createServerClient } from '@supabase/ssr';
+import { cookies } from 'next/headers';
+import { setSessionCookie } from '@/lib/session';
+
+const ADMIN_USER_ID = process.env.ADMIN_USER_ID ?? '';
 
 export async function GET(req: NextRequest) {
   try {
     const code = req.nextUrl.searchParams.get('code');
     if (!code) return NextResponse.redirect(new URL('/?auth=invalid', req.url));
 
-    const clientId = process.env.GITHUB_CLIENT_ID;
-    const clientSecret = process.env.GITHUB_CLIENT_SECRET;
-    if (!clientId || !clientSecret) {
-      return NextResponse.redirect(new URL('/?auth=no-config', req.url));
-    }
+    const cookieStore = await cookies();
+    const res = NextResponse.next();
 
-    const redirectUri = `${req.nextUrl.origin}/api/auth/github/callback`;
+    const supabase = createServerClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        cookies: {
+          getAll: () => cookieStore.getAll(),
+          setAll: (toSet) => toSet.forEach(({ name, value, options }) => res.cookies.set(name, value, options)),
+        },
+      },
+    );
 
-    const tokenRes = await fetch('https://github.com/login/oauth/access_token', {
-      method: 'POST',
-      headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
-      body: JSON.stringify({ client_id: clientId, client_secret: clientSecret, code, redirect_uri: redirectUri }),
-    });
+    const { data, error } = await supabase.auth.exchangeCodeForSession(code);
+    if (error || !data.user) return NextResponse.redirect(new URL('/?auth=invalid', req.url));
 
-    const tokenData = await tokenRes.json() as { access_token?: string; error?: string };
-    if (!tokenData.access_token) return NextResponse.redirect(new URL('/?auth=invalid', req.url));
-
-    const emailsRes = await fetch('https://api.github.com/user/emails', {
-      headers: { Authorization: `Bearer ${tokenData.access_token}`, 'User-Agent': 'snuffdb' },
-    });
-
-    const emails = await emailsRes.json() as { email: string; primary: boolean; verified: boolean }[];
-    if (!Array.isArray(emails)) return NextResponse.redirect(new URL('/?auth=invalid', req.url));
-
-    const primary = emails.find((e) => e.primary && e.verified);
-    if (!primary || primary.email.toLowerCase() !== ADMIN_EMAIL) {
+    if (!ADMIN_USER_ID || data.user.id !== ADMIN_USER_ID) {
       return NextResponse.redirect(new URL('/?auth=invalid', req.url));
     }
 
-    await setSessionCookie(primary.email);
+    await setSessionCookie(data.user.email!);
     return NextResponse.redirect(new URL('/admin', req.url));
   } catch {
     return NextResponse.redirect(new URL('/?auth=error', req.url));
