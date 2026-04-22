@@ -110,25 +110,7 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
     let cancelled = false;
     (async () => {
       try {
-        const res = await fetch('https://api.psychonautwiki.org/', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            query: `{
-              substances(query: ${JSON.stringify(drug.name)}) {
-                name url
-                roas {
-                  name
-                  dose { units threshold light { min max } common { min max } strong { min max } heavy }
-                  duration {
-                    onset { min max units } comeup { min max units } peak { min max units }
-                    offset { min max units } total { min max units } afterglow { min max units }
-                  }
-                }
-              }
-            }`,
-          }),
-        });
+        const res = await fetch(`/api/psychonautwiki?name=${encodeURIComponent(drug.name)}`);
         const json = await res.json();
         if (cancelled) return;
         const substances: { name: string; url: string; roas: Roa[] }[] = json?.data?.substances ?? [];
