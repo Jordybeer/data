@@ -2,9 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 import { SUPABASE_URL, SUPABASE_ANON_KEY } from '@/lib/supabase';
-import { setSessionCookie } from '@/lib/session';
-
-const ADMIN_USER_ID = process.env.ADMIN_USER_ID ?? '';
+import { setSessionCookie, ADMIN_EMAIL } from '@/lib/session';
 
 export async function GET(req: NextRequest) {
   try {
@@ -26,9 +24,13 @@ export async function GET(req: NextRequest) {
     );
 
     const { data, error } = await supabase.auth.exchangeCodeForSession(code);
-    if (error || !data.user) return NextResponse.redirect(new URL('/?auth=invalid', req.url));
+    if (error) {
+      console.error('exchangeCodeForSession error:', error.message);
+      return NextResponse.redirect(new URL(`/?auth=invalid&reason=${encodeURIComponent(error.message)}`, req.url));
+    }
+    if (!data.user) return NextResponse.redirect(new URL('/?auth=invalid', req.url));
 
-    if (!ADMIN_USER_ID || data.user.id !== ADMIN_USER_ID) {
+    if (data.user.email?.toLowerCase() !== ADMIN_EMAIL) {
       return NextResponse.redirect(new URL('/?auth=invalid', req.url));
     }
 
