@@ -98,11 +98,11 @@ function severityLabel(status: string): string {
 
 const containerVariants = {
   hidden: {},
-  visible: { transition: { staggerChildren: 0.07 } },
+  visible: { transition: { staggerChildren: 0.1 } },
 };
 const itemVariants = {
-  hidden: { opacity: 0, y: 8 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.18, ease: 'easeOut' as const } },
+  hidden: { opacity: 0, y: 12 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.3, ease: 'easeOut' as const } },
 };
 
 function fmtDur(r: DurRange): string | null {
@@ -234,6 +234,7 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
         exit={{ opacity: 0, scale: 0.94 }}
         transition={{ type: 'spring' as const, stiffness: 400, damping: 30 }}
       >
+        <div className="overflow-y-auto max-h-[80dvh] p-7">
         {/* Sticky header */}
         <div
           className="pd-modalStickyHeader sticky top-0 z-10 flex justify-between items-start gap-3 pb-4 border-b border-borderc/40"
@@ -316,7 +317,7 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
               animate="visible"
             >
               {/* Notes */}
-              <motion.div variants={itemVariants} className="bg-bg/40 p-5 mt-6 rounded-2xl border border-borderc/50">
+              <motion.div variants={itemVariants} className="bg-bg/40 p-5 pt-8 mt-6 rounded-2xl border border-borderc/50">
                 <div className="flex justify-between items-center mb-3">
                   <h3 className="text-xs font-bold text-textc/60 uppercase tracking-widest">Notities</h3>
                   {isAdmin && !isEditing && (
@@ -504,6 +505,7 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
             </motion.div>
           )}
         </AnimatePresence>
+        </div>
       </motion.div>
     </motion.div>
   );
