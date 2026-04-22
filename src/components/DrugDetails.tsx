@@ -261,7 +261,7 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
         </div>
 
         {/* Notes */}
-        <div className="bg-bg/40 p-4 pt-6 rounded-2xl border border-borderc/50">
+        <div className="bg-bg/40 p-4 pt-6 mt-3 rounded-2xl border border-borderc/50">
           <div className="flex justify-between items-center mb-3">
             <h3 className="text-xs font-bold text-textc/60 uppercase tracking-widest">Notities</h3>
             {isAdmin && !isEditing && (
