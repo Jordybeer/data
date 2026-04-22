@@ -13,7 +13,12 @@ interface DrugDetailsProps {
 
 type WikiResult = { url: string; source: 'psychonautwiki' | 'tripsit' | 'wikipedia' } | null;
 
-interface TripSitData { formatted_dose?: string; duration?: string; }
+interface TripSitData {
+  dose?: Record<string, Record<string, string>>;
+  duration?: Record<string, string>;
+  onset?: Record<string, string>;
+  summary?: string;
+}
 interface Interaction { name: string; status: string; }
 
 type DoseRange = { min: number | null; max: number | null } | null;
@@ -174,7 +179,12 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
         const entry = json?.data?.[0];
         if (entry) {
           setWiki({ url: entry.url ?? `https://tripsit.me/${encodeURIComponent(drug.name.toLowerCase())}`, source: 'tripsit' });
-          setTripsit({ formatted_dose: entry.properties?.formatted_dose, duration: entry.properties?.duration });
+          setTripsit({
+            dose: entry.formatted_dose,
+            duration: entry.formatted_duration,
+            onset: entry.formatted_onset,
+            summary: entry.properties?.summary,
+          });
           setRoas([]);
           const combos: Record<string, { status: string }> = entry.combos ?? {};
           setInteractions(Object.entries(combos).map(([name, v]) => ({ name, status: v.status ?? '' })));
@@ -292,7 +302,9 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
                     </motion.div>
                   ) : (
                     <motion.p key="viewing" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.15 }} className="text-textc leading-relaxed whitespace-pre-wrap text-sm">
-                      {drug.notes || <span className="text-textc/40 italic">Geen notities voor deze stof.</span>}
+                      {drug.notes || (tripsit?.summary
+                        ? tripsit.summary
+                        : <span className="text-textc/40 italic">Geen notities voor deze stof.</span>)}
                     </motion.p>
                   )}
                 </AnimatePresence>
@@ -364,7 +376,7 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
               )}
 
               {/* Dosage & duration — TripSit */}
-              {tripsit && (tripsit.formatted_dose || tripsit.duration) && (
+              {tripsit && (tripsit.dose || tripsit.duration || tripsit.onset) && (
                 <motion.div variants={sectionVariants} className="mt-3 rounded-2xl border border-borderc/50 overflow-hidden">
                   <button onClick={() => setTripsitOpen((o) => !o)} className="w-full flex items-center justify-between px-4 py-3 min-h-[44px] text-left" aria-expanded={tripsitOpen}>
                     <span className="text-xs font-bold text-textc/60 uppercase tracking-widest">Dosering &amp; duur</span>
@@ -375,34 +387,39 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
                   <AnimatePresence initial={false}>
                     {tripsitOpen && (
                       <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.22, ease: 'easeInOut' }} className="overflow-hidden">
-                        <div className="px-4 pb-4 space-y-5">
-                          {tripsit.formatted_dose && (
-                            <div>
-                              <p className="text-[11px] font-bold text-textc/40 uppercase tracking-widest mb-2">Dosering</p>
+                        <div className="px-4 pb-4 space-y-4">
+                          {tripsit.dose && Object.entries(tripsit.dose).map(([route, levels]) => (
+                            <div key={route}>
+                              <p className="text-[11px] font-bold text-textc/40 uppercase tracking-widest mb-2">{route}</p>
                               <div className="space-y-1">
-                                {tripsit.formatted_dose.split('\n').filter(Boolean).map((line, i) => {
-                                  const [label, ...rest] = line.split(':');
-                                  const value = rest.join(':').trim();
-                                  return value ? (
-                                    <div key={i} className="flex items-center justify-between">
-                                      <span className="text-xs text-textc/50 w-16 flex-shrink-0">{label.trim()}</span>
-                                      <div className="flex-1 mx-2 h-px bg-borderc/30" />
-                                      <span className="text-xs font-semibold tabular-nums text-textc/70">{value}</span>
-                                    </div>
-                                  ) : (
-                                    <p key={i} className="text-[11px] font-bold text-textc/40 uppercase tracking-widest mt-2 mb-1">{label.trim()}</p>
-                                  );
-                                })}
+                                {Object.entries(levels).map(([level, value]) => (
+                                  <div key={level} className="flex items-center justify-between">
+                                    <span className="text-xs text-textc/50 w-16 flex-shrink-0">{level}</span>
+                                    <div className="flex-1 mx-2 h-px bg-borderc/30" />
+                                    <span className="text-xs font-semibold tabular-nums text-textc/70">{value}</span>
+                                  </div>
+                                ))}
                               </div>
                             </div>
-                          )}
-                          {tripsit.duration && (
+                          ))}
+                          {(tripsit.duration || tripsit.onset) && (
                             <div>
-                              <p className="text-[11px] font-bold text-textc/40 uppercase tracking-widest mb-2">Duur</p>
-                              <div className="flex items-center justify-between">
-                                <span className="text-xs text-textc/50 w-16 flex-shrink-0">Totaal</span>
-                                <div className="flex-1 mx-2 h-px bg-borderc/30" />
-                                <span className="text-xs font-semibold tabular-nums text-textc/70">{tripsit.duration}</span>
+                              <p className="text-[11px] font-bold text-textc/40 uppercase tracking-widest mb-2">Timing</p>
+                              <div className="space-y-1">
+                                {tripsit.onset && Object.entries(tripsit.onset).filter(([k]) => k !== '_unit').map(([route, val]) => (
+                                  <div key={`onset-${route}`} className="flex items-center justify-between">
+                                    <span className="text-xs text-textc/50 w-24 flex-shrink-0">Onset {route}</span>
+                                    <div className="flex-1 mx-2 h-px bg-borderc/30" />
+                                    <span className="text-xs font-semibold tabular-nums text-textc/70">{val} {tripsit.onset!['_unit'] ?? 'min'}</span>
+                                  </div>
+                                ))}
+                                {tripsit.duration && Object.entries(tripsit.duration).filter(([k]) => k !== '_unit').map(([route, val]) => (
+                                  <div key={`dur-${route}`} className="flex items-center justify-between">
+                                    <span className="text-xs text-textc/50 w-24 flex-shrink-0">Duur {route}</span>
+                                    <div className="flex-1 mx-2 h-px bg-borderc/30" />
+                                    <span className="text-xs font-semibold tabular-nums text-textc/70">{val} {tripsit.duration!['_unit'] ?? 'u'}</span>
+                                  </div>
+                                ))}
                               </div>
                             </div>
                           )}
