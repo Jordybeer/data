@@ -268,7 +268,7 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
         </div>
 
         {/* Notes */}
-        <div className="bg-bg/40 p-4 pt-8 mt-5 rounded-2xl border border-borderc/50">
+        <div className="bg-bg/40 p-5 pt-10 mt-6 rounded-2xl border border-borderc/50">
           <div className="flex justify-between items-center mb-3">
             <h3 className="text-xs font-bold text-textc/60 uppercase tracking-widest">Notities</h3>
             {isAdmin && !isEditing && (
@@ -302,22 +302,32 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
         </div>
 
         {/* Loading spinner */}
-        {wiki === null && (
-          <div className="mt-5 flex justify-center py-6">
-            <motion.svg
-              className="w-8 h-8 text-primary/60"
-              viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round"
-              animate={{ rotate: 360 }}
-              transition={{ duration: 0.9, repeat: Infinity, ease: 'linear' }}
+        <AnimatePresence>
+          {wiki === null && (
+            <motion.div
+              className="mt-5 flex justify-center py-6"
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
             >
-              <path d="M12 2a10 10 0 0 1 10 10" />
-            </motion.svg>
-          </div>
-        )}
+              <motion.svg
+                className="w-8 h-8 text-primary/60"
+                viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round"
+                animate={{ rotate: 360 }}
+                transition={{ duration: 0.9, repeat: Infinity, ease: 'linear' }}
+              >
+                <path d="M12 2a10 10 0 0 1 10 10" />
+              </motion.svg>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Dosage & duration */}
         {roas !== null && roas.length > 0 && (
-          <div className="mt-3 rounded-2xl border border-borderc/50 overflow-hidden">
+          <motion.div
+            className="mt-3 rounded-2xl border border-borderc/50 overflow-hidden"
+            initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.25, ease: 'easeOut' }}
+          >
             <button
               onClick={() => setRoasOpen((o) => !o)}
               className="w-full flex items-center justify-between px-4 py-3 text-left"
@@ -389,11 +399,15 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
                 </motion.div>
               )}
             </AnimatePresence>
-          </div>
+          </motion.div>
         )}
 
         {tripsit && (tripsit.formatted_dose || tripsit.duration) && (
-          <div className="mt-3 rounded-2xl border border-borderc/50 overflow-hidden">
+          <motion.div
+            className="mt-3 rounded-2xl border border-borderc/50 overflow-hidden"
+            initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.25, ease: 'easeOut' }}
+          >
             <button
               onClick={() => setRoasOpen((o) => !o)}
               className="w-full flex items-center justify-between px-4 py-3 text-left"
@@ -453,11 +467,15 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
                 </motion.div>
               )}
             </AnimatePresence>
-          </div>
+          </motion.div>
         )}
 
         {interactions !== null && interactions.length > 0 && (
-          <div className="mt-3 rounded-2xl border border-borderc/50 overflow-hidden">
+          <motion.div
+            className="mt-3 rounded-2xl border border-borderc/50 overflow-hidden"
+            initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.25, ease: 'easeOut', delay: 0.05 }}
+          >
             <button
               onClick={() => setInteractionsOpen((o) => !o)}
               className="w-full flex items-center justify-between px-4 py-3 text-left"
@@ -494,16 +512,18 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
                 </motion.div>
               )}
             </AnimatePresence>
-          </div>
+          </motion.div>
         )}
 
         {wiki && (
           // eslint-disable-next-line @next/next/no-img-element
-          <a
+          <motion.a
             href={wiki.url}
             target="_blank"
             rel="noopener noreferrer"
             className="mt-3 flex items-center gap-3 px-4 py-3 rounded-2xl border border-borderc/50 bg-bg/40 text-textc/70 hover:bg-bg-hover transition-colors"
+            initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.25, ease: 'easeOut', delay: 0.1 }}
           >
             <img
               src={wiki.source === 'psychonautwiki'
@@ -521,7 +541,7 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
             <svg className="w-4 h-4 text-textc/30 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
             </svg>
-          </a>
+          </motion.a>
         )}
 
         <div className="mt-5 flex justify-end">
