@@ -268,7 +268,7 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
         </div>
 
         {/* Notes */}
-        <div className="bg-bg/40 p-4 pt-6 mt-3 rounded-2xl border border-borderc/50">
+        <div className="bg-bg/40 p-4 pt-8 mt-5 rounded-2xl border border-borderc/50">
           <div className="flex justify-between items-center mb-3">
             <h3 className="text-xs font-bold text-textc/60 uppercase tracking-widest">Notities</h3>
             {isAdmin && !isEditing && (
@@ -300,6 +300,20 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
             )}
           </AnimatePresence>
         </div>
+
+        {/* Loading spinner */}
+        {wiki === null && (
+          <div className="mt-5 flex justify-center py-6">
+            <motion.svg
+              className="w-8 h-8 text-primary/60"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round"
+              animate={{ rotate: 360 }}
+              transition={{ duration: 0.9, repeat: Infinity, ease: 'linear' }}
+            >
+              <path d="M12 2a10 10 0 0 1 10 10" />
+            </motion.svg>
+          </div>
+        )}
 
         {/* Dosage & duration */}
         {roas !== null && roas.length > 0 && (
