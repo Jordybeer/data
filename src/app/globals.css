@@ -117,9 +117,14 @@ html[data-theme="light"] [role="group"] button[aria-checked="false"] {
   color: rgba(12,25,41,0.50);
 }
 
-/* Modal header light-mode border */
+/* Modal header light-mode */
 html[data-theme="light"] .pd-modalStickyHeader {
-  border-bottom-color: rgba(0, 0, 0, 0.12);
+  background: rgba(255, 255, 255, 0.98) !important;
+  border-bottom-color: rgba(0, 0, 0, 0.10);
+}
+
+html[data-theme="light"] .pd-modalStickyHeader h2 {
+  color: #1a1a2e;
 }
 
 /* Drug name inside modal header */
