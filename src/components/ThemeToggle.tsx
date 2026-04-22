@@ -18,13 +18,16 @@ export default function ThemeToggle() {
   const mounted = useRef(false);
 
   useEffect(() => {
-    // Skip the first run — don't animate on initial mount
-    if (!mounted.current) {
-      mounted.current = true;
-      return;
-    }
     const dl = lottieRef.current;
     if (!dl) return;
+
+    if (!mounted.current) {
+      mounted.current = true;
+      // Seek to correct frame without animating
+      dl.setFrame(theme === 'light' ? 1 : 0);
+      return;
+    }
+
     if (theme === 'light') {
       dl.setMode('forward');
     } else {

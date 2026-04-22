@@ -43,20 +43,10 @@ body,
    LIGHT MODE
    =========================== */
 
-/*
-   Palette rationale: a mid-tone slate-blue body (~#7e9bbc) gives backdrop-blur
-   enough luminance contrast to actually read as glass. Pure-white or near-white
-   backgrounds kill the depth — glass on white looks flat. The mid-slate approach
-   mirrors what iOS uses for its own glassmorphism in daylight (Control Centre,
-   sheets). Accent colours (purple #a78bfa, amber #fbbf24, sky #38bdf8) are
-   unchanged — they pop off white glass on slate far better than on white.
-*/
-
 html[data-theme="light"] {
   color-scheme: light;
 
-  /* Mid-tone slate used as the base background swatch */
-  --pd-bg: #7e9bbc;
+  --pd-bg: #f0f2f5;
 
   /* White glass — legible because the slate body shows through the blur */
   --pd-surface: rgba(255, 255, 255, 0.52);
@@ -65,11 +55,9 @@ html[data-theme="light"] {
   /* Crisp white border reads cleanly on mid-slate */
   --pd-border: rgba(255, 255, 255, 0.32);
 
-  /* Near-black with a blue tint — ~8:1 contrast on white glass surface */
-  --pd-text: #0c1929;
+  --pd-text: #0a0a0a;
 
-  /* Mid-dark slate — ~4.8:1 on white glass, passes WCAG AA */
-  --pd-subtle: #3b506e;
+  --pd-subtle: #374151;
 
   /* Semantic palette — legible on white glass surface */
   --pd-blue: #1d6fa8;
@@ -84,31 +72,32 @@ html[data-theme="light"] {
   --pd-shadow: 0 20px 60px rgba(8, 20, 48, 0.16);
 
   /* Tailwind CSS-variable bridges */
-  --tw-color-textc: 12 25 41;
-  --tw-color-bg: 126 155 188;
+  --tw-color-textc: 10 10 10;
+  --tw-color-bg: 240 242 245;
 }
 
-/* Body: mid-tone slate-blue gradient with visible purple + sky ambient orbs */
 html[data-theme="light"] body {
-  background:
-    radial-gradient(ellipse 70% 50% at 15% 0%,   rgba(56, 189, 248, 0.28),  transparent),
-    radial-gradient(ellipse 60% 45% at 85% 5%,   rgba(167, 139, 250, 0.26), transparent),
-    radial-gradient(ellipse 50% 60% at 50% 100%, rgba(99, 102, 241, 0.18),  transparent),
-    linear-gradient(180deg, #6b8fb0 0%, #7898ba 35%, #7a9abf 65%, #7e9bbc 100%);
+  background: #f0f2f5;
   color: var(--pd-text);
 }
 
-/* Ambient drift orbs — teal-blue & purple, stronger than dark mode to compensate
-   for the lighter background swamping them */
-html[data-theme="light"] body::before {
-  background: rgba(56, 189, 248, 0.22);
-}
-
-html[data-theme="light"] body::after {
-  background: rgba(167, 139, 250, 0.20);
-}
-
 /* ---- Component overrides ---- */
+
+html[data-theme="light"] .pd-substanceName {
+  color: #0a0a0a;
+}
+
+html[data-theme="light"] .pd-chip {
+  border-color: rgba(0,0,0,0.15);
+}
+
+html[data-theme="light"] [role="group"] button {
+  border: 1px solid rgba(0,0,0,0.12);
+}
+
+html[data-theme="light"] [role="group"] button[aria-checked="false"] {
+  color: rgba(10,10,10,0.50);
+}
 
 /* .card — DrugItem, DisclaimerSection */
 html[data-theme="light"] .card {
@@ -234,12 +223,6 @@ html[data-theme="light"] [role="group"] {
   border-color: rgba(255, 255, 255, 0.30);
 }
 
-/* Inactive segment/chip buttons */
-html[data-theme="light"] [role="group"] button[aria-checked="false"] {
-  color: rgba(12, 25, 41, 0.50);
-  border-color: transparent;
-}
-
 /* Active segment button: "Alles" / all — override the hard-coded text-white */
 html[data-theme="light"] [role="group"] button[aria-checked="true"] {
   color: var(--pd-text);
@@ -268,7 +251,6 @@ html[data-theme="light"] .pd-label {
 /* Chip active state inherits the dark-mode dark glass bg — override to white glass */
 html[data-theme="light"] .pd-chip {
   background: rgba(255, 255, 255, 0.40);
-  border-color: rgba(255, 255, 255, 0.32);
 }
 
 html[data-theme="light"] .pd-chip.is-active {

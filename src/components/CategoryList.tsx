@@ -59,7 +59,7 @@ export const CategoryList: React.FC<CategoryListProps> = ({
                 'flex-1 h-8 rounded-[11px] text-[13px] font-medium transition-all duration-150 ' +
                 (isActive
                   ? (SEGMENT_ACTIVE[key] ?? SEGMENT_ACTIVE.__all__)
-                  : 'text-textc/50 active:bg-white/[0.05]')
+                  : 'text-textc/50 active:bg-black/[0.04] dark:active:bg-white/[0.05]')
               }
             >
               {displayLabel(cat)}
@@ -89,7 +89,7 @@ export const CategoryList: React.FC<CategoryListProps> = ({
               'h-6 px-2.5 rounded-full text-[11px] font-medium transition-all duration-150 border ' +
               (isActive
                 ? (CHIP_ACTIVE[key] ?? 'bg-primary/[0.18] border-primary/30 text-primary')
-                : 'border-white/[0.09] text-textc/45 active:bg-white/[0.05]')
+                : 'border-black/[0.12] dark:border-white/[0.09] text-textc/50 active:bg-black/[0.04] dark:active:bg-white/[0.05]')
             }
           >
             {displayLabel(cat)}
