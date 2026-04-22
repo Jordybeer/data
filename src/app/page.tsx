@@ -27,7 +27,7 @@ export default function Home() {
   useEffect(() => {
     (async () => {
       try {
-        const res = await fetch('/api/drugs', { cache: 'no-store' });
+        const res = await fetch('/api/drugs');
         if (!res.ok) throw new Error(`${res.status}`);
         const data = await res.json();
         if (Array.isArray(data)) setDrugs(data);
