@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { AnimatePresence } from 'framer-motion';
+import { useState, useEffect, useRef } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { AnimatePresence, motion } from 'framer-motion';
 import { useSession } from '@/components/SessionProvider';
 import { SearchBar } from '@/components/SearchBar';
 import { CategoryList } from '@/components/CategoryList';
@@ -13,8 +14,16 @@ import { ScrollToTop } from '@/components/ScrollToTop';
 import DrugDetails from '@/components/DrugDetails';
 import type { Drug } from '@/data/drugs';
 
+const AUTH_MESSAGES: Record<string, string> = {
+  invalid: 'Login mislukt — geen toegang.',
+  error: 'Er ging iets mis bij het inloggen.',
+  required: 'Je moet ingelogd zijn om dit te bekijken.',
+};
+
 export default function Home() {
   const { session } = useSession();
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const [drugs, setDrugs] = useState<Drug[]>([]);
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState<string | null>(null);
@@ -22,7 +31,21 @@ export default function Home() {
   const [selectedDrug, setSelectedDrug] = useState<Drug | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [fetchError, setFetchError] = useState(false);
+  const [authToast, setAuthToast] = useState<string | null>(null);
+  const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isAdmin = session.isAdmin;
+
+  useEffect(() => {
+    const auth = searchParams.get('auth');
+    if (!auth) return;
+    const msg = AUTH_MESSAGES[auth] ?? null;
+    if (msg) {
+      setAuthToast(msg);
+      toastTimer.current = setTimeout(() => setAuthToast(null), 4000);
+    }
+    router.replace('/');
+    return () => { if (toastTimer.current) clearTimeout(toastTimer.current); };
+  }, [searchParams, router]);
 
   useEffect(() => {
     (async () => {
@@ -145,6 +168,20 @@ export default function Home() {
       </AnimatePresence>
 
       <ScrollToTop />
+
+      <AnimatePresence>
+        {authToast && (
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 16 }}
+            transition={{ duration: 0.25 }}
+            className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[300] card px-5 py-2.5 text-sm font-medium text-red-400"
+          >
+            {authToast}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
