@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from 'next';
+import { Analytics } from '@vercel/analytics/next';
 import { SessionProvider } from '@/components/SessionProvider';
 import { ThemeProvider } from '@/components/ThemeProvider';
 import OfflineBanner from '@/components/OfflineBanner';
@@ -31,6 +32,7 @@ export default function RootLayout({
             {children}
           </SessionProvider>
         </ThemeProvider>
+        <Analytics />
       </body>
     </html>
   );
