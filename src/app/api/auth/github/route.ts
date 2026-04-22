@@ -13,7 +13,7 @@ export async function GET(req: NextRequest) {
       {
         cookies: {
           getAll: () => cookieStore.getAll(),
-          setAll: (toSet) => pending.push(...toSet),
+          setAll: (toSet) => { toSet.forEach((c) => pending.push(c)); },
         },
       },
     );
