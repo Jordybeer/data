@@ -90,19 +90,18 @@ export default function Home() {
       <main className="container mx-auto px-4 py-6 space-y-5">
         <DisclaimerSection />
 
-        <div className="space-y-3">
+        <div className="space-y-2.5">
           <CategoryList
             categories={categories}
             selected={category}
             onSelect={setCategory}
-            label="Categorie"
+            variant="segment"
           />
           {categories2.length > 0 && (
             <CategoryList
               categories={categories2}
               selected={category2}
               onSelect={setCategory2}
-              label="Subcategorie"
             />
           )}
         </div>
