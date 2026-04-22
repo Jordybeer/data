@@ -10,6 +10,6 @@
   .input { @apply w-full px-4 py-3 bg-bg border border-borderc rounded-lg text-textc placeholder:text-textc/50 outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/20; font-size: 16px; }
   .modal-overlay { @apply fixed inset-0 bg-black/0 backdrop-blur-0 z-50 pointer-events-none transition-all duration-300; }
   .modal-overlay.show { @apply bg-black/50 backdrop-blur-sm pointer-events-auto; }
-  .modal { @apply fixed top-1/2 left-1/2 opacity-0 pointer-events-none bg-bg-light border border-borderc rounded-2xl w-[calc(100%-2rem)] max-w-xl max-h-[80dvh] overflow-hidden z-[60] transition-all duration-300; transform: translate(-50%, calc(-50% + 40px)); }
+  .modal { @apply fixed top-1/2 left-1/2 opacity-0 pointer-events-none bg-bg-light border border-borderc rounded-2xl w-[calc(100%-2rem)] max-w-xl max-h-[80dvh] overflow-hidden z-[60] transition-all duration-300; transform: translate(-50%, calc(-50% + 40px)); -webkit-mask-image: -webkit-radial-gradient(white, black); }
   .modal.show { @apply opacity-100 pointer-events-auto; transform: translate(-50%, -50%); }
 }
