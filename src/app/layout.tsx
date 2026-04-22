@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import { SessionProvider } from '@/components/SessionProvider';
+import { ThemeProvider } from '@/components/ThemeProvider';
 import OfflineBanner from '@/components/OfflineBanner';
 import './globals.css';
 
@@ -20,10 +21,12 @@ export default function RootLayout({
   return (
     <html lang="nl">
       <body>
-        <SessionProvider>
-          <OfflineBanner />
-          {children}
-        </SessionProvider>
+        <ThemeProvider>
+          <SessionProvider>
+            <OfflineBanner />
+            {children}
+          </SessionProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

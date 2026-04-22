@@ -16,6 +16,138 @@
   --pd-red: #fb7185;
   --pd-purple: #a78bfa;
   --pd-shadow: 0 30px 80px rgba(2, 6, 23, 0.45);
+  /* Tailwind CSS-variable bridges */
+  --tw-color-textc: 229 238 252;
+  --tw-color-bg: 11 18 32;
+}
+
+/* ===========================
+   LIGHT MODE
+   =========================== */
+
+html[data-theme="light"] {
+  color-scheme: light;
+  --pd-bg: #f4f7ff;
+  --pd-surface: rgba(255, 255, 255, 0.78);
+  --pd-surface-strong: rgba(255, 255, 255, 0.97);
+  --pd-border: rgba(15, 30, 80, 0.09);
+  --pd-text: #0c1a3d;
+  --pd-subtle: #5a6a8a;
+  --pd-blue: #3b82f6;
+  --pd-cyan: #06b6d4;
+  --pd-green: #10b981;
+  --pd-red: #f43f5e;
+  --pd-purple: #8b5cf6;
+  --pd-shadow: 0 20px 60px rgba(15, 30, 80, 0.10);
+  --tw-color-textc: 12 26 61;
+  --tw-color-bg: 240 244 255;
+}
+
+html[data-theme="light"] body {
+  background:
+    radial-gradient(ellipse 70% 50% at 15% 0%, rgba(96, 165, 250, 0.14), transparent),
+    radial-gradient(ellipse 60% 45% at 85% 5%, rgba(167, 139, 250, 0.11), transparent),
+    radial-gradient(ellipse 50% 60% at 50% 100%, rgba(109, 40, 217, 0.06), transparent),
+    linear-gradient(180deg, #eef2ff 0%, #f0f4ff 35%, #f2f0ff 65%, #f4f7ff 100%);
+  color: var(--pd-text);
+}
+
+html[data-theme="light"] body::before {
+  background: rgba(99, 102, 241, 0.10);
+}
+
+html[data-theme="light"] body::after {
+  background: rgba(139, 92, 246, 0.08);
+}
+
+html[data-theme="light"] .card {
+  background: rgba(255, 255, 255, 0.68);
+  border-color: rgba(15, 30, 80, 0.09);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.9) inset, 0 8px 32px rgba(15, 30, 80, 0.08);
+}
+
+html[data-theme="light"] .btn {
+  background: rgba(15, 30, 80, 0.05);
+  border-color: rgba(15, 30, 80, 0.12);
+  color: var(--pd-text);
+}
+
+html[data-theme="light"] .input {
+  background: rgba(255, 255, 255, 0.85);
+  border-color: rgba(15, 30, 80, 0.12);
+  color: var(--pd-text);
+}
+
+html[data-theme="light"] .input::placeholder {
+  color: rgba(12, 26, 61, 0.30);
+}
+
+html[data-theme="light"] .modal {
+  background: rgba(255, 255, 255, 0.97);
+  border-color: rgba(15, 30, 80, 0.10);
+  box-shadow: 0 32px 80px rgba(15, 30, 80, 0.18), 0 1px 0 rgba(255, 255, 255, 0.9) inset;
+}
+
+html[data-theme="light"] .pd-stickyHeader {
+  background: rgba(240, 244, 255, 0.72);
+  border-bottom-color: rgba(15, 30, 80, 0.07);
+}
+
+html[data-theme="light"] .pd-stickyHeader::after {
+  background: linear-gradient(to bottom, rgba(240, 244, 255, 0.45), transparent);
+}
+
+html[data-theme="light"] .pd-modal {
+  background: rgba(255, 255, 255, 0.97);
+  border-color: rgba(15, 30, 80, 0.10);
+  box-shadow: 0 24px 64px rgba(15, 30, 80, 0.14), 0 1px 2px rgba(255, 255, 255, 0.9) inset;
+}
+
+html[data-theme="light"] .pd-card {
+  background: rgba(255, 255, 255, 0.72);
+}
+
+html[data-theme="light"] .pd-substanceCard {
+  background: rgba(255, 255, 255, 0.65);
+}
+
+html[data-theme="light"] .pd-input,
+html[data-theme="light"] .pd-textarea {
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--pd-text);
+}
+
+html[data-theme="light"] .pd-authButton {
+  background: rgba(15, 30, 80, 0.06);
+  border-color: rgba(15, 30, 80, 0.12);
+  color: var(--pd-text);
+}
+
+html[data-theme="light"] .pd-secondaryButton {
+  background: rgba(15, 30, 80, 0.05);
+}
+
+html[data-theme="light"] .pd-closeButton {
+  background: rgba(15, 30, 80, 0.05);
+  border-color: rgba(15, 30, 80, 0.09);
+  color: var(--pd-subtle);
+}
+
+html[data-theme="light"] .pd-disclaimer {
+  background: rgba(244, 63, 94, 0.07);
+  border-color: rgba(244, 63, 94, 0.20);
+  color: #be123c;
+}
+
+/* Category filter — override hardcoded white-tinted borders */
+html[data-theme="light"] [role="group"] {
+  background: rgba(15, 30, 80, 0.04);
+  border-color: rgba(15, 30, 80, 0.08);
+}
+
+html[data-theme="light"] [role="group"] button[aria-checked="false"] {
+  border-color: rgba(15, 30, 80, 0.11);
+  color: rgba(12, 26, 61, 0.55);
 }
 
 * {

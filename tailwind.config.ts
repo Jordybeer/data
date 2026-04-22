@@ -12,9 +12,9 @@ const config: Config = {
     extend: {
       colors: {
         // design-system tokens used throughout components
-        bg:       'rgb(11 18 32 / <alpha-value>)',
+        bg:       'rgb(var(--tw-color-bg) / <alpha-value>)',
         card:     'rgba(15, 23, 42, 0.78)',
-        textc:    'rgb(229 238 252 / <alpha-value>)',
+        textc:    'rgb(var(--tw-color-textc) / <alpha-value>)',
         borderc:  'rgba(255, 255, 255, 0.08)',
         primary:  'rgb(167 139 250 / <alpha-value>)',
         'bg-hover': 'rgba(255, 255, 255, 0.08)',
