@@ -24,7 +24,7 @@ export async function sendMagicLink(to: string, url: string) {
   await transporter().sendMail({
     from,
     to,
-    subject: 'Your Psychonaut DB sign-in link',
+    subject: 'Your Snuff DB sign-in link',
     text: `Click to sign in: ${url}\n\nThis link expires in 15 minutes. If you didn't request it, ignore this email.`,
     html: `<p>Click to sign in: <a href="${url}">${url}</a></p><p>This link expires in 15 minutes. If you didn't request it, ignore this email.</p>`,
   });

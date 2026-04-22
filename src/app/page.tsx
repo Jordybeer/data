@@ -79,7 +79,7 @@ export default function Home() {
         <div className="container mx-auto px-4 py-4">
           <div className="flex justify-between items-center mb-3">
             <h1 className="text-2xl font-bold">
-              <span className="text-textc">Psychonaut</span>{' '}
+              <span className="text-textc">Snuff</span>{' '}
               <span className="text-primary">DB</span>
             </h1>
           </div>

@@ -25,7 +25,7 @@ export const LoadingScreen = () => (
     {/* Logo */}
     <div className="text-center">
       <p className="text-xl font-bold tracking-tight">
-        <span className="text-textc">Psychonaut</span>{' '}
+        <span className="text-textc">Snuff</span>{' '}
         <span className="text-primary">DB</span>
       </p>
       <p className="text-sm text-textc/40 mt-1 animate-pulse">laden…</p>

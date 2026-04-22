@@ -4,7 +4,7 @@ import OfflineBanner from '@/components/OfflineBanner';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'Psychonaut DB',
+  title: 'Snuff DB',
   description: 'Personal psychoactive substances database',
 };
 
