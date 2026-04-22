@@ -115,6 +115,7 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
   const [roas, setRoas] = useState<Roa[] | null>(null);
   const [tripsit, setTripsit] = useState<TripSitData | null>(null);
   const [roasOpen, setRoasOpen] = useState(false);
+  const [tripsitOpen, setTripsitOpen] = useState(false);
   const [interactions, setInteractions] = useState<Interaction[] | null>(null);
   const [interactionsOpen, setInteractionsOpen] = useState(false);
 
@@ -235,7 +236,7 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.94 }}
         transition={{ type: 'spring' as const, stiffness: 400, damping: 30 }}
-        style={{ padding: 0, overflow: 'hidden', display: 'flex', flexDirection: 'column', height: '80dvh' }}
+        style={{ padding: 0, overflow: 'hidden', display: 'flex', flexDirection: 'column', height: '75dvh' }}
       >
         {/* Header — outside scroll container so content can never bleed above it */}
         <div
@@ -256,7 +257,7 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
             </div>
           </div>
         </div>
-        <div className="overflow-y-auto p-7 pt-5" style={{ flex: '1 1 0', minHeight: 0 }}>
+        <div className="overflow-y-auto p-7 pt-5 pb-4" style={{ flex: '1 1 0', minHeight: 0 }}>
 
         {/* Notes — always visible, no API dependency */}
         <motion.div
@@ -268,7 +269,7 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
                 <div className="flex justify-between items-center mb-3">
                   <h3 className="text-xs font-bold text-textc/60 uppercase tracking-widest">Notities</h3>
                   {isAdmin && !isEditing && (
-                    <button onClick={() => setIsEditing(true)} className="btn text-xs px-3 min-h-[32px]">
+                    <button onClick={() => setIsEditing(true)} className="btn text-xs px-3 min-h-[44px]">
                       Bewerken
                     </button>
                   )}
@@ -296,6 +297,14 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
                   )}
                 </AnimatePresence>
         </motion.div>
+
+        {/* Skeleton while API loads */}
+        {(wiki === null || interactions === null) && (
+          <div className="mt-3 space-y-3 animate-pulse">
+            <div className="h-12 rounded-2xl bg-white/5" />
+            <div className="h-12 rounded-2xl bg-white/5" />
+          </div>
+        )}
 
         {/* API sections — fade in once wiki + interactions resolve */}
         {wiki !== null && interactions !== null && (
@@ -357,14 +366,14 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
               {/* Dosage & duration — TripSit */}
               {tripsit && (tripsit.formatted_dose || tripsit.duration) && (
                 <motion.div variants={sectionVariants} className="mt-3 rounded-2xl border border-borderc/50 overflow-hidden">
-                  <button onClick={() => setRoasOpen((o) => !o)} className="w-full flex items-center justify-between px-4 py-3 min-h-[44px] text-left" aria-expanded={roasOpen}>
+                  <button onClick={() => setTripsitOpen((o) => !o)} className="w-full flex items-center justify-between px-4 py-3 min-h-[44px] text-left" aria-expanded={tripsitOpen}>
                     <span className="text-xs font-bold text-textc/60 uppercase tracking-widest">Dosering &amp; duur</span>
-                    <motion.svg className="w-4 h-4 text-textc/40 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" animate={{ rotate: roasOpen ? 180 : 0 }} transition={{ duration: 0.2 }}>
+                    <motion.svg className="w-4 h-4 text-textc/40 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" animate={{ rotate: tripsitOpen ? 180 : 0 }} transition={{ duration: 0.2 }}>
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                     </motion.svg>
                   </button>
                   <AnimatePresence initial={false}>
-                    {roasOpen && (
+                    {tripsitOpen && (
                       <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.22, ease: 'easeInOut' }} className="overflow-hidden">
                         <div className="px-4 pb-4 space-y-5">
                           {tripsit.formatted_dose && (
@@ -421,7 +430,7 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
                             <div key={ix.name} className="flex items-center gap-2 min-h-[44px]">
                               <span className="text-sm leading-none" role="img" aria-label={severityLabel(ix.status)}>{severityEmoji(ix.status)}</span>
                               <span className="text-xs text-textc/70 flex-1">{ix.name}</span>
-                              <span className="text-[11px] text-textc/40">{severityLabel(ix.status)}</span>
+                              <span className="text-xs text-textc/70">{severityLabel(ix.status)}</span>
                             </div>
                           ))}
                         </div>
@@ -447,14 +456,12 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
                 </svg>
               </motion.a>
 
-              {/* Close button */}
-              <motion.div variants={sectionVariants} className="mt-5 flex justify-end">
-                <motion.button onClick={onClose} className="btn btn-primary" whileTap={{ scale: 0.97 }}>
-                  Sluiten
-                </motion.button>
-              </motion.div>
           </motion.div>
         )}
+        </div>
+        {/* Footer — always visible at bottom */}
+        <div style={{ padding: '16px 28px', flexShrink: 0, borderTop: '1px solid rgba(255,255,255,0.08)' }} className="flex justify-end">
+          <button onClick={onClose} className="btn btn-primary" style={{ minHeight: 44 }}>Sluiten</button>
         </div>
       </motion.div>
     </motion.div>
