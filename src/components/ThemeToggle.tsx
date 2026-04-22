@@ -16,18 +16,23 @@ export default function ThemeToggle() {
   const { theme, toggle } = useTheme();
   const lottieRef = useRef<DotLottie | null>(null);
   const mounted = useRef(false);
+  const themeRef = useRef(theme);
+  themeRef.current = theme;
+
+  const handleLottieRef = (dl: DotLottie | null) => {
+    if (!dl) return;
+    lottieRef.current = dl;
+    // Seek to correct frame as soon as the instance is available
+    dl.setFrame(themeRef.current === 'light' ? 1 : 0);
+  };
 
   useEffect(() => {
-    const dl = lottieRef.current;
-    if (!dl) return;
-
     if (!mounted.current) {
       mounted.current = true;
-      // Seek to correct frame without animating
-      dl.setFrame(theme === 'light' ? 1 : 0);
-      return;
+      return; // initial frame already handled by handleLottieRef
     }
-
+    const dl = lottieRef.current;
+    if (!dl) return;
     if (theme === 'light') {
       dl.setMode('forward');
     } else {
@@ -46,7 +51,7 @@ export default function ThemeToggle() {
         src={LOTTIE_SRC}
         autoplay={false}
         loop={false}
-        dotLottieRefCallback={(dl) => { lottieRef.current = dl; }}
+        dotLottieRefCallback={handleLottieRef}
         style={{ width: 56, height: 56 }}
       />
     </button>
