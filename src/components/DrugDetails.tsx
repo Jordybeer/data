@@ -19,7 +19,7 @@ interface TripSitData {
   onset?: Record<string, string>;
   summary?: string;
 }
-interface Interaction { name: string; status: string; }
+interface Interaction { name: string; status: string; note?: string; }
 
 type DoseRange = { min: number | null; max: number | null } | null;
 type DurRange  = { min: number | null; max: number | null; units: string | null } | null;
@@ -187,7 +187,7 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
           });
           setRoas([]);
           const combos: Record<string, { status: string }> = entry.combos ?? {};
-          setInteractions(Object.entries(combos).map(([name, v]) => ({ name, status: v.status ?? '' })));
+          setInteractions(Object.entries(combos).map(([name, v]) => ({ name, status: v.status ?? '', note: v.note })));
           return;
         }
       } catch { /* fall through */ }
@@ -444,10 +444,13 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
                       <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.22, ease: 'easeInOut' }} className="overflow-hidden">
                         <div className="px-4 pb-4 space-y-1">
                           {interactions.map((ix) => (
-                            <div key={ix.name} className="flex items-center gap-2 min-h-[44px]">
-                              <span className="text-sm leading-none" role="img" aria-label={severityLabel(ix.status)}>{severityEmoji(ix.status)}</span>
-                              <span className="text-xs text-textc/70 flex-1">{ix.name}</span>
-                              <span className="text-xs text-textc/70">{severityLabel(ix.status)}</span>
+                            <div key={ix.name} className="py-1">
+                              <div className="flex items-center gap-2 min-h-[44px]">
+                                <span className="text-sm leading-none" role="img" aria-label={severityLabel(ix.status)}>{severityEmoji(ix.status)}</span>
+                                <span className="text-xs text-textc/70 flex-1">{ix.name}</span>
+                                <span className="text-xs text-textc/70">{severityLabel(ix.status)}</span>
+                              </div>
+                              {ix.note && <p className="text-[11px] text-textc/50 leading-relaxed pb-1 pl-6">{ix.note}</p>}
                             </div>
                           ))}
                         </div>
