@@ -7,6 +7,7 @@ export async function GET(req: NextRequest) {
   const name = req.nextUrl.searchParams.get('name');
   if (!name) return NextResponse.json({ error: 'missing name' }, { status: 400 });
 
+  const includeInteractions = req.nextUrl.searchParams.get('interactions') === '1';
   const query = `{
     substances(query: ${JSON.stringify(name)}) {
       name url
@@ -18,7 +19,7 @@ export async function GET(req: NextRequest) {
           offset { min max units } total { min max units } afterglow { min max units }
         }
       }
-      interactions { name status }
+      ${includeInteractions ? 'interactions { name status }' : ''}
     }
   }`;
 

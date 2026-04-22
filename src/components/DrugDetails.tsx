@@ -128,20 +128,29 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
         const res = await fetch(`/api/psychonautwiki?name=${encodeURIComponent(drug.name)}`);
         const json = await res.json();
         if (cancelled) return;
-        const substances: { name: string; url: string; roas: Roa[]; interactions?: Interaction[] }[] = json?.data?.substances ?? [];
+        const substances: { name: string; url: string; roas: Roa[] }[] = json?.data?.substances ?? [];
         const match = substances.find((s) => s.name.toLowerCase() === drug.name.toLowerCase());
         if (match?.url) {
           setWiki({ url: match.url, source: 'psychonautwiki' });
           setRoas(match.roas ?? []);
-          setInteractions(match.interactions ?? []);
           matched = true;
+          // fetch interactions separately so a failure here doesn't affect the main result
+          fetch(`/api/psychonautwiki?name=${encodeURIComponent(drug.name)}&interactions=1`)
+            .then((r) => r.json())
+            .then((j) => {
+              if (cancelled) return;
+              const s = (j?.data?.substances ?? []) as { name: string; interactions?: Interaction[] }[];
+              const m = s.find((x) => x.name.toLowerCase() === drug.name.toLowerCase());
+              setInteractions(m?.interactions ?? []);
+            })
+            .catch(() => setInteractions([]));
         }
       } catch { /* fall through */ }
 
       if (cancelled || matched) return;
 
       try {
-        const res = await fetch(`https://tripbot.tripsit.me/api/tripsit/getDrug?name=${encodeURIComponent(drug.name)}`);
+        const res = await fetch(`/api/tripsit?name=${encodeURIComponent(drug.name)}`);
         const json = await res.json();
         if (cancelled) return;
         const entry = json?.data?.[0];
