@@ -11,11 +11,10 @@ export const DrugItem: React.FC<DrugItemProps> = ({ drug, onClick }) => (
     onClick={onClick}
     className={
       'card p-4 text-left w-full transition-all duration-200 group min-h-[88px] ' +
-      'hover:border-primary/30 hover:bg-[rgba(20,40,80,0.55)] ' +
       'active:scale-[0.98] active:brightness-95'
     }
   >
-    <h3 className="font-semibold text-base text-textc group-hover:text-white transition-colors mb-2 leading-snug">
+    <h3 className="font-semibold text-base text-textc mb-2 leading-snug">
       {drug.name}
     </h3>
     <div className="flex flex-wrap gap-1.5">

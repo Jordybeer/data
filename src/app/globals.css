@@ -137,10 +137,6 @@ button {
     white-space: nowrap;
   }
 
-  .btn:hover:not(:disabled) {
-    background: rgba(255, 255, 255, 0.11);
-  }
-
   .btn:active:not(:disabled) {
     filter: brightness(0.9);
   }
@@ -155,10 +151,6 @@ button {
     border-color: transparent;
     color: #fff;
     box-shadow: 0 8px 24px rgba(139, 92, 246, 0.28);
-  }
-
-  .btn-primary:hover:not(:disabled) {
-    box-shadow: 0 12px 32px rgba(139, 92, 246, 0.4);
   }
 
   .input {
@@ -290,15 +282,6 @@ button {
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
 }
 
-.pd-authButton:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.14);
-  border-color: rgba(103, 232, 249, 0.4);
-  box-shadow:
-    0 8px 24px rgba(0, 0, 0, 0.3),
-    0 0 32px rgba(103, 232, 249, 0.15);
-  transform: translateY(-2px);
-}
-
 .pd-authButton:disabled {
   opacity: 0.6;
   cursor: not-allowed;
@@ -363,13 +346,6 @@ button {
   padding: 20px;
   transition: all 0.2s ease;
   cursor: pointer;
-}
-
-.pd-substanceCard:hover {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(167, 139, 250, 0.3);
-  transform: translateY(-2px);
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
 }
 
 .pd-substanceName {
@@ -476,11 +452,6 @@ button {
   transition: all 0.2s ease;
 }
 
-.pd-primaryButton:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 16px 40px rgba(139, 92, 246, 0.35);
-}
-
 .pd-primaryButton:disabled {
   opacity: 0.5;
   cursor: not-allowed;
@@ -495,11 +466,6 @@ button {
   font-size: 16px;
   font-weight: 700;
   transition: all 0.2s ease;
-}
-
-.pd-secondaryButton:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.1);
-  transform: translateY(-1px);
 }
 
 /* ===========================

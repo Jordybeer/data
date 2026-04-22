@@ -62,7 +62,7 @@ export const AuthSection: React.FC = () => {
       {!open ? (
         <button
           onClick={() => setOpen(true)}
-          className="text-xs text-textc/30 hover:text-textc/60 transition-colors"
+          className="text-xs text-textc/30"
         >
           Admin
         </button>
@@ -77,7 +77,7 @@ export const AuthSection: React.FC = () => {
               type="button"
               aria-label="Sluiten"
               onClick={() => { setOpen(false); setStatus('idle'); setEmail(''); }}
-              className="flex items-center justify-center w-11 h-11 -mr-2 rounded-full text-textc/40 hover:text-textc/70 transition-colors"
+              className="flex items-center justify-center w-11 h-11 -mr-2 rounded-full text-textc/40"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />

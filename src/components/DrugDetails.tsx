@@ -119,7 +119,7 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
                   href={wiki.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 text-[11px] font-medium text-textc/70 bg-white/[0.07] border border-white/10 px-2 py-0.5 rounded-md hover:text-textc hover:bg-white/[0.12] transition-colors"
+                  className="inline-flex items-center gap-1.5 text-[11px] font-medium text-textc/70 bg-white/[0.07] border border-white/10 px-2 py-0.5 rounded-md"
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
@@ -140,7 +140,7 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
           <motion.button
             onClick={onClose}
             aria-label="Sluiten"
-            className="flex-shrink-0 flex items-center justify-center w-11 h-11 rounded-2xl bg-bg-hover border border-borderc text-textc/60 hover:text-textc transition-colors"
+            className="flex-shrink-0 flex items-center justify-center w-11 h-11 rounded-2xl bg-bg-hover border border-borderc text-textc/60"
             whileTap={{ scale: 0.9 }}
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

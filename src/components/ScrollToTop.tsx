@@ -21,7 +21,7 @@ export const ScrollToTop = () => {
         'fixed bottom-6 right-5 z-[150] w-11 h-11 rounded-2xl ' +
         'flex items-center justify-center ' +
         'border border-white/10 bg-[rgba(14,26,52,0.72)] ' +
-        'backdrop-blur-xl text-textc/60 hover:text-textc ' +
+        'backdrop-blur-xl text-textc/60 ' +
         'shadow-[0_8px_32px_rgba(2,6,23,0.4)] ' +
         'transition-colors duration-150 active:brightness-90'
       }

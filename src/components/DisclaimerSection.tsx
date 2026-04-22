@@ -71,7 +71,7 @@ export const DisclaimerSection = () => {
                       href={link.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-3 p-3 rounded-xl border border-borderc hover:border-primary/40 transition-all group bg-bg/30 hover:bg-bg/50"
+                      className="flex items-center gap-3 p-3 rounded-xl border border-borderc bg-bg/30"
                       style={{ borderLeftColor: link.color, borderLeftWidth: '3px' }}
                     >
                       <div
@@ -81,7 +81,7 @@ export const DisclaimerSection = () => {
                         {iconMap[link.icon]}
                       </div>
                       <div className="min-w-0">
-                        <div className="font-semibold text-sm group-hover:text-primary transition-colors truncate">
+                        <div className="font-semibold text-sm truncate">
                           {link.name}
                         </div>
                         <div className="text-xs text-textc/50 truncate">{link.description}</div>
