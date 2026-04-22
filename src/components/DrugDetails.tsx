@@ -36,15 +36,21 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
     let cancelled = false;
     (async () => {
       try {
-        const res = await fetch(
-          `https://psychonautwiki.org/w/api.php?action=query&titles=${encodeURIComponent(drug.name)}&format=json&origin=*`,
-        );
+        const res = await fetch('https://api.psychonautwiki.org/', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            query: `{ substances(query: ${JSON.stringify(drug.name)}) { name url } }`,
+          }),
+        });
         const json = await res.json();
-        const pages = json?.query?.pages ?? {};
-        const page = Object.values(pages)[0] as { missing?: string } | undefined;
         if (cancelled) return;
-        if (page && !('missing' in page)) {
-          setWiki({ url: `https://psychonautwiki.org/wiki/${encodeURIComponent(drug.name)}`, source: 'psychonautwiki' });
+        const substances: { name: string; url: string }[] = json?.data?.substances ?? [];
+        const match = substances.find(
+          (s) => s.name.toLowerCase() === drug.name.toLowerCase(),
+        );
+        if (match?.url) {
+          setWiki({ url: match.url, source: 'psychonautwiki' });
         } else {
           setWiki({ url: `https://en.wikipedia.org/wiki/${encodeURIComponent(drug.name)}`, source: 'wikipedia' });
         }
