@@ -11,7 +11,6 @@ import { AuthSection } from '@/components/AuthSection';
 import { LoadingScreen } from '@/components/LoadingScreen';
 import { ScrollToTop } from '@/components/ScrollToTop';
 import DrugDetails from '@/components/DrugDetails';
-import ThemeToggle from '@/components/ThemeToggle';
 import type { Drug } from '@/data/drugs';
 
 export default function Home() {
@@ -83,7 +82,6 @@ export default function Home() {
               <span className="text-textc">Snuff</span>{' '}
               <span className="text-primary">DB</span>
             </h1>
-            <ThemeToggle />
           </div>
           <SearchBar value={search} onChange={setSearch} />
         </div>

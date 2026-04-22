@@ -31,11 +31,16 @@ export const AuthSection: React.FC = () => {
         setStatus('sent');
       } else {
         const j = await r.json().catch(() => ({}));
-        setErrorMsg(j?.error || 'Er ging iets mis.');
+        const msg = j?.error;
+        if (r.status === 401 || r.status === 403 || msg?.toLowerCase().includes('not allowed') || msg?.toLowerCase().includes('unauthorized')) {
+          setErrorMsg('Dit e-mailadres is niet geautoriseerd.');
+        } else {
+          setErrorMsg(msg || 'Er ging iets mis.');
+        }
         setStatus('error');
       }
     } catch {
-      setErrorMsg('Netwerkfout.');
+      setErrorMsg('Netwerkfout. Probeer opnieuw.');
       setStatus('error');
     }
   };
@@ -107,7 +112,7 @@ export const AuthSection: React.FC = () => {
             </p>
           )}
           {status === 'error' && (
-            <p className="text-xs text-red-400 text-center">{errorMsg || 'Kon niet versturen.'}</p>
+            <p className="text-xs text-red-400 text-center">{errorMsg}</p>
           )}
         </form>
       )}
