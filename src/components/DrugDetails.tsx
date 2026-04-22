@@ -87,6 +87,15 @@ function severityEmoji(status: string): string {
   return '✅';
 }
 
+const containerVariants = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.07 } },
+};
+const itemVariants = {
+  hidden: { opacity: 0, y: 8 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.18, ease: 'easeOut' as const } },
+};
+
 function fmtDur(r: DurRange): string | null {
   if (!r) return null;
   const u = r.units ?? '';
@@ -267,51 +276,14 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
           </motion.button>
         </div>
 
-        {/* Notes */}
-        <motion.div
-          className="bg-bg/40 p-5 pt-10 mt-6 rounded-2xl border border-borderc/50"
-          initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.18, ease: 'easeOut' }}
-        >
-          <div className="flex justify-between items-center mb-3">
-            <h3 className="text-xs font-bold text-textc/60 uppercase tracking-widest">Notities</h3>
-            {isAdmin && !isEditing && (
-              <button onClick={() => setIsEditing(true)} className="btn text-xs px-3 min-h-[32px]">
-                Bewerken
-              </button>
-            )}
-          </div>
-          <AnimatePresence mode="wait">
-            {isEditing ? (
-              <motion.div key="editing" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.15 }} className="flex flex-col gap-3">
-                <textarea
-                  className="input w-full min-h-[140px] p-3"
-                  value={editNote}
-                  onChange={(e) => setEditNote(e.target.value)}
-                  placeholder="Notities hier invoeren..."
-                  autoFocus
-                />
-                {saveError && <p className="text-sm text-red-400">{saveError}</p>}
-                <div className="flex justify-end gap-2">
-                  <button onClick={() => { setIsEditing(false); setEditNote(drug.notes || ''); setSaveError(''); }} className="btn">Annuleren</button>
-                  <button onClick={handleSave} disabled={isSaving} className="btn btn-primary">{isSaving ? 'Opslaan...' : 'Opslaan'}</button>
-                </div>
-              </motion.div>
-            ) : (
-              <motion.p key="viewing" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.15 }} className="text-textc leading-relaxed whitespace-pre-wrap text-sm">
-                {drug.notes || <span className="text-textc/40 italic">Geen notities voor deze stof.</span>}
-              </motion.p>
-            )}
-          </AnimatePresence>
-        </motion.div>
-
-        {/* Loading spinner */}
+        {/* Spinner — stays until both wiki and interactions resolve */}
         <AnimatePresence>
-          {wiki === null && (
+          {(wiki === null || interactions === null) && (
             <motion.div
+              key="spinner"
               className="mt-5 flex justify-center py-6"
               initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-              transition={{ duration: 0.2 }}
+              transition={{ duration: 0.15 }}
             >
               <motion.svg
                 className="w-8 h-8 text-primary/60"
@@ -325,234 +297,204 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
           )}
         </AnimatePresence>
 
-        {/* Dosage & duration */}
-        {roas !== null && roas.length > 0 && (
-          <motion.div
-            className="mt-3 rounded-2xl border border-borderc/50 overflow-hidden"
-            initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.18, ease: 'easeOut', delay: 0.07 }}
-          >
-            <button
-              onClick={() => setRoasOpen((o) => !o)}
-              className="w-full flex items-center justify-between px-4 py-3 text-left"
-              aria-expanded={roasOpen}
+        {/* All sections stagger in once both fetches complete */}
+        <AnimatePresence>
+          {wiki !== null && interactions !== null && (
+            <motion.div
+              key="content"
+              variants={containerVariants}
+              initial="hidden"
+              animate="visible"
             >
-              <span className="text-xs font-bold text-textc/60 uppercase tracking-widest">Dosering &amp; duur</span>
-              <motion.svg
-                className="w-4 h-4 text-textc/40 flex-shrink-0"
-                fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                animate={{ rotate: roasOpen ? 180 : 0 }}
-                transition={{ duration: 0.2 }}
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-              </motion.svg>
-            </button>
+              {/* Notes */}
+              <motion.div variants={itemVariants} className="bg-bg/40 p-5 pt-10 mt-6 rounded-2xl border border-borderc/50">
+                <div className="flex justify-between items-center mb-3">
+                  <h3 className="text-xs font-bold text-textc/60 uppercase tracking-widest">Notities</h3>
+                  {isAdmin && !isEditing && (
+                    <button onClick={() => setIsEditing(true)} className="btn text-xs px-3 min-h-[32px]">
+                      Bewerken
+                    </button>
+                  )}
+                </div>
+                <AnimatePresence mode="wait">
+                  {isEditing ? (
+                    <motion.div key="editing" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.15 }} className="flex flex-col gap-3">
+                      <textarea
+                        className="input w-full min-h-[140px] p-3"
+                        value={editNote}
+                        onChange={(e) => setEditNote(e.target.value)}
+                        placeholder="Notities hier invoeren..."
+                        autoFocus
+                      />
+                      {saveError && <p className="text-sm text-red-400">{saveError}</p>}
+                      <div className="flex justify-end gap-2">
+                        <button onClick={() => { setIsEditing(false); setEditNote(drug.notes || ''); setSaveError(''); }} className="btn">Annuleren</button>
+                        <button onClick={handleSave} disabled={isSaving} className="btn btn-primary">{isSaving ? 'Opslaan...' : 'Opslaan'}</button>
+                      </div>
+                    </motion.div>
+                  ) : (
+                    <motion.p key="viewing" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.15 }} className="text-textc leading-relaxed whitespace-pre-wrap text-sm">
+                      {drug.notes || <span className="text-textc/40 italic">Geen notities voor deze stof.</span>}
+                    </motion.p>
+                  )}
+                </AnimatePresence>
+              </motion.div>
 
-            <AnimatePresence initial={false}>
-              {roasOpen && (
-                <motion.div
-                  initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: 'auto', opacity: 1 }}
-                  exit={{ height: 0, opacity: 0 }}
-                  transition={{ duration: 0.22, ease: 'easeInOut' }}
-                  className="overflow-hidden"
-                >
-                  <div className="px-4 pb-4 space-y-5">
-                    {roas.map((roa) => {
-                      const roaLabel = ROA_LABELS[roa.name.toLowerCase()] ?? roa.name;
-                      const doseRows = roa.dose
-                        ? DOSE_LEVELS.map((l) => ({ ...l, value: fmtDose(roa.dose!, l.key) })).filter((l) => l.value)
-                        : [];
-                      const durRows = roa.duration
-                        ? DUR_FIELDS.map((f) => ({ ...f, value: fmtDur(roa.duration![f.key]) })).filter((f) => f.value)
-                        : [];
-
-                      if (!doseRows.length && !durRows.length) return null;
-
-                      return (
-                        <div key={roa.name}>
-                          <p className="text-[11px] font-bold text-textc/40 uppercase tracking-widest mb-2">{roaLabel}</p>
-
-                          {doseRows.length > 0 && (
-                            <div className="space-y-1 mb-3">
-                              {doseRows.map((l) => (
-                                <div key={l.key} className="flex items-center justify-between">
-                                  <span className="text-xs text-textc/50 w-16 flex-shrink-0">{l.label}</span>
-                                  <div className="flex-1 mx-2 h-px bg-borderc/30" />
-                                  <span className={`text-xs font-semibold tabular-nums ${l.color}`}>{l.value}</span>
-                                </div>
-                              ))}
-                            </div>
-                          )}
-
-                          {durRows.length > 0 && (
-                            <div className="space-y-1">
-                              {durRows.map((f) => (
-                                <div key={f.key} className="flex items-center justify-between">
-                                  <span className="text-xs text-textc/50 w-16 flex-shrink-0">{f.label}</span>
-                                  <div className="flex-1 mx-2 h-px bg-borderc/30" />
-                                  <span className="text-xs font-semibold tabular-nums text-textc/70">{f.value}</span>
-                                </div>
-                              ))}
-                            </div>
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </motion.div>
-        )}
-
-        {tripsit && (tripsit.formatted_dose || tripsit.duration) && (
-          <motion.div
-            className="mt-3 rounded-2xl border border-borderc/50 overflow-hidden"
-            initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.18, ease: 'easeOut', delay: 0.07 }}
-          >
-            <button
-              onClick={() => setRoasOpen((o) => !o)}
-              className="w-full flex items-center justify-between px-4 py-3 text-left"
-              aria-expanded={roasOpen}
-            >
-              <span className="text-xs font-bold text-textc/60 uppercase tracking-widest">Dosering &amp; duur</span>
-              <motion.svg
-                className="w-4 h-4 text-textc/40 flex-shrink-0"
-                fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                animate={{ rotate: roasOpen ? 180 : 0 }}
-                transition={{ duration: 0.2 }}
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-              </motion.svg>
-            </button>
-            <AnimatePresence initial={false}>
-              {roasOpen && (
-                <motion.div
-                  initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: 'auto', opacity: 1 }}
-                  exit={{ height: 0, opacity: 0 }}
-                  transition={{ duration: 0.22, ease: 'easeInOut' }}
-                  className="overflow-hidden"
-                >
-                  <div className="px-4 pb-4 space-y-5">
-                    {tripsit.formatted_dose && (
-                      <div>
-                        <p className="text-[11px] font-bold text-textc/40 uppercase tracking-widest mb-2">Dosering</p>
-                        <div className="space-y-1">
-                          {tripsit.formatted_dose.split('\n').filter(Boolean).map((line, i) => {
-                            const [label, ...rest] = line.split(':');
-                            const value = rest.join(':').trim();
-                            return value ? (
-                              <div key={i} className="flex items-center justify-between">
-                                <span className="text-xs text-textc/50 w-16 flex-shrink-0">{label.trim()}</span>
-                                <div className="flex-1 mx-2 h-px bg-borderc/30" />
-                                <span className="text-xs font-semibold tabular-nums text-textc/70">{value}</span>
+              {/* Dosage & duration — PsychonautWiki */}
+              {roas.length > 0 && (
+                <motion.div variants={itemVariants} className="mt-3 rounded-2xl border border-borderc/50 overflow-hidden">
+                  <button onClick={() => setRoasOpen((o) => !o)} className="w-full flex items-center justify-between px-4 py-3 text-left" aria-expanded={roasOpen}>
+                    <span className="text-xs font-bold text-textc/60 uppercase tracking-widest">Dosering &amp; duur</span>
+                    <motion.svg className="w-4 h-4 text-textc/40 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" animate={{ rotate: roasOpen ? 180 : 0 }} transition={{ duration: 0.2 }}>
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </motion.svg>
+                  </button>
+                  <AnimatePresence initial={false}>
+                    {roasOpen && (
+                      <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.22, ease: 'easeInOut' }} className="overflow-hidden">
+                        <div className="px-4 pb-4 space-y-5">
+                          {roas.map((roa) => {
+                            const roaLabel = ROA_LABELS[roa.name.toLowerCase()] ?? roa.name;
+                            const doseRows = roa.dose ? DOSE_LEVELS.map((l) => ({ ...l, value: fmtDose(roa.dose!, l.key) })).filter((l) => l.value) : [];
+                            const durRows = roa.duration ? DUR_FIELDS.map((f) => ({ ...f, value: fmtDur(roa.duration![f.key]) })).filter((f) => f.value) : [];
+                            if (!doseRows.length && !durRows.length) return null;
+                            return (
+                              <div key={roa.name}>
+                                <p className="text-[11px] font-bold text-textc/40 uppercase tracking-widest mb-2">{roaLabel}</p>
+                                {doseRows.length > 0 && (
+                                  <div className="space-y-1 mb-3">
+                                    {doseRows.map((l) => (
+                                      <div key={l.key} className="flex items-center justify-between">
+                                        <span className="text-xs text-textc/50 w-16 flex-shrink-0">{l.label}</span>
+                                        <div className="flex-1 mx-2 h-px bg-borderc/30" />
+                                        <span className={`text-xs font-semibold tabular-nums ${l.color}`}>{l.value}</span>
+                                      </div>
+                                    ))}
+                                  </div>
+                                )}
+                                {durRows.length > 0 && (
+                                  <div className="space-y-1">
+                                    {durRows.map((f) => (
+                                      <div key={f.key} className="flex items-center justify-between">
+                                        <span className="text-xs text-textc/50 w-16 flex-shrink-0">{f.label}</span>
+                                        <div className="flex-1 mx-2 h-px bg-borderc/30" />
+                                        <span className="text-xs font-semibold tabular-nums text-textc/70">{f.value}</span>
+                                      </div>
+                                    ))}
+                                  </div>
+                                )}
                               </div>
-                            ) : (
-                              <p key={i} className="text-[11px] font-bold text-textc/40 uppercase tracking-widest mt-2 mb-1">{label.trim()}</p>
                             );
                           })}
                         </div>
-                      </div>
+                      </motion.div>
                     )}
-                    {tripsit.duration && (
-                      <div>
-                        <p className="text-[11px] font-bold text-textc/40 uppercase tracking-widest mb-2">Duur</p>
-                        <div className="flex items-center justify-between">
-                          <span className="text-xs text-textc/50 w-16 flex-shrink-0">Totaal</span>
-                          <div className="flex-1 mx-2 h-px bg-borderc/30" />
-                          <span className="text-xs font-semibold tabular-nums text-textc/70">{tripsit.duration}</span>
+                  </AnimatePresence>
+                </motion.div>
+              )}
+
+              {/* Dosage & duration — TripSit */}
+              {tripsit && (tripsit.formatted_dose || tripsit.duration) && (
+                <motion.div variants={itemVariants} className="mt-3 rounded-2xl border border-borderc/50 overflow-hidden">
+                  <button onClick={() => setRoasOpen((o) => !o)} className="w-full flex items-center justify-between px-4 py-3 text-left" aria-expanded={roasOpen}>
+                    <span className="text-xs font-bold text-textc/60 uppercase tracking-widest">Dosering &amp; duur</span>
+                    <motion.svg className="w-4 h-4 text-textc/40 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" animate={{ rotate: roasOpen ? 180 : 0 }} transition={{ duration: 0.2 }}>
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </motion.svg>
+                  </button>
+                  <AnimatePresence initial={false}>
+                    {roasOpen && (
+                      <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.22, ease: 'easeInOut' }} className="overflow-hidden">
+                        <div className="px-4 pb-4 space-y-5">
+                          {tripsit.formatted_dose && (
+                            <div>
+                              <p className="text-[11px] font-bold text-textc/40 uppercase tracking-widest mb-2">Dosering</p>
+                              <div className="space-y-1">
+                                {tripsit.formatted_dose.split('\n').filter(Boolean).map((line, i) => {
+                                  const [label, ...rest] = line.split(':');
+                                  const value = rest.join(':').trim();
+                                  return value ? (
+                                    <div key={i} className="flex items-center justify-between">
+                                      <span className="text-xs text-textc/50 w-16 flex-shrink-0">{label.trim()}</span>
+                                      <div className="flex-1 mx-2 h-px bg-borderc/30" />
+                                      <span className="text-xs font-semibold tabular-nums text-textc/70">{value}</span>
+                                    </div>
+                                  ) : (
+                                    <p key={i} className="text-[11px] font-bold text-textc/40 uppercase tracking-widest mt-2 mb-1">{label.trim()}</p>
+                                  );
+                                })}
+                              </div>
+                            </div>
+                          )}
+                          {tripsit.duration && (
+                            <div>
+                              <p className="text-[11px] font-bold text-textc/40 uppercase tracking-widest mb-2">Duur</p>
+                              <div className="flex items-center justify-between">
+                                <span className="text-xs text-textc/50 w-16 flex-shrink-0">Totaal</span>
+                                <div className="flex-1 mx-2 h-px bg-borderc/30" />
+                                <span className="text-xs font-semibold tabular-nums text-textc/70">{tripsit.duration}</span>
+                              </div>
+                            </div>
+                          )}
                         </div>
-                      </div>
+                      </motion.div>
                     )}
-                  </div>
+                  </AnimatePresence>
                 </motion.div>
               )}
-            </AnimatePresence>
-          </motion.div>
-        )}
 
-        {interactions !== null && interactions.length > 0 && (
-          <motion.div
-            className="mt-3 rounded-2xl border border-borderc/50 overflow-hidden"
-            initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.18, ease: 'easeOut', delay: 0.14 }}
-          >
-            <button
-              onClick={() => setInteractionsOpen((o) => !o)}
-              className="w-full flex items-center justify-between px-4 py-3 text-left"
-              aria-expanded={interactionsOpen}
-            >
-              <span className="text-xs font-bold text-textc/60 uppercase tracking-widest">Risicovolle interacties</span>
-              <motion.svg
-                className="w-4 h-4 text-textc/40 flex-shrink-0"
-                fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                animate={{ rotate: interactionsOpen ? 180 : 0 }}
-                transition={{ duration: 0.2 }}
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-              </motion.svg>
-            </button>
-            <AnimatePresence initial={false}>
-              {interactionsOpen && (
-                <motion.div
-                  initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: 'auto', opacity: 1 }}
-                  exit={{ height: 0, opacity: 0 }}
-                  transition={{ duration: 0.22, ease: 'easeInOut' }}
-                  className="overflow-hidden"
-                >
-                  <div className="px-4 pb-4 space-y-1">
-                    {interactions.map((ix) => (
-                      <div key={ix.name} className="flex items-center gap-2">
-                        <span className="text-sm leading-none">{severityEmoji(ix.status)}</span>
-                        <span className="text-xs text-textc/70 flex-1">{ix.name}</span>
-                        <span className="text-[11px] text-textc/40">{ix.status}</span>
-                      </div>
-                    ))}
-                  </div>
+              {/* Interactions */}
+              {interactions.length > 0 && (
+                <motion.div variants={itemVariants} className="mt-3 rounded-2xl border border-borderc/50 overflow-hidden">
+                  <button onClick={() => setInteractionsOpen((o) => !o)} className="w-full flex items-center justify-between px-4 py-3 text-left" aria-expanded={interactionsOpen}>
+                    <span className="text-xs font-bold text-textc/60 uppercase tracking-widest">Risicovolle interacties</span>
+                    <motion.svg className="w-4 h-4 text-textc/40 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" animate={{ rotate: interactionsOpen ? 180 : 0 }} transition={{ duration: 0.2 }}>
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </motion.svg>
+                  </button>
+                  <AnimatePresence initial={false}>
+                    {interactionsOpen && (
+                      <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.22, ease: 'easeInOut' }} className="overflow-hidden">
+                        <div className="px-4 pb-4 space-y-1">
+                          {interactions.map((ix) => (
+                            <div key={ix.name} className="flex items-center gap-2">
+                              <span className="text-sm leading-none">{severityEmoji(ix.status)}</span>
+                              <span className="text-xs text-textc/70 flex-1">{ix.name}</span>
+                              <span className="text-[11px] text-textc/40">{ix.status}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </motion.div>
               )}
-            </AnimatePresence>
-          </motion.div>
-        )}
 
-        {wiki && (
-          // eslint-disable-next-line @next/next/no-img-element
-          <motion.a
-            href={wiki.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mt-3 flex items-center gap-3 px-4 py-3 rounded-2xl border border-borderc/50 bg-bg/40 text-textc/70 hover:bg-bg-hover transition-colors"
-            initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.18, ease: 'easeOut', delay: 0.21 }}
-          >
-            <img
-              src={wiki.source === 'psychonautwiki'
-                ? 'https://www.google.com/s2/favicons?domain=psychonautwiki.org&sz=32'
-                : wiki.source === 'tripsit'
-                ? 'https://www.google.com/s2/favicons?domain=tripsit.me&sz=32'
-                : 'https://www.google.com/s2/favicons?domain=en.wikipedia.org&sz=32'}
-              alt="" width={20} height={20}
-              className="rounded opacity-80 flex-shrink-0"
-              onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
-            />
-            <span className="text-sm font-medium flex-1">
-              {wiki.source === 'psychonautwiki' ? 'PsychonautWiki' : wiki.source === 'tripsit' ? 'TripSit' : 'Wikipedia'}
-            </span>
-            <svg className="w-4 h-4 text-textc/30 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-            </svg>
-          </motion.a>
-        )}
+              {/* Wiki card */}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <motion.a variants={itemVariants} href={wiki.url} target="_blank" rel="noopener noreferrer" className="mt-3 flex items-center gap-3 px-4 py-3 rounded-2xl border border-borderc/50 bg-bg/40 text-textc/70 hover:bg-bg-hover transition-colors">
+                <img
+                  src={wiki.source === 'psychonautwiki' ? 'https://www.google.com/s2/favicons?domain=psychonautwiki.org&sz=32' : wiki.source === 'tripsit' ? 'https://www.google.com/s2/favicons?domain=tripsit.me&sz=32' : 'https://www.google.com/s2/favicons?domain=en.wikipedia.org&sz=32'}
+                  alt="" width={20} height={20} className="rounded opacity-80 flex-shrink-0"
+                  onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                />
+                <span className="text-sm font-medium flex-1">
+                  {wiki.source === 'psychonautwiki' ? 'PsychonautWiki' : wiki.source === 'tripsit' ? 'TripSit' : 'Wikipedia'}
+                </span>
+                <svg className="w-4 h-4 text-textc/30 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                </svg>
+              </motion.a>
 
-        <div className="mt-5 flex justify-end">
-          <motion.button onClick={onClose} className="btn btn-primary" whileTap={{ scale: 0.97 }} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.18, ease: 'easeOut', delay: 0.28 }}>
-            Sluiten
-          </motion.button>
-        </div>
+              {/* Close button */}
+              <div className="mt-5 flex justify-end">
+                <motion.button variants={itemVariants} onClick={onClose} className="btn btn-primary" whileTap={{ scale: 0.97 }}>
+                  Sluiten
+                </motion.button>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </motion.div>
     </motion.div>
   );
