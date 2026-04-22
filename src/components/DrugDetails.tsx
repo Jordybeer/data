@@ -13,12 +13,86 @@ interface DrugDetailsProps {
 
 type WikiResult = { url: string; source: 'psychonautwiki' | 'wikipedia' } | null;
 
+type DoseRange = { min: number | null; max: number | null } | null;
+type DurRange  = { min: number | null; max: number | null; units: string | null } | null;
+
+interface RoaDose {
+  units: string | null;
+  threshold: number | null;
+  light: DoseRange;
+  common: DoseRange;
+  strong: DoseRange;
+  heavy: number | null;
+}
+
+interface RoaDuration {
+  onset: DurRange;
+  comeup: DurRange;
+  peak: DurRange;
+  offset: DurRange;
+  total: DurRange;
+  afterglow: DurRange;
+}
+
+interface Roa {
+  name: string;
+  dose: RoaDose | null;
+  duration: RoaDuration | null;
+}
+
+const ROA_LABELS: Record<string, string> = {
+  oral: 'Oraal', smoked: 'Gerookt', insufflated: 'Nasaal',
+  intravenous: 'Intraveneus', sublingual: 'Sublinguaal',
+  rectal: 'Rectaal', intramuscular: 'Intramusculair', transdermal: 'Transdermaal',
+};
+
+const DOSE_LEVELS = [
+  { key: 'threshold', label: 'Drempel', color: 'text-textc/50' },
+  { key: 'light',     label: 'Licht',   color: 'text-emerald-400' },
+  { key: 'common',    label: 'Gewoon',  color: 'text-yellow-400' },
+  { key: 'strong',    label: 'Sterk',   color: 'text-orange-400' },
+  { key: 'heavy',     label: 'Zwaar',   color: 'text-red-400' },
+] as const;
+
+const DUR_FIELDS = [
+  { key: 'onset',     label: 'Aanvang' },
+  { key: 'comeup',    label: 'Opbouw' },
+  { key: 'peak',      label: 'Piek' },
+  { key: 'offset',    label: 'Afbouw' },
+  { key: 'total',     label: 'Totaal' },
+  { key: 'afterglow', label: 'Nawerkingen' },
+] as const;
+
+function fmtDose(dose: RoaDose, key: typeof DOSE_LEVELS[number]['key']): string | null {
+  if (!dose) return null;
+  const u = dose.units ?? '';
+  if (key === 'threshold') return dose.threshold != null ? `${dose.threshold} ${u}`.trim() : null;
+  if (key === 'heavy')     return dose.heavy     != null ? `${dose.heavy}+ ${u}`.trim()  : null;
+  const r = dose[key] as DoseRange;
+  if (!r) return null;
+  if (r.min != null && r.max != null) return `${r.min}–${r.max} ${u}`.trim();
+  if (r.min != null) return `${r.min}+ ${u}`.trim();
+  if (r.max != null) return `≤${r.max} ${u}`.trim();
+  return null;
+}
+
+function fmtDur(r: DurRange): string | null {
+  if (!r) return null;
+  const u = r.units ?? '';
+  if (r.min != null && r.max != null) return `${r.min}–${r.max} ${u}`.trim();
+  if (r.min != null) return `${r.min}+ ${u}`.trim();
+  if (r.max != null) return `≤${r.max} ${u}`.trim();
+  return null;
+}
+
 const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editNote, setEditNote] = useState(drug.notes || '');
   const [isSaving, setIsSaving] = useState(false);
   const [saveError, setSaveError] = useState('');
   const [wiki, setWiki] = useState<WikiResult>(null);
+  const [roas, setRoas] = useState<Roa[] | null>(null);
+  const [roasOpen, setRoasOpen] = useState(false);
 
   useEffect(() => {
     const prev = document.body.style.overflow;
@@ -40,23 +114,36 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            query: `{ substances(query: ${JSON.stringify(drug.name)}) { name url } }`,
+            query: `{
+              substances(query: ${JSON.stringify(drug.name)}) {
+                name url
+                roas {
+                  name
+                  dose { units threshold light { min max } common { min max } strong { min max } heavy }
+                  duration {
+                    onset { min max units } comeup { min max units } peak { min max units }
+                    offset { min max units } total { min max units } afterglow { min max units }
+                  }
+                }
+              }
+            }`,
           }),
         });
         const json = await res.json();
         if (cancelled) return;
-        const substances: { name: string; url: string }[] = json?.data?.substances ?? [];
-        const match = substances.find(
-          (s) => s.name.toLowerCase() === drug.name.toLowerCase(),
-        );
+        const substances: { name: string; url: string; roas: Roa[] }[] = json?.data?.substances ?? [];
+        const match = substances.find((s) => s.name.toLowerCase() === drug.name.toLowerCase());
         if (match?.url) {
           setWiki({ url: match.url, source: 'psychonautwiki' });
+          setRoas(match.roas ?? []);
         } else {
           setWiki({ url: `https://en.wikipedia.org/wiki/${encodeURIComponent(drug.name)}`, source: 'wikipedia' });
+          setRoas([]);
         }
       } catch {
         if (!cancelled) {
           setWiki({ url: `https://en.wikipedia.org/wiki/${encodeURIComponent(drug.name)}`, source: 'wikipedia' });
+          setRoas([]);
         }
       }
     })();
@@ -99,8 +186,9 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
         exit={{ opacity: 0, scale: 0.94 }}
         transition={{ type: 'spring' as const, stiffness: 400, damping: 30 }}
       >
-        {/* Header — sticky so close button is always reachable */}
-        <div className="sticky top-0 z-10 flex justify-between items-start mb-5 gap-3 pb-4 border-b border-borderc/40"
+        {/* Sticky header */}
+        <div
+          className="sticky top-0 z-10 flex justify-between items-start gap-3 pb-4 border-b border-borderc/40"
           style={{ background: 'rgba(15,23,42,0.96)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)', margin: '-28px -28px 20px', padding: '20px 28px' }}
         >
           <div className="min-w-0">
@@ -126,9 +214,7 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
                     src={wiki.source === 'psychonautwiki'
                       ? 'https://www.google.com/s2/favicons?domain=psychonautwiki.org&sz=16'
                       : 'https://www.google.com/s2/favicons?domain=en.wikipedia.org&sz=16'}
-                    alt=""
-                    width={12}
-                    height={12}
+                    alt="" width={12} height={12}
                     className="rounded-sm opacity-80"
                     onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
                   />
@@ -149,30 +235,19 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
           </motion.button>
         </div>
 
-        {/* Notes section */}
+        {/* Notes */}
         <div className="bg-bg/40 p-4 rounded-2xl border border-borderc/50">
           <div className="flex justify-between items-center mb-3">
             <h3 className="text-xs font-bold text-textc/60 uppercase tracking-widest">Notities</h3>
             {isAdmin && !isEditing && (
-              <button
-                onClick={() => setIsEditing(true)}
-                className="btn text-xs px-3 min-h-[32px]"
-              >
+              <button onClick={() => setIsEditing(true)} className="btn text-xs px-3 min-h-[32px]">
                 Bewerken
               </button>
             )}
           </div>
-
           <AnimatePresence mode="wait">
             {isEditing ? (
-              <motion.div
-                key="editing"
-                initial={{ opacity: 0, y: 6 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -6 }}
-                transition={{ duration: 0.15 }}
-                className="flex flex-col gap-3"
-              >
+              <motion.div key="editing" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.15 }} className="flex flex-col gap-3">
                 <textarea
                   className="input w-full min-h-[140px] p-3"
                   value={editNote}
@@ -182,33 +257,94 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
                 />
                 {saveError && <p className="text-sm text-red-400">{saveError}</p>}
                 <div className="flex justify-end gap-2">
-                  <button
-                    onClick={() => { setIsEditing(false); setEditNote(drug.notes || ''); setSaveError(''); }}
-                    className="btn"
-                  >
-                    Annuleren
-                  </button>
-                  <button onClick={handleSave} disabled={isSaving} className="btn btn-primary">
-                    {isSaving ? 'Opslaan...' : 'Opslaan'}
-                  </button>
+                  <button onClick={() => { setIsEditing(false); setEditNote(drug.notes || ''); setSaveError(''); }} className="btn">Annuleren</button>
+                  <button onClick={handleSave} disabled={isSaving} className="btn btn-primary">{isSaving ? 'Opslaan...' : 'Opslaan'}</button>
                 </div>
               </motion.div>
             ) : (
-              <motion.p
-                key="viewing"
-                initial={{ opacity: 0, y: 6 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -6 }}
-                transition={{ duration: 0.15 }}
-                className="text-textc leading-relaxed whitespace-pre-wrap text-sm"
-              >
-                {drug.notes || (
-                  <span className="text-textc/40 italic">Geen notities voor deze stof.</span>
-                )}
+              <motion.p key="viewing" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.15 }} className="text-textc leading-relaxed whitespace-pre-wrap text-sm">
+                {drug.notes || <span className="text-textc/40 italic">Geen notities voor deze stof.</span>}
               </motion.p>
             )}
           </AnimatePresence>
         </div>
+
+        {/* Dosage & duration — only shown when PsychonautWiki has data */}
+        {roas !== null && roas.length > 0 && (
+          <div className="mt-3 rounded-2xl border border-borderc/50 overflow-hidden">
+            <button
+              onClick={() => setRoasOpen((o) => !o)}
+              className="w-full flex items-center justify-between px-4 py-3 text-left"
+              aria-expanded={roasOpen}
+            >
+              <span className="text-xs font-bold text-textc/60 uppercase tracking-widest">Dosering &amp; duur</span>
+              <motion.svg
+                className="w-4 h-4 text-textc/40 flex-shrink-0"
+                fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                animate={{ rotate: roasOpen ? 180 : 0 }}
+                transition={{ duration: 0.2 }}
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </motion.svg>
+            </button>
+
+            <AnimatePresence initial={false}>
+              {roasOpen && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: 'auto', opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.22, ease: 'easeInOut' }}
+                  className="overflow-hidden"
+                >
+                  <div className="px-4 pb-4 space-y-5">
+                    {roas.map((roa) => {
+                      const roaLabel = ROA_LABELS[roa.name.toLowerCase()] ?? roa.name;
+                      const doseRows = roa.dose
+                        ? DOSE_LEVELS.map((l) => ({ ...l, value: fmtDose(roa.dose!, l.key) })).filter((l) => l.value)
+                        : [];
+                      const durRows = roa.duration
+                        ? DUR_FIELDS.map((f) => ({ ...f, value: fmtDur(roa.duration![f.key]) })).filter((f) => f.value)
+                        : [];
+
+                      if (!doseRows.length && !durRows.length) return null;
+
+                      return (
+                        <div key={roa.name}>
+                          <p className="text-[11px] font-bold text-textc/40 uppercase tracking-widest mb-2">{roaLabel}</p>
+
+                          {doseRows.length > 0 && (
+                            <div className="space-y-1 mb-3">
+                              {doseRows.map((l) => (
+                                <div key={l.key} className="flex items-center justify-between">
+                                  <span className="text-xs text-textc/50 w-16 flex-shrink-0">{l.label}</span>
+                                  <div className="flex-1 mx-2 h-px bg-borderc/30" />
+                                  <span className={`text-xs font-semibold tabular-nums ${l.color}`}>{l.value}</span>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+
+                          {durRows.length > 0 && (
+                            <div className="space-y-1">
+                              {durRows.map((f) => (
+                                <div key={f.key} className="flex items-center justify-between">
+                                  <span className="text-xs text-textc/50 w-16 flex-shrink-0">{f.label}</span>
+                                  <div className="flex-1 mx-2 h-px bg-borderc/30" />
+                                  <span className="text-xs font-semibold tabular-nums text-textc/70">{f.value}</span>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        )}
 
         <div className="mt-5 flex justify-end">
           <motion.button onClick={onClose} className="btn btn-primary" whileTap={{ scale: 0.97 }}>
