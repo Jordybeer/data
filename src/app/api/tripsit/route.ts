@@ -8,7 +8,7 @@ export async function GET(req: NextRequest) {
   if (!name) return NextResponse.json({ error: 'missing name' }, { status: 400 });
 
   try {
-    const res = await fetch(`${TRIPSIT_API}?name=${encodeURIComponent(name)}`, {
+    const res = await fetch(`${TRIPSIT_API}/${encodeURIComponent(name)}`, {
       signal: AbortSignal.timeout(TIMEOUT_MS),
     });
 
