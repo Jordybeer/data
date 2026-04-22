@@ -268,7 +268,11 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
         </div>
 
         {/* Notes */}
-        <div className="bg-bg/40 p-5 pt-10 mt-6 rounded-2xl border border-borderc/50">
+        <motion.div
+          className="bg-bg/40 p-5 pt-10 mt-6 rounded-2xl border border-borderc/50"
+          initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.18, ease: 'easeOut' }}
+        >
           <div className="flex justify-between items-center mb-3">
             <h3 className="text-xs font-bold text-textc/60 uppercase tracking-widest">Notities</h3>
             {isAdmin && !isEditing && (
@@ -299,7 +303,7 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
               </motion.p>
             )}
           </AnimatePresence>
-        </div>
+        </motion.div>
 
         {/* Loading spinner */}
         <AnimatePresence>
@@ -326,7 +330,7 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
           <motion.div
             className="mt-3 rounded-2xl border border-borderc/50 overflow-hidden"
             initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.25, ease: 'easeOut' }}
+            transition={{ duration: 0.18, ease: 'easeOut', delay: 0.07 }}
           >
             <button
               onClick={() => setRoasOpen((o) => !o)}
@@ -406,7 +410,7 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
           <motion.div
             className="mt-3 rounded-2xl border border-borderc/50 overflow-hidden"
             initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.25, ease: 'easeOut' }}
+            transition={{ duration: 0.18, ease: 'easeOut', delay: 0.07 }}
           >
             <button
               onClick={() => setRoasOpen((o) => !o)}
@@ -474,7 +478,7 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
           <motion.div
             className="mt-3 rounded-2xl border border-borderc/50 overflow-hidden"
             initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.25, ease: 'easeOut', delay: 0.05 }}
+            transition={{ duration: 0.18, ease: 'easeOut', delay: 0.14 }}
           >
             <button
               onClick={() => setInteractionsOpen((o) => !o)}
@@ -523,7 +527,7 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
             rel="noopener noreferrer"
             className="mt-3 flex items-center gap-3 px-4 py-3 rounded-2xl border border-borderc/50 bg-bg/40 text-textc/70 hover:bg-bg-hover transition-colors"
             initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.25, ease: 'easeOut', delay: 0.1 }}
+            transition={{ duration: 0.18, ease: 'easeOut', delay: 0.21 }}
           >
             <img
               src={wiki.source === 'psychonautwiki'
@@ -545,7 +549,7 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
         )}
 
         <div className="mt-5 flex justify-end">
-          <motion.button onClick={onClose} className="btn btn-primary" whileTap={{ scale: 0.97 }}>
+          <motion.button onClick={onClose} className="btn btn-primary" whileTap={{ scale: 0.97 }} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.18, ease: 'easeOut', delay: 0.28 }}>
             Sluiten
           </motion.button>
         </div>
