@@ -139,9 +139,16 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
             .then((r) => r.json())
             .then((j) => {
               if (cancelled) return;
-              const s = (j?.data?.substances ?? []) as { name: string; interactions?: Interaction[] }[];
+              type IxSubstance = { name: string };
+              type IxResult = { dangerousInteractions?: IxSubstance[]; unsafeInteractions?: IxSubstance[]; uncertainInteractions?: IxSubstance[] };
+              const s = (j?.data?.substances ?? []) as (IxResult & { name: string })[];
               const m = s.find((x) => x.name.toLowerCase() === drug.name.toLowerCase());
-              setInteractions(m?.interactions ?? []);
+              if (!m) { setInteractions([]); return; }
+              setInteractions([
+                ...(m.dangerousInteractions ?? []).map((x) => ({ name: x.name, status: 'dangerous' })),
+                ...(m.unsafeInteractions ?? []).map((x) => ({ name: x.name, status: 'unsafe' })),
+                ...(m.uncertainInteractions ?? []).map((x) => ({ name: x.name, status: 'caution' })),
+              ]);
             })
             .catch(() => setInteractions([]));
         }

@@ -19,7 +19,7 @@ export async function GET(req: NextRequest) {
           offset { min max units } total { min max units } afterglow { min max units }
         }
       }
-      ${includeInteractions ? 'interactions { name status }' : ''}
+      ${includeInteractions ? 'dangerousInteractions { name } unsafeInteractions { name } uncertainInteractions { name }' : ''}
     }
   }`;
 
