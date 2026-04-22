@@ -10,7 +10,7 @@ const DotLottieReact = dynamic(
   { ssr: false },
 );
 
-const LOTTIE_SRC = 'https://lottie.host/4930d9a9-fe50-4128-bbc1-cdda8fcbe08c/9TArMKSg77.lottie';
+const LOTTIE_SRC = '/animations/theme-toggle.json';
 
 export default function ThemeToggle() {
   const { theme, toggle } = useTheme();
