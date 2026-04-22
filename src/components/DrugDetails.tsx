@@ -228,7 +228,7 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
                     src={wiki.source === 'psychonautwiki'
                       ? 'https://www.google.com/s2/favicons?domain=psychonautwiki.org&sz=16'
                       : wiki.source === 'tripsit'
-                      ? 'https://tripsit.me/favicon.ico'
+                      ? 'https://www.google.com/s2/favicons?domain=tripsit.me&sz=16'
                       : 'https://www.google.com/s2/favicons?domain=en.wikipedia.org&sz=16'}
                     alt="" width={14} height={14}
                     className="rounded-sm opacity-80"
@@ -479,7 +479,7 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
               src={wiki.source === 'psychonautwiki'
                 ? 'https://www.google.com/s2/favicons?domain=psychonautwiki.org&sz=32'
                 : wiki.source === 'tripsit'
-                ? 'https://tripsit.me/favicon.ico'
+                ? 'https://www.google.com/s2/favicons?domain=tripsit.me&sz=32'
                 : 'https://www.google.com/s2/favicons?domain=en.wikipedia.org&sz=32'}
               alt="" width={20} height={20}
               className="rounded opacity-80 flex-shrink-0"
