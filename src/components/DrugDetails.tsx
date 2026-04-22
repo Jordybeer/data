@@ -11,7 +11,10 @@ interface DrugDetailsProps {
   onNoteUpdate: (drugId: string, newNote: string) => void;
 }
 
-type WikiResult = { url: string; source: 'psychonautwiki' | 'wikipedia' } | null;
+type WikiResult = { url: string; source: 'psychonautwiki' | 'tripsit' | 'wikipedia' } | null;
+
+interface TripSitData { formatted_dose?: string; duration?: string; }
+interface Interaction { name: string; status: string; }
 
 type DoseRange = { min: number | null; max: number | null } | null;
 type DurRange  = { min: number | null; max: number | null; units: string | null } | null;
@@ -76,6 +79,14 @@ function fmtDose(dose: RoaDose, key: typeof DOSE_LEVELS[number]['key']): string 
   return null;
 }
 
+function severityEmoji(status: string): string {
+  const s = status.toLowerCase();
+  if (s.includes('dangerous') || s.includes('deadly')) return '💀';
+  if (s.includes('unsafe')) return '⚠️';
+  if (s.includes('caution')) return '❗️';
+  return '✅';
+}
+
 function fmtDur(r: DurRange): string | null {
   if (!r) return null;
   const u = r.units ?? '';
@@ -92,7 +103,10 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
   const [saveError, setSaveError] = useState('');
   const [wiki, setWiki] = useState<WikiResult>(null);
   const [roas, setRoas] = useState<Roa[] | null>(null);
+  const [tripsit, setTripsit] = useState<TripSitData | null>(null);
   const [roasOpen, setRoasOpen] = useState(false);
+  const [interactions, setInteractions] = useState<Interaction[] | null>(null);
+  const [interactionsOpen, setInteractionsOpen] = useState(false);
 
   useEffect(() => {
     const prev = document.body.style.overflow;
@@ -109,24 +123,42 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
   useEffect(() => {
     let cancelled = false;
     (async () => {
+      let matched = false;
       try {
         const res = await fetch(`/api/psychonautwiki?name=${encodeURIComponent(drug.name)}`);
         const json = await res.json();
         if (cancelled) return;
-        const substances: { name: string; url: string; roas: Roa[] }[] = json?.data?.substances ?? [];
+        const substances: { name: string; url: string; roas: Roa[]; interactions?: Interaction[] }[] = json?.data?.substances ?? [];
         const match = substances.find((s) => s.name.toLowerCase() === drug.name.toLowerCase());
         if (match?.url) {
           setWiki({ url: match.url, source: 'psychonautwiki' });
           setRoas(match.roas ?? []);
-        } else {
-          setWiki({ url: `https://en.wikipedia.org/wiki/${encodeURIComponent(drug.name)}`, source: 'wikipedia' });
-          setRoas([]);
+          setInteractions(match.interactions ?? []);
+          matched = true;
         }
-      } catch {
-        if (!cancelled) {
-          setWiki({ url: `https://en.wikipedia.org/wiki/${encodeURIComponent(drug.name)}`, source: 'wikipedia' });
+      } catch { /* fall through */ }
+
+      if (cancelled || matched) return;
+
+      try {
+        const res = await fetch(`https://tripbot.tripsit.me/api/tripsit/getDrug?name=${encodeURIComponent(drug.name)}`);
+        const json = await res.json();
+        if (cancelled) return;
+        const entry = json?.data?.[0];
+        if (entry) {
+          setWiki({ url: entry.url ?? `https://tripsit.me/${encodeURIComponent(drug.name.toLowerCase())}`, source: 'tripsit' });
+          setTripsit({ formatted_dose: entry.properties?.formatted_dose, duration: entry.properties?.duration });
           setRoas([]);
+          const combos: Record<string, { status: string }> = entry.combos ?? {};
+          setInteractions(Object.entries(combos).map(([name, v]) => ({ name, status: v.status ?? '' })));
+          return;
         }
+      } catch { /* fall through */ }
+
+      if (!cancelled) {
+        setWiki({ url: `https://en.wikipedia.org/wiki/Special:Search?search=${encodeURIComponent(drug.name)}`, source: 'wikipedia' });
+        setRoas([]);
+        setInteractions([]);
       }
     })();
     return () => { cancelled = true; };
@@ -176,11 +208,11 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
           <div className="min-w-0">
             <h2 className="text-2xl font-bold text-primary leading-snug">{drug.name}</h2>
             <div className="flex flex-wrap gap-1.5 mt-2">
-              <span className="text-[11px] font-medium text-primary/80 bg-primary/10 border border-primary/20 px-2 py-0.5 rounded-md">
+              <span className="text-sm font-medium text-primary/80 bg-primary/10 border border-primary/20 px-2.5 py-1 rounded-md">
                 {drug.category}
               </span>
               {drug.category2 && (
-                <span className="text-[11px] font-medium text-cyan-300/80 bg-cyan-400/10 border border-cyan-400/20 px-2 py-0.5 rounded-md">
+                <span className="text-sm font-medium text-cyan-300/80 bg-cyan-400/10 border border-cyan-400/20 px-2.5 py-1 rounded-md">
                   {drug.category2}
                 </span>
               )}
@@ -189,14 +221,16 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
                   href={wiki.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 text-[11px] font-medium text-textc/70 bg-white/[0.07] border border-white/10 px-2 py-0.5 rounded-md"
+                  className="inline-flex items-center gap-1.5 text-sm font-medium text-textc/70 bg-white/[0.07] border border-white/10 px-2.5 py-1 rounded-md"
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={wiki.source === 'psychonautwiki'
                       ? 'https://www.google.com/s2/favicons?domain=psychonautwiki.org&sz=16'
+                      : wiki.source === 'tripsit'
+                      ? 'https://tripsit.me/favicon.ico'
                       : 'https://www.google.com/s2/favicons?domain=en.wikipedia.org&sz=16'}
-                    alt="" width={12} height={12}
+                    alt="" width={14} height={14}
                     className="rounded-sm opacity-80"
                     onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
                   />
@@ -218,7 +252,7 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
         </div>
 
         {/* Notes */}
-        <div className="bg-bg/40 p-4 rounded-2xl border border-borderc/50">
+        <div className="bg-bg/40 p-4 pt-6 rounded-2xl border border-borderc/50">
           <div className="flex justify-between items-center mb-3">
             <h3 className="text-xs font-bold text-textc/60 uppercase tracking-widest">Notities</h3>
             {isAdmin && !isEditing && (
@@ -326,6 +360,138 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
               )}
             </AnimatePresence>
           </div>
+        )}
+
+        {tripsit && (tripsit.formatted_dose || tripsit.duration) && (
+          <div className="mt-3 rounded-2xl border border-borderc/50 overflow-hidden">
+            <button
+              onClick={() => setRoasOpen((o) => !o)}
+              className="w-full flex items-center justify-between px-4 py-3 text-left"
+              aria-expanded={roasOpen}
+            >
+              <span className="text-xs font-bold text-textc/60 uppercase tracking-widest">Dosering &amp; duur</span>
+              <motion.svg
+                className="w-4 h-4 text-textc/40 flex-shrink-0"
+                fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                animate={{ rotate: roasOpen ? 180 : 0 }}
+                transition={{ duration: 0.2 }}
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </motion.svg>
+            </button>
+            <AnimatePresence initial={false}>
+              {roasOpen && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: 'auto', opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.22, ease: 'easeInOut' }}
+                  className="overflow-hidden"
+                >
+                  <div className="px-4 pb-4 space-y-5">
+                    {tripsit.formatted_dose && (
+                      <div>
+                        <p className="text-[11px] font-bold text-textc/40 uppercase tracking-widest mb-2">Dosering</p>
+                        <div className="space-y-1">
+                          {tripsit.formatted_dose.split('\n').filter(Boolean).map((line, i) => {
+                            const [label, ...rest] = line.split(':');
+                            const value = rest.join(':').trim();
+                            return value ? (
+                              <div key={i} className="flex items-center justify-between">
+                                <span className="text-xs text-textc/50 w-16 flex-shrink-0">{label.trim()}</span>
+                                <div className="flex-1 mx-2 h-px bg-borderc/30" />
+                                <span className="text-xs font-semibold tabular-nums text-textc/70">{value}</span>
+                              </div>
+                            ) : (
+                              <p key={i} className="text-[11px] font-bold text-textc/40 uppercase tracking-widest mt-2 mb-1">{label.trim()}</p>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
+                    {tripsit.duration && (
+                      <div>
+                        <p className="text-[11px] font-bold text-textc/40 uppercase tracking-widest mb-2">Duur</p>
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs text-textc/50 w-16 flex-shrink-0">Totaal</span>
+                          <div className="flex-1 mx-2 h-px bg-borderc/30" />
+                          <span className="text-xs font-semibold tabular-nums text-textc/70">{tripsit.duration}</span>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        )}
+
+        {interactions !== null && interactions.length > 0 && (
+          <div className="mt-3 rounded-2xl border border-borderc/50 overflow-hidden">
+            <button
+              onClick={() => setInteractionsOpen((o) => !o)}
+              className="w-full flex items-center justify-between px-4 py-3 text-left"
+              aria-expanded={interactionsOpen}
+            >
+              <span className="text-xs font-bold text-textc/60 uppercase tracking-widest">Risicovolle interacties</span>
+              <motion.svg
+                className="w-4 h-4 text-textc/40 flex-shrink-0"
+                fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                animate={{ rotate: interactionsOpen ? 180 : 0 }}
+                transition={{ duration: 0.2 }}
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </motion.svg>
+            </button>
+            <AnimatePresence initial={false}>
+              {interactionsOpen && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: 'auto', opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.22, ease: 'easeInOut' }}
+                  className="overflow-hidden"
+                >
+                  <div className="px-4 pb-4 space-y-1">
+                    {interactions.map((ix) => (
+                      <div key={ix.name} className="flex items-center gap-2">
+                        <span className="text-sm leading-none">{severityEmoji(ix.status)}</span>
+                        <span className="text-xs text-textc/70 flex-1">{ix.name}</span>
+                        <span className="text-[11px] text-textc/40">{ix.status}</span>
+                      </div>
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        )}
+
+        {wiki && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <a
+            href={wiki.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-3 flex items-center gap-3 px-4 py-3 rounded-2xl border border-borderc/50 bg-bg/40 text-textc/70 hover:bg-bg-hover transition-colors"
+          >
+            <img
+              src={wiki.source === 'psychonautwiki'
+                ? 'https://www.google.com/s2/favicons?domain=psychonautwiki.org&sz=32'
+                : wiki.source === 'tripsit'
+                ? 'https://tripsit.me/favicon.ico'
+                : 'https://www.google.com/s2/favicons?domain=en.wikipedia.org&sz=32'}
+              alt="" width={20} height={20}
+              className="rounded opacity-80 flex-shrink-0"
+              onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+            />
+            <span className="text-sm font-medium flex-1">
+              {wiki.source === 'psychonautwiki' ? 'PsychonautWiki' : wiki.source === 'tripsit' ? 'TripSit' : 'Wikipedia'}
+            </span>
+            <svg className="w-4 h-4 text-textc/30 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+            </svg>
+          </a>
         )}
 
         <div className="mt-5 flex justify-end">

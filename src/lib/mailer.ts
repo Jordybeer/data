@@ -17,9 +17,9 @@ function transporter() {
 }
 
 export async function sendMagicLink(to: string, url: string) {
-  const from = process.env.SMTP_FROM || process.env.SMTP_USER;
+  const from = process.env.SMTP_FROM || process.env.SMTP_USER || process.env.ADMIN_MAIL;
   if (!process.env.SMTP_HOST || !from) {
-    throw new Error('SMTP not configured (SMTP_HOST / SMTP_FROM)');
+    throw new Error('SMTP not configured (SMTP_HOST / SMTP_FROM / ADMIN_MAIL)');
   }
   await transporter().sendMail({
     from,
