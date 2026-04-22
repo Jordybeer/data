@@ -87,6 +87,15 @@ function severityEmoji(status: string): string {
   return '✅';
 }
 
+function severityLabel(status: string): string {
+  const s = status.toLowerCase();
+  if (s.includes('dangerous') || s.includes('deadly')) return 'Gevaarlijk';
+  if (s.includes('unsafe')) return 'Onveilig';
+  if (s.includes('caution')) return 'Voorzichtigheid';
+  if (s.includes('low risk')) return 'Laag risico';
+  return 'Onbekend';
+}
+
 const containerVariants = {
   hidden: {},
   visible: { transition: { staggerChildren: 0.07 } },
@@ -307,7 +316,7 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
               animate="visible"
             >
               {/* Notes */}
-              <motion.div variants={itemVariants} className="bg-bg/40 p-5 pt-10 mt-6 rounded-2xl border border-borderc/50">
+              <motion.div variants={itemVariants} className="bg-bg/40 p-5 mt-6 rounded-2xl border border-borderc/50">
                 <div className="flex justify-between items-center mb-3">
                   <h3 className="text-xs font-bold text-textc/60 uppercase tracking-widest">Notities</h3>
                   {isAdmin && !isEditing && (
@@ -341,9 +350,9 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
               </motion.div>
 
               {/* Dosage & duration — PsychonautWiki */}
-              {roas.length > 0 && (
+              {roas !== null && roas.length > 0 && (
                 <motion.div variants={itemVariants} className="mt-3 rounded-2xl border border-borderc/50 overflow-hidden">
-                  <button onClick={() => setRoasOpen((o) => !o)} className="w-full flex items-center justify-between px-4 py-3 text-left" aria-expanded={roasOpen}>
+                  <button onClick={() => setRoasOpen((o) => !o)} className="w-full flex items-center justify-between px-4 py-3 min-h-[44px] text-left" aria-expanded={roasOpen}>
                     <span className="text-xs font-bold text-textc/60 uppercase tracking-widest">Dosering &amp; duur</span>
                     <motion.svg className="w-4 h-4 text-textc/40 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" animate={{ rotate: roasOpen ? 180 : 0 }} transition={{ duration: 0.2 }}>
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
@@ -396,7 +405,7 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
               {/* Dosage & duration — TripSit */}
               {tripsit && (tripsit.formatted_dose || tripsit.duration) && (
                 <motion.div variants={itemVariants} className="mt-3 rounded-2xl border border-borderc/50 overflow-hidden">
-                  <button onClick={() => setRoasOpen((o) => !o)} className="w-full flex items-center justify-between px-4 py-3 text-left" aria-expanded={roasOpen}>
+                  <button onClick={() => setRoasOpen((o) => !o)} className="w-full flex items-center justify-between px-4 py-3 min-h-[44px] text-left" aria-expanded={roasOpen}>
                     <span className="text-xs font-bold text-textc/60 uppercase tracking-widest">Dosering &amp; duur</span>
                     <motion.svg className="w-4 h-4 text-textc/40 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" animate={{ rotate: roasOpen ? 180 : 0 }} transition={{ duration: 0.2 }}>
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
@@ -446,7 +455,7 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
               {/* Interactions */}
               {interactions.length > 0 && (
                 <motion.div variants={itemVariants} className="mt-3 rounded-2xl border border-borderc/50 overflow-hidden">
-                  <button onClick={() => setInteractionsOpen((o) => !o)} className="w-full flex items-center justify-between px-4 py-3 text-left" aria-expanded={interactionsOpen}>
+                  <button onClick={() => setInteractionsOpen((o) => !o)} className="w-full flex items-center justify-between px-4 py-3 min-h-[44px] text-left" aria-expanded={interactionsOpen}>
                     <span className="text-xs font-bold text-textc/60 uppercase tracking-widest">Risicovolle interacties</span>
                     <motion.svg className="w-4 h-4 text-textc/40 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" animate={{ rotate: interactionsOpen ? 180 : 0 }} transition={{ duration: 0.2 }}>
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
@@ -457,10 +466,10 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
                       <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.22, ease: 'easeInOut' }} className="overflow-hidden">
                         <div className="px-4 pb-4 space-y-1">
                           {interactions.map((ix) => (
-                            <div key={ix.name} className="flex items-center gap-2">
-                              <span className="text-sm leading-none">{severityEmoji(ix.status)}</span>
+                            <div key={ix.name} className="flex items-center gap-2 min-h-[36px]">
+                              <span className="text-sm leading-none" role="img" aria-label={severityLabel(ix.status)}>{severityEmoji(ix.status)}</span>
                               <span className="text-xs text-textc/70 flex-1">{ix.name}</span>
-                              <span className="text-[11px] text-textc/40">{ix.status}</span>
+                              <span className="text-[11px] text-textc/40">{severityLabel(ix.status)}</span>
                             </div>
                           ))}
                         </div>
