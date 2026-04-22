@@ -170,7 +170,7 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
       >
         {/* Sticky header */}
         <div
-          className="sticky top-0 z-10 flex justify-between items-start gap-3 pb-4 border-b border-borderc/40"
+          className="pd-modalStickyHeader sticky top-0 z-10 flex justify-between items-start gap-3 pb-4 border-b border-borderc/40"
           style={{ background: 'rgba(15,23,42,0.96)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)', margin: '-28px -28px 20px', padding: '20px 28px' }}
         >
           <div className="min-w-0">
@@ -251,7 +251,7 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
           </AnimatePresence>
         </div>
 
-        {/* Dosage & duration — only shown when PsychonautWiki has data */}
+        {/* Dosage & duration */}
         {roas !== null && roas.length > 0 && (
           <div className="mt-3 rounded-2xl border border-borderc/50 overflow-hidden">
             <button
