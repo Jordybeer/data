@@ -11,7 +11,7 @@ export async function GET(req: NextRequest) {
     if (!code) return NextResponse.redirect(new URL('/?auth=invalid', req.url));
 
     const cookieStore = await cookies();
-    const res = NextResponse.next();
+    const pending: { name: string; value: string; options: Record<string, unknown> }[] = [];
 
     const supabase = createServerClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -19,7 +19,7 @@ export async function GET(req: NextRequest) {
       {
         cookies: {
           getAll: () => cookieStore.getAll(),
-          setAll: (toSet) => toSet.forEach(({ name, value, options }) => res.cookies.set(name, value, options)),
+          setAll: (toSet) => pending.push(...toSet),
         },
       },
     );
@@ -33,7 +33,8 @@ export async function GET(req: NextRequest) {
 
     await setSessionCookie(data.user.email!);
     return NextResponse.redirect(new URL('/admin', req.url));
-  } catch {
+  } catch (e) {
+    console.error('GitHub callback error:', e);
     return NextResponse.redirect(new URL('/?auth=error', req.url));
   }
 }
