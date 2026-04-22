@@ -199,7 +199,7 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
   }, [wiki, interactions]);
 
   const item = (delay: number) => ({
-    initial: false as const,
+    initial: { opacity: 0, y: 16 },
     animate: contentVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 16 },
     transition: { duration: 0.35, delay: contentVisible ? delay : 0, ease: [0.25, 0.46, 0.45, 0.94] as const },
   });

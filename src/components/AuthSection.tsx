@@ -7,42 +7,10 @@ import { useSession } from '@/components/SessionProvider';
 export const AuthSection: React.FC = () => {
   const { session } = useSession();
   const [open, setOpen] = useState(false);
-  const [email, setEmail] = useState('');
-  const [status, setStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
-  const [errorMsg, setErrorMsg] = useState('');
 
   const signOut = async () => {
     await fetch('/api/auth/signout', { method: 'POST' });
     window.location.href = '/';
-  };
-
-  const request = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!email) return;
-    setStatus('sending');
-    setErrorMsg('');
-    try {
-      const r = await fetch('/api/auth/request', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
-      });
-      if (r.ok) {
-        setStatus('sent');
-      } else {
-        const j = await r.json().catch(() => ({}));
-        const msg = j?.error;
-        if (r.status === 401 || r.status === 403 || msg?.toLowerCase().includes('not allowed') || msg?.toLowerCase().includes('unauthorized')) {
-          setErrorMsg('Dit e-mailadres is niet geautoriseerd.');
-        } else {
-          setErrorMsg(msg || 'Er ging iets mis.');
-        }
-        setStatus('error');
-      }
-    } catch {
-      setErrorMsg('Netwerkfout. Probeer opnieuw.');
-      setStatus('error');
-    }
   };
 
   if (session.isAdmin) {
@@ -65,23 +33,17 @@ export const AuthSection: React.FC = () => {
   return (
     <div className="flex justify-center pt-2 pb-4">
       {!open ? (
-        <button
-          onClick={() => setOpen(true)}
-          className="text-xs text-textc/30"
-        >
+        <button onClick={() => setOpen(true)} className="text-xs text-textc/30">
           Admin
         </button>
       ) : (
-        <form
-          onSubmit={request}
-          className="card p-5 flex flex-col gap-3 w-full max-w-sm"
-        >
+        <div className="card p-5 flex flex-col gap-3 w-full max-w-sm">
           <div className="flex items-center justify-between">
             <p className="text-sm font-semibold text-textc/80">Admin inloggen</p>
             <button
               type="button"
               aria-label="Sluiten"
-              onClick={() => { setOpen(false); setStatus('idle'); setEmail(''); }}
+              onClick={() => setOpen(false)}
               className="flex items-center justify-center w-11 h-11 -mr-2 rounded-full text-textc/40"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -89,32 +51,13 @@ export const AuthSection: React.FC = () => {
               </svg>
             </button>
           </div>
-          <input
-            type="email"
-            required
-            autoComplete="email"
-            autoFocus
-            className="input w-full"
-            placeholder="jouw@email.com"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-          <button
-            type="submit"
-            className="btn btn-primary w-full"
-            disabled={status === 'sending' || status === 'sent'}
-          >
-            {status === 'sending' ? 'Versturen…' : status === 'sent' ? 'Controleer je inbox' : 'Stuur magic link'}
-          </button>
-          {status === 'sent' && (
-            <p className="text-xs text-green-400 text-center">
-              Als dat e-mailadres geautoriseerd is, is er een link onderweg. Verloopt in 15 minuten.
-            </p>
-          )}
-          {status === 'error' && (
-            <p className="text-xs text-red-400 text-center">{errorMsg}</p>
-          )}
-        </form>
+          <a href="/api/auth/github" className="btn btn-primary w-full flex items-center justify-center gap-2">
+            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61-.546-1.385-1.335-1.755-1.335-1.755-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 21.795 24 17.295 24 12c0-6.63-5.37-12-12-12" />
+            </svg>
+            Inloggen met GitHub
+          </a>
+        </div>
       )}
     </div>
   );
