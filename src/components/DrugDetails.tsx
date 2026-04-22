@@ -163,10 +163,10 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
       <motion.div
         className="modal"
         onClick={(e) => e.stopPropagation()}
-        initial={{ opacity: 0, scale: 0.94 }}
-        animate={{ opacity: 1, scale: 1 }}
-        exit={{ opacity: 0, scale: 0.94 }}
-        transition={{ type: 'spring' as const, stiffness: 400, damping: 30 }}
+        initial={{ opacity: 0, y: 40 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: 40 }}
+        transition={{ type: 'spring' as const, stiffness: 400, damping: 32 }}
       >
         {/* Sticky header */}
         <div
