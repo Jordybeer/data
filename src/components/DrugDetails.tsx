@@ -93,8 +93,10 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
         exit={{ opacity: 0, scale: 0.94 }}
         transition={{ type: 'spring' as const, stiffness: 400, damping: 30 }}
       >
-        {/* Header */}
-        <div className="flex justify-between items-start mb-5 gap-3">
+        {/* Header — sticky so close button is always reachable */}
+        <div className="sticky top-0 z-10 flex justify-between items-start mb-5 gap-3 pb-4 border-b border-borderc/40"
+          style={{ background: 'rgba(15,23,42,0.96)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)', margin: '-28px -28px 20px', padding: '20px 28px' }}
+        >
           <div className="min-w-0">
             <h2 className="text-2xl font-bold text-primary leading-snug">{drug.name}</h2>
             <div className="flex flex-wrap gap-1.5 mt-2">
@@ -122,6 +124,7 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
                     width={12}
                     height={12}
                     className="rounded-sm opacity-80"
+                    onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
                   />
                   Wiki
                 </a>
@@ -131,7 +134,7 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
           <motion.button
             onClick={onClose}
             aria-label="Sluiten"
-            className="flex-shrink-0 flex items-center justify-center w-11 h-11 rounded-full bg-bg-hover border border-borderc text-textc/60 hover:text-textc transition-colors"
+            className="flex-shrink-0 flex items-center justify-center w-11 h-11 rounded-2xl bg-bg-hover border border-borderc text-textc/60 hover:text-textc transition-colors"
             whileTap={{ scale: 0.9 }}
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

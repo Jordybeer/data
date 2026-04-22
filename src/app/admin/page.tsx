@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import type { Drug } from '@/data/drugs';
 import { useSession } from '@/components/SessionProvider';
+import { Button } from '@/components/Button';
 
 type Row = Drug & {
   _notesDirty?: string;
@@ -131,13 +132,12 @@ export default function AdminPage() {
           </div>
           <div className="flex gap-2">
             <Link href="/" className="btn">← Terug</Link>
-            <button
-              className="btn"
-              style={{ color: '#fb7185', borderColor: 'rgba(251,113,133,0.3)' }}
+            <Button
+              variant="danger"
               onClick={async () => { await fetch('/api/auth/signout', { method: 'POST' }); window.location.href = '/'; }}
             >
               Uitloggen
-            </button>
+            </Button>
           </div>
         </div>
       </header>
@@ -242,23 +242,23 @@ export default function AdminPage() {
                         >
                           Nee
                         </button>
-                        <button
-                          className="btn text-xs py-0 px-2 h-8"
-                          style={{ color: '#fb7185', borderColor: 'rgba(251,113,133,0.3)' }}
+                        <Button
+                          variant="danger"
+                          size="sm"
                           disabled={busy === `del-${d.id}`}
                           onClick={() => remove(d.id)}
                         >
                           {busy === `del-${d.id}` ? '…' : 'Ja, verwijder'}
-                        </button>
+                        </Button>
                       </div>
                     ) : (
-                      <button
-                        className="btn text-xs"
-                        style={{ color: '#fb7185', borderColor: 'rgba(251,113,133,0.2)' }}
+                      <Button
+                        variant="danger"
+                        size="sm"
                         onClick={() => setDrugs((cur) => cur.map((r) => r.id === d.id ? { ...r, _confirmDelete: true } : r))}
                       >
                         Verwijder
-                      </button>
+                      </Button>
                     )}
                   </div>
 

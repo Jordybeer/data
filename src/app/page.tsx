@@ -75,7 +75,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen pb-20">
-      <header className="sticky top-0 z-10" style={{ background: 'rgba(8,16,29,0.84)', backdropFilter: 'blur(24px)', WebkitBackdropFilter: 'blur(24px)', borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
+      <header className="pd-stickyHeader">
         <div className="container mx-auto px-4 py-4">
           <div className="flex justify-between items-center mb-3">
             <h1 className="text-2xl font-bold">
