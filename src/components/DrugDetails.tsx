@@ -107,7 +107,6 @@ function fmtDur(r: DurRange): string | null {
 }
 
 const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps) => {
-  const [contentVisible, setContentVisible] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editNote, setEditNote] = useState(drug.notes || '');
   const [isSaving, setIsSaving] = useState(false);
@@ -191,18 +190,15 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
     return () => { cancelled = true; };
   }, [drug.name]);
 
-  useEffect(() => {
-    if (wiki !== null && interactions !== null) {
-      const raf = requestAnimationFrame(() => setContentVisible(true));
-      return () => cancelAnimationFrame(raf);
-    }
-  }, [wiki, interactions]);
+  const containerVariants = {
+    hidden: {},
+    visible: { transition: { staggerChildren: 0.14, delayChildren: 0.05 } },
+  };
 
-  const item = (delay: number) => ({
-    initial: { opacity: 0, y: 16 },
-    animate: contentVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 16 },
-    transition: { duration: 0.35, delay: contentVisible ? delay : 0, ease: [0.25, 0.46, 0.45, 0.94] as const },
-  });
+  const sectionVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.55, ease: [0.25, 0.46, 0.45, 0.94] as const } },
+  };
 
   const handleSave = async () => {
     setIsSaving(true);
@@ -306,9 +302,9 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
 
         {/* All sections fade in once both fetches complete */}
         {wiki !== null && interactions !== null && (
-          <div>
+          <motion.div variants={containerVariants} initial="hidden" animate="visible">
               {/* Notes */}
-              <motion.div {...item(0)} className="bg-bg/40 p-5 mt-3 rounded-2xl border border-borderc/50">
+              <motion.div variants={sectionVariants} className="bg-bg/40 p-5 mt-3 rounded-2xl border border-borderc/50">
                 <div className="flex justify-between items-center mb-3">
                   <h3 className="text-xs font-bold text-textc/60 uppercase tracking-widest">Notities</h3>
                   {isAdmin && !isEditing && (
@@ -343,7 +339,7 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
 
               {/* Dosage & duration — PsychonautWiki */}
               {roas !== null && roas.length > 0 && (
-                <motion.div {...item(0.12)} className="mt-3 rounded-2xl border border-borderc/50 overflow-hidden">
+                <motion.div variants={sectionVariants} className="mt-3 rounded-2xl border border-borderc/50 overflow-hidden">
                   <button onClick={() => setRoasOpen((o) => !o)} className="w-full flex items-center justify-between px-4 py-3 min-h-[44px] text-left" aria-expanded={roasOpen}>
                     <span className="text-xs font-bold text-textc/60 uppercase tracking-widest">Dosering &amp; duur</span>
                     <motion.svg className="w-4 h-4 text-textc/40 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" animate={{ rotate: roasOpen ? 180 : 0 }} transition={{ duration: 0.2 }}>
@@ -396,7 +392,7 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
 
               {/* Dosage & duration — TripSit */}
               {tripsit && (tripsit.formatted_dose || tripsit.duration) && (
-                <motion.div {...item(0.12)} className="mt-3 rounded-2xl border border-borderc/50 overflow-hidden">
+                <motion.div variants={sectionVariants} className="mt-3 rounded-2xl border border-borderc/50 overflow-hidden">
                   <button onClick={() => setRoasOpen((o) => !o)} className="w-full flex items-center justify-between px-4 py-3 min-h-[44px] text-left" aria-expanded={roasOpen}>
                     <span className="text-xs font-bold text-textc/60 uppercase tracking-widest">Dosering &amp; duur</span>
                     <motion.svg className="w-4 h-4 text-textc/40 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" animate={{ rotate: roasOpen ? 180 : 0 }} transition={{ duration: 0.2 }}>
@@ -446,7 +442,7 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
 
               {/* Interactions */}
               {interactions.length > 0 && (
-                <motion.div {...item(0.24)} className="mt-3 rounded-2xl border border-borderc/50 overflow-hidden">
+                <motion.div variants={sectionVariants} className="mt-3 rounded-2xl border border-borderc/50 overflow-hidden">
                   <button onClick={() => setInteractionsOpen((o) => !o)} className="w-full flex items-center justify-between px-4 py-3 min-h-[44px] text-left" aria-expanded={interactionsOpen}>
                     <span className="text-xs font-bold text-textc/60 uppercase tracking-widest">Risicovolle interacties</span>
                     <motion.svg className="w-4 h-4 text-textc/40 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" animate={{ rotate: interactionsOpen ? 180 : 0 }} transition={{ duration: 0.2 }}>
@@ -473,7 +469,7 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
 
               {/* Wiki card */}
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <motion.a {...item(0.36)} href={wiki.url} target="_blank" rel="noopener noreferrer" className="mt-3 flex items-center gap-3 px-4 py-3 rounded-2xl border border-borderc/50 bg-bg/40 text-textc/70 hover:bg-bg-hover transition-colors">
+              <motion.a variants={sectionVariants} href={wiki.url} target="_blank" rel="noopener noreferrer" className="mt-3 flex items-center gap-3 px-4 py-3 rounded-2xl border border-borderc/50 bg-bg/40 text-textc/70 hover:bg-bg-hover transition-colors">
                 <img
                   src={wiki.source === 'psychonautwiki' ? 'https://www.google.com/s2/favicons?domain=psychonautwiki.org&sz=32' : wiki.source === 'tripsit' ? 'https://www.google.com/s2/favicons?domain=tripsit.me&sz=32' : 'https://www.google.com/s2/favicons?domain=en.wikipedia.org&sz=32'}
                   alt="" width={20} height={20} className="rounded opacity-80 flex-shrink-0"
@@ -488,14 +484,13 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
               </motion.a>
 
               {/* Close button */}
-              <div className="mt-5 flex justify-end">
-                <motion.button {...item(0.48)} onClick={onClose} className="btn btn-primary" whileTap={{ scale: 0.97 }}>
+              <motion.div variants={sectionVariants} className="mt-5 flex justify-end">
+                <motion.button onClick={onClose} className="btn btn-primary" whileTap={{ scale: 0.97 }}>
                   Sluiten
                 </motion.button>
-              </div>
-          </div>
+              </motion.div>
+          </motion.div>
         )}
-        </div>
         </div>
       </motion.div>
     </motion.div>
