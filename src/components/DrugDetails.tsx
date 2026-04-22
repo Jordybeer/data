@@ -235,7 +235,7 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.94 }}
         transition={{ type: 'spring' as const, stiffness: 400, damping: 30 }}
-        style={{ padding: 0, overflow: 'hidden', display: 'flex', flexDirection: 'column', maxHeight: '80dvh' }}
+        style={{ padding: 0, overflow: 'hidden', display: 'flex', flexDirection: 'column', maxHeight: '80dvh', minHeight: '50dvh' }}
       >
         {/* Header — outside scroll container so content can never bleed above it */}
         <div
