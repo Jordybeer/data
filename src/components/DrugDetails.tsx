@@ -186,7 +186,7 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
             summary: entry.properties?.summary,
           });
           setRoas([]);
-          const combos: Record<string, { status: string }> = entry.combos ?? {};
+          const combos: Record<string, { status: string; note?: string }> = entry.combos ?? {};
           setInteractions(Object.entries(combos).map(([name, v]) => ({ name, status: v.status ?? '', note: v.note })));
           return;
         }
