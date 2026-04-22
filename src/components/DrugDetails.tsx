@@ -239,12 +239,12 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.94 }}
         transition={{ type: 'spring' as const, stiffness: 400, damping: 30 }}
+        style={{ padding: 0, overflow: 'hidden', display: 'flex', flexDirection: 'column', maxHeight: '80dvh' }}
       >
-        <div className="overflow-y-auto max-h-[80dvh] p-7">
-        {/* Sticky header */}
+        {/* Header — outside scroll container so content can never bleed above it */}
         <div
-          className="pd-modalStickyHeader sticky top-0 z-10 flex justify-between items-start gap-3 pb-4 border-b border-borderc/40"
-          style={{ background: 'rgba(15,23,42,0.96)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)', margin: '-28px -28px 20px', padding: '20px 28px' }}
+          className="pd-modalStickyHeader flex justify-between items-start gap-3 pb-4 border-b border-borderc/40"
+          style={{ padding: '20px 28px', flexShrink: 0 }}
         >
           <div className="min-w-0">
             <h2 className="text-2xl font-bold text-primary leading-snug">{drug.name}</h2>
@@ -281,6 +281,7 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
             </div>
           </div>
         </div>
+        <div className="overflow-y-auto p-7 pt-5">
 
         {/* Spinner — stays until both wiki and interactions resolve */}
         <AnimatePresence>
@@ -307,7 +308,7 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
         {wiki !== null && interactions !== null && (
           <div>
               {/* Notes */}
-              <motion.div {...item(0)} className="bg-bg/40 p-5 pt-10 mt-8 rounded-2xl border border-borderc/50">
+              <motion.div {...item(0)} className="bg-bg/40 p-5 mt-3 rounded-2xl border border-borderc/50">
                 <div className="flex justify-between items-center mb-3">
                   <h3 className="text-xs font-bold text-textc/60 uppercase tracking-widest">Notities</h3>
                   {isAdmin && !isEditing && (
@@ -494,6 +495,7 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
               </div>
           </div>
         )}
+        </div>
         </div>
       </motion.div>
     </motion.div>

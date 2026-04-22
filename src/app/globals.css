@@ -117,12 +117,9 @@ html[data-theme="light"] [role="group"] button[aria-checked="false"] {
   color: rgba(12,25,41,0.50);
 }
 
-/* Modal sticky header — overrides the hardcoded inline style in DrugDetails */
+/* Modal header light-mode border */
 html[data-theme="light"] .pd-modalStickyHeader {
-  background: rgba(110, 145, 180, 0.82) !important;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-bottom-color: rgba(255, 255, 255, 0.22);
+  border-bottom-color: rgba(0, 0, 0, 0.12);
 }
 
 /* Drug name inside modal header */
