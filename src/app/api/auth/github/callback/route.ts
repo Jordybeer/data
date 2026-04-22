@@ -9,7 +9,7 @@ export async function GET(req: NextRequest) {
     const clientId = process.env.GITHUB_CLIENT_ID;
     const clientSecret = process.env.GITHUB_CLIENT_SECRET;
     if (!clientId || !clientSecret) {
-      return NextResponse.redirect(new URL('/?auth=error', req.url));
+      return NextResponse.redirect(new URL('/?auth=no-config', req.url));
     }
 
     const redirectUri = `${req.nextUrl.origin}/api/auth/github/callback`;
