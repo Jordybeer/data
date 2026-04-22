@@ -192,7 +192,7 @@ button {
     position: relative;
     width: 100%;
     max-width: 600px;
-    max-height: 85vh;
+    max-height: 90vh;
     overflow-y: auto;
     border-radius: 28px;
     background: rgba(15, 23, 42, 0.96);
@@ -205,22 +205,6 @@ button {
     padding: 28px;
   }
 
-  @media (max-width: 640px) {
-    .modal-overlay {
-      align-items: flex-end;
-      justify-content: stretch;
-      padding: 0;
-    }
-
-    .modal {
-      max-width: 100%;
-      min-height: 65vh;
-      max-height: 92vh;
-      border-radius: 28px 28px 0 0;
-      padding: 20px 20px max(20px, env(safe-area-inset-bottom));
-      border-bottom: none;
-    }
-  }
 }
 
 /* ===========================

@@ -14,6 +14,8 @@ type Row = Drug & {
   _confirmDelete?: boolean;
 };
 
+type BulkRow = { name: string; notes: string; drug: Row | null; result?: 'ok' | 'err' };
+
 export default function AdminPage() {
   const { session, loading } = useSession();
   const router = useRouter();
@@ -29,6 +31,10 @@ export default function AdminPage() {
   const [busy, setBusy] = useState<string | null>(null);
   const [toast, setToast] = useState<{ msg: string; ok: boolean } | null>(null);
   const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [bulkOpen, setBulkOpen] = useState(false);
+  const [bulkText, setBulkText] = useState('');
+  const [bulkRows, setBulkRows] = useState<BulkRow[]>([]);
+  const [bulkBusy, setBulkBusy] = useState(false);
 
   const flash = (msg: string, ok = true) => {
     if (toastTimer.current) clearTimeout(toastTimer.current);
@@ -117,6 +123,32 @@ export default function AdminPage() {
     flash('Toegevoegd');
   };
 
+  const parseBulk = () => {
+    const rows = bulkText
+      .split(/(?:^|\n)---(?:\n|$)/)
+      .map((b) => b.trim())
+      .filter(Boolean)
+      .map((b) => {
+        const lines = b.split('\n');
+        const fi = lines.findIndex((l) => l.trim());
+        const name = fi >= 0 ? lines[fi].trim() : '';
+        const notes = lines.slice(fi + 1).join('\n').trim();
+        const drug = drugs.find((d) => d.name.toLowerCase().trim() === name.toLowerCase()) ?? null;
+        return { name, notes, drug };
+      });
+    setBulkRows(rows);
+  };
+
+  const runBulkImport = async () => {
+    setBulkBusy(true);
+    for (const row of bulkRows.filter((r) => r.drug)) {
+      const ok = await patch(row.drug!.id, { notes: row.notes }, 'bulk');
+      if (ok) setDrugs((cur) => cur.map((d) => d.id === row.drug!.id ? { ...d, notes: row.notes } : d));
+      setBulkRows((cur) => cur.map((r) => r === row ? { ...r, result: ok ? 'ok' : 'err' } : r));
+    }
+    setBulkBusy(false);
+  };
+
   return (
     <div className="min-h-screen pb-20">
       <header className="card rounded-none border-x-0 border-t-0 sticky top-0 z-10">
@@ -170,6 +202,84 @@ export default function AdminPage() {
               {busy === 'add' ? 'Bezig…' : 'Toevoegen'}
             </button>
           </form>
+        </section>
+
+        {/* Bulk import */}
+        <section className="card p-4">
+          <button
+            className="flex w-full items-center justify-between text-xs font-bold text-textc/50 uppercase tracking-widest"
+            type="button"
+            onClick={() => setBulkOpen((o) => !o)}
+          >
+            Bulk import notities
+            <span>{bulkOpen ? '▲' : '▼'}</span>
+          </button>
+          {bulkOpen && (
+            <div className="mt-4 space-y-3">
+              <textarea
+                className="input w-full min-h-[120px] text-sm font-mono"
+                placeholder={'Naam\nnotities hier\n---\nVolgende stof\nmeer notities'}
+                value={bulkText}
+                onChange={(e) => setBulkText(e.target.value)}
+              />
+              <button
+                className="btn btn-primary text-xs"
+                type="button"
+                disabled={!bulkText.trim()}
+                onClick={parseBulk}
+              >
+                Voorvertoning
+              </button>
+              {bulkRows.length > 0 && (
+                <>
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="text-xs text-textc/40 text-left">
+                        <th className="pb-1 pr-3 font-medium">Naam</th>
+                        <th className="pb-1 pr-3 font-medium">Notitie (preview)</th>
+                        <th className="pb-1 pr-3 font-medium">Status</th>
+                        {bulkRows.some((r) => r.result) && <th className="pb-1 font-medium">Resultaat</th>}
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-borderc">
+                      {bulkRows.map((row, i) => (
+                        <tr key={i}>
+                          <td className="py-1.5 pr-3 font-medium text-textc">{row.name}</td>
+                          <td className="py-1.5 pr-3 text-textc/60 max-w-[200px] truncate">
+                            {row.notes.slice(0, 80)}{row.notes.length > 80 ? '…' : ''}
+                          </td>
+                          <td className="py-1.5 pr-3">
+                            {!row.drug
+                              ? <span className="text-xs text-red-400">geen match</span>
+                              : row.drug.notes?.trim()
+                                ? <span className="text-xs text-amber-400">matched</span>
+                                : <span className="text-xs text-green-400">nieuw</span>
+                            }
+                          </td>
+                          {bulkRows.some((r) => r.result) && (
+                            <td className="py-1.5">
+                              {row.result === 'ok' && <span className="text-green-400">✓</span>}
+                              {row.result === 'err' && <span className="text-red-400">✗</span>}
+                            </td>
+                          )}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                  <div className="flex justify-end">
+                    <button
+                      className="btn btn-primary text-xs"
+                      type="button"
+                      disabled={bulkBusy || bulkRows.filter((r) => r.drug).length === 0}
+                      onClick={runBulkImport}
+                    >
+                      {bulkBusy ? 'Bezig…' : `Importeer ${bulkRows.filter((r) => r.drug).length} notities`}
+                    </button>
+                  </div>
+                </>
+              )}
+            </div>
+          )}
         </section>
 
         {/* List */}
