@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 const PW_API = 'https://api.psychonautwiki.org/';
-const TIMEOUT_MS = 8000;
+const TIMEOUT_MS = 4000;
 
 export async function GET(req: NextRequest) {
   const name = req.nextUrl.searchParams.get('name');

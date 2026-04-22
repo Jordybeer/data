@@ -253,36 +253,18 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
                   {drug.category2}
                 </span>
               )}
-              {wiki && (
-                <a
-                  href={wiki.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 text-sm font-medium text-textc/70 bg-white/[0.07] border border-white/10 px-2.5 py-1 rounded-md"
-                >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={wiki.source === 'psychonautwiki'
-                      ? 'https://www.google.com/s2/favicons?domain=psychonautwiki.org&sz=16'
-                      : wiki.source === 'tripsit'
-                      ? 'https://www.google.com/s2/favicons?domain=tripsit.me&sz=16'
-                      : 'https://www.google.com/s2/favicons?domain=en.wikipedia.org&sz=16'}
-                    alt="" width={14} height={14}
-                    className="rounded-sm opacity-80"
-                    onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
-                  />
-                  Wiki
-                </a>
-              )}
             </div>
           </div>
         </div>
         <div className="overflow-y-auto p-7 pt-5" style={{ flex: '1 1 0', minHeight: 0 }}>
 
-        {wiki !== null && interactions !== null && (
-          <motion.div variants={containerVariants} initial="hidden" animate="visible">
-              {/* Notes */}
-              <motion.div variants={sectionVariants} className="bg-bg/40 p-5 mt-3 rounded-2xl border border-borderc/50">
+        {/* Notes — always visible, no API dependency */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.55, ease: [0.25, 0.46, 0.45, 0.94] as const }}
+          className="bg-bg/40 p-5 mt-3 rounded-2xl border border-borderc/50"
+        >
                 <div className="flex justify-between items-center mb-3">
                   <h3 className="text-xs font-bold text-textc/60 uppercase tracking-widest">Notities</h3>
                   {isAdmin && !isEditing && (
@@ -313,7 +295,11 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
                     </motion.p>
                   )}
                 </AnimatePresence>
-              </motion.div>
+        </motion.div>
+
+        {/* API sections — fade in once wiki + interactions resolve */}
+        {wiki !== null && interactions !== null && (
+          <motion.div variants={containerVariants} initial="hidden" animate="visible">
 
               {/* Dosage & duration — PsychonautWiki */}
               {roas !== null && roas.length > 0 && (
@@ -432,7 +418,7 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
                       <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.22, ease: 'easeInOut' }} className="overflow-hidden">
                         <div className="px-4 pb-4 space-y-1">
                           {interactions.map((ix) => (
-                            <div key={ix.name} className="flex items-center gap-2 min-h-[36px]">
+                            <div key={ix.name} className="flex items-center gap-2 min-h-[44px]">
                               <span className="text-sm leading-none" role="img" aria-label={severityLabel(ix.status)}>{severityEmoji(ix.status)}</span>
                               <span className="text-xs text-textc/70 flex-1">{ix.name}</span>
                               <span className="text-[11px] text-textc/40">{severityLabel(ix.status)}</span>
