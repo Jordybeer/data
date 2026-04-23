@@ -250,7 +250,6 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
         {/* Header — outside scroll container so content can never bleed above it */}
         <div
           className="pd-modalStickyHeader flex justify-between items-start gap-3 px-5 py-4 shrink-0 border-b border-white/[0.07]"
-          style={{ background: 'var(--pd-surface-strong)', backdropFilter: 'blur(24px)', WebkitBackdropFilter: 'blur(24px)' }}
         >
           <div className="min-w-0 flex-1 pr-2">
             <h2 className="text-2xl font-bold text-primary leading-snug">{drug.name}</h2>
@@ -488,7 +487,7 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
         )}
         </div>
         {/* Footer — always visible at bottom */}
-        <div style={{ padding: '16px 28px', flexShrink: 0, borderTop: '1px solid rgba(255,255,255,0.08)' }} className="flex justify-end">
+        <div className="flex justify-end px-7 py-4 shrink-0 border-t border-white/[0.08]">
           <button onClick={onClose} className="btn">Sluiten</button>
         </div>
       </motion.div>

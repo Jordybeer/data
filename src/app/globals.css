@@ -748,6 +748,12 @@ button {
   color: white;
 }
 
+.pd-modalStickyHeader {
+  background: var(--pd-surface-strong);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+}
+
 .pd-section {
   margin-bottom: 24px;
 }
