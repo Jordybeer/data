@@ -28,7 +28,7 @@ export const LoadingScreen = () => (
         <span className="text-textc">Snuff</span>{' '}
         <span className="text-primary">DB</span>
       </p>
-      <p className="text-sm text-textc/58 mt-1 animate-pulse">laden…</p>
+      <p className="text-sm text-textc/78 mt-1 animate-pulse">laden…</p>
     </div>
 
   </div>

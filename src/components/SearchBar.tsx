@@ -8,7 +8,7 @@ interface SearchBarProps {
 export const SearchBar: React.FC<SearchBarProps> = ({ value, onChange }) => (
   <div className="relative">
     <svg
-      className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-textc/35 pointer-events-none"
+      className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-textc/55 pointer-events-none"
       fill="none" stroke="currentColor" viewBox="0 0 24 24"
     >
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}

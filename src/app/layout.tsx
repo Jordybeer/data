@@ -1,9 +1,15 @@
 import type { Metadata, Viewport } from 'next';
+import { Geist } from 'next/font/google';
 import { Analytics } from '@vercel/analytics/next';
 import { SessionProvider } from '@/components/SessionProvider';
 import { ThemeProvider } from '@/components/ThemeProvider';
 import OfflineBanner from '@/components/OfflineBanner';
 import './globals.css';
+
+const geist = Geist({
+  subsets: ['latin'],
+  variable: '--font-geist',
+});
 
 export const metadata: Metadata = {
   title: 'Snuff DB',
@@ -23,7 +29,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="nl">
-      <body>
+      <body className={geist.variable}>
         <ThemeProvider>
           <SessionProvider>
             <OfflineBanner />

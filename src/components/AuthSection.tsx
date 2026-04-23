@@ -20,7 +20,7 @@ export const AuthSection: React.FC = () => {
           <span className="px-2 py-1 rounded-full bg-green-600/20 border border-green-500/30 text-green-400 text-xs font-bold uppercase tracking-wider">
             Admin
           </span>
-          <p className="text-textc/70 text-sm">{session.email}</p>
+          <p className="text-textc/82 text-sm">{session.email}</p>
         </div>
         <div className="flex gap-2">
           <Link href="/admin" className="btn btn-primary">Beheer</Link>
@@ -33,18 +33,18 @@ export const AuthSection: React.FC = () => {
   return (
     <div className="flex justify-center pt-2 pb-4">
       {!open ? (
-        <button onClick={() => setOpen(true)} className="text-xs text-textc/30">
+        <button onClick={() => setOpen(true)} className="text-xs text-textc/55">
           Admin
         </button>
       ) : (
         <div className="card p-5 flex flex-col gap-3 w-full max-w-sm">
           <div className="flex items-center justify-between">
-            <p className="text-sm font-semibold text-textc/80">Admin inloggen</p>
+            <p className="text-sm font-semibold text-textc/90">Admin inloggen</p>
             <button
               type="button"
               aria-label="Sluiten"
               onClick={() => setOpen(false)}
-              className="flex items-center justify-center w-11 h-11 -mr-2 rounded-full text-textc/40"
+              className="flex items-center justify-center w-11 h-11 -mr-2 rounded-full text-textc/65"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
