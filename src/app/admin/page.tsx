@@ -156,7 +156,7 @@ export default function AdminPage() {
 
   return (
     <div className="min-h-screen pb-20">
-      <header className="card rounded-none border-x-0 border-t-0 sticky top-0 z-10">
+      <header className="pd-stickyHeader">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between gap-3 flex-wrap">
           <div>
             <h1 className="text-2xl font-bold">
