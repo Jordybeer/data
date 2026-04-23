@@ -273,14 +273,14 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.55, ease: [0.25, 0.46, 0.45, 0.94] as const }}
-            className="rounded-2xl border border-borderc/50 overflow-hidden"
+            className="rounded-2xl border border-violet-500/25 bg-violet-500/[0.07] overflow-hidden"
           >
             <button
               onClick={() => setNotesOpen((o) => !o)}
-              className="w-full flex items-center justify-between px-4 py-3 min-h-[44px] text-left bg-bg/40"
+              className="w-full flex items-center justify-between px-4 py-3 min-h-[44px] text-left"
               aria-expanded={notesOpen}
             >
-              <span className="text-xs font-bold text-textc/60 uppercase tracking-widest">Notities</span>
+              <span className="text-xs font-bold text-violet-300/80 uppercase tracking-widest">Notities</span>
               <div className="flex items-center gap-2">
                 {isAdmin && !isEditing && (
                   <span
@@ -357,9 +357,9 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
 
               {/* Dosage & duration — PsychonautWiki */}
               {roas !== null && roas.length > 0 && (
-                <motion.div variants={sectionVariants} className="mt-3 rounded-2xl border border-borderc/50 overflow-hidden">
+                <motion.div variants={sectionVariants} className="mt-3 rounded-2xl border border-indigo-500/25 bg-indigo-500/[0.07] overflow-hidden">
                   <button onClick={() => setRoasOpen((o) => !o)} className="w-full flex items-center justify-between px-4 py-3 min-h-[44px] text-left" aria-expanded={roasOpen}>
-                    <span className="text-xs font-bold text-textc/60 uppercase tracking-widest">Dosering &amp; duur</span>
+                    <span className="text-xs font-bold text-indigo-300/80 uppercase tracking-widest">Dosering &amp; duur</span>
                     <motion.svg className="w-4 h-4 text-textc/40 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" animate={{ rotate: roasOpen ? 180 : 0 }} transition={{ duration: 0.2 }}>
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                     </motion.svg>
@@ -410,9 +410,9 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
 
               {/* Dosage & duration — TripSit */}
               {tripsit && (tripsit.dose || tripsit.duration || tripsit.onset) && (
-                <motion.div variants={sectionVariants} className="mt-3 rounded-2xl border border-borderc/50 overflow-hidden">
+                <motion.div variants={sectionVariants} className="mt-3 rounded-2xl border border-indigo-500/25 bg-indigo-500/[0.07] overflow-hidden">
                   <button onClick={() => setTripsitOpen((o) => !o)} className="w-full flex items-center justify-between px-4 py-3 min-h-[44px] text-left" aria-expanded={tripsitOpen}>
-                    <span className="text-xs font-bold text-textc/60 uppercase tracking-widest">Dosering &amp; duur</span>
+                    <span className="text-xs font-bold text-indigo-300/80 uppercase tracking-widest">Dosering &amp; duur</span>
                     <motion.svg className="w-4 h-4 text-textc/40 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" animate={{ rotate: tripsitOpen ? 180 : 0 }} transition={{ duration: 0.2 }}>
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                     </motion.svg>
@@ -465,9 +465,9 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
 
               {/* Interactions */}
               {interactions.length > 0 && (
-                <motion.div variants={sectionVariants} className="mt-3 rounded-2xl border border-borderc/50 overflow-hidden">
+                <motion.div variants={sectionVariants} className="mt-3 rounded-2xl border border-rose-500/25 bg-rose-500/[0.07] overflow-hidden">
                   <button onClick={() => setInteractionsOpen((o) => !o)} className="w-full flex items-center justify-between px-4 py-3 min-h-[44px] text-left" aria-expanded={interactionsOpen}>
-                    <span className="text-xs font-bold text-textc/60 uppercase tracking-widest">Risicovolle interacties</span>
+                    <span className="text-xs font-bold text-rose-300/80 uppercase tracking-widest">Risicovolle interacties</span>
                     <motion.svg className="w-4 h-4 text-textc/40 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" animate={{ rotate: interactionsOpen ? 180 : 0 }} transition={{ duration: 0.2 }}>
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                     </motion.svg>
@@ -495,7 +495,7 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
 
               {/* Wiki card */}
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <motion.a variants={sectionVariants} href={wiki.url} target="_blank" rel="noopener noreferrer" className="mt-3 flex items-center gap-3 px-4 py-3 rounded-2xl border border-borderc/50 bg-bg/40 text-textc/70 hover:bg-bg-hover transition-colors">
+              <motion.a variants={sectionVariants} href={wiki.url} target="_blank" rel="noopener noreferrer" className="mt-3 flex items-center gap-3 px-4 py-3 rounded-2xl border border-sky-500/25 bg-sky-500/[0.07] text-textc/70 hover:bg-sky-500/[0.12] transition-colors">
                 <img
                   src={wiki.source === 'psychonautwiki' ? 'https://www.google.com/s2/favicons?domain=psychonautwiki.org&sz=32' : wiki.source === 'tripsit' ? 'https://www.google.com/s2/favicons?domain=tripsit.me&sz=32' : 'https://www.google.com/s2/favicons?domain=en.wikipedia.org&sz=32'}
                   alt="" width={20} height={20} className="rounded opacity-80 flex-shrink-0"

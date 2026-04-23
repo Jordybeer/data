@@ -111,9 +111,9 @@ html[data-theme="light"] .card {
 }
 
 html[data-theme="light"] .btn {
-  background: rgba(255, 255, 255, 0.50);
-  border-color: rgba(255, 255, 255, 0.40);
-  color: var(--pd-text);
+  background: rgba(99, 102, 241, 0.10);
+  border-color: rgba(99, 102, 241, 0.30);
+  color: #3730a3;
 }
 
 html[data-theme="light"] .input {
@@ -369,14 +369,20 @@ button {
     min-height: 44px;
     padding: 0 18px;
     border-radius: 14px;
-    background: rgba(255, 255, 255, 0.06);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    color: #e5eefc;
+    background: rgba(99, 102, 241, 0.16);
+    border: 1px solid rgba(99, 102, 241, 0.32);
+    color: #c7d2fe;
     font-weight: 600;
     font-size: 15px;
     transition: all 0.18s ease;
     cursor: pointer;
     white-space: nowrap;
+  }
+
+  .btn:hover:not(:disabled) {
+    background: rgba(99, 102, 241, 0.26);
+    border-color: rgba(99, 102, 241, 0.50);
+    color: #e0e7ff;
   }
 
   .btn:active:not(:disabled) {
@@ -646,6 +652,17 @@ button {
   align-items: center;
   justify-content: center;
   padding: 20px;
+}
+
+@media (max-width: 640px) {
+  .pd-modalOverlay {
+    padding: 8px;
+    align-items: flex-end;
+  }
+  .pd-modal {
+    border-bottom-left-radius: 16px;
+    border-bottom-right-radius: 16px;
+  }
 }
 
 .pd-modal {
