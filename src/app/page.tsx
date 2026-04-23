@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useSession } from '@/components/SessionProvider';
@@ -20,7 +20,7 @@ const AUTH_MESSAGES: Record<string, string> = {
   required: 'Je moet ingelogd zijn om dit te bekijken.',
 };
 
-export default function Home() {
+function HomeInner() {
   const { session } = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -183,5 +183,13 @@ export default function Home() {
         )}
       </AnimatePresence>
     </div>
+  );
+}
+
+export default function Home() {
+  return (
+    <Suspense>
+      <HomeInner />
+    </Suspense>
   );
 }
