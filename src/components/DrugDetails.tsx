@@ -250,7 +250,7 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
         transition={{ type: 'spring' as const, stiffness: 400, damping: 30 }}
       >
         {/* Header */}
-        <div className="pd-modalStickyHeader flex justify-between items-start gap-3 px-5 py-4 shrink-0 border-b border-white/[0.07]">
+        <div className="pd-modalStickyHeader flex justify-between items-start gap-3 px-4 py-4 sm:px-6 shrink-0 border-b border-white/[0.07]">
           <div className="min-w-0 flex-1">
             <h2 className="text-2xl font-bold text-primary leading-snug">{drug.name}</h2>
             <div className="flex flex-wrap gap-1.5 mt-2">
@@ -266,7 +266,7 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
           </div>
         </div>
 
-        <div className="flex-1 min-h-0 overflow-y-auto p-8 pt-6 pb-6">
+        <div className="flex-1 min-h-0 overflow-y-auto px-4 pt-4 pb-6 sm:px-6">
 
           {/* Notes — collapsible */}
           <motion.div
@@ -514,7 +514,7 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
         </div>
 
         {/* Footer */}
-        <div className="flex justify-end px-7 py-4 shrink-0 border-t border-white/[0.08]">
+        <div className="flex justify-end px-4 py-4 sm:px-6 shrink-0 border-t border-white/[0.08]">
           <button onClick={onClose} className="btn">Sluiten</button>
         </div>
       </motion.div>

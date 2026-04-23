@@ -679,7 +679,7 @@ button {
     0 0 0 1px rgba(99, 102, 241, 0.08) inset,
     0 32px 80px rgba(0, 0, 0, 0.55),
     0 0 100px rgba(99, 102, 241, 0.10);
-  padding: 32px;
+  padding: 0;
 }
 
 .pd-modalHeader {
@@ -817,7 +817,7 @@ button {
   }
 
   .pd-modal {
-    padding: 20px;
+    padding: 0;
     border-radius: 22px;
   }
 
