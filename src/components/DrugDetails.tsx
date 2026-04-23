@@ -249,7 +249,7 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
       >
         {/* Header — outside scroll container so content can never bleed above it */}
         <div
-          className="pd-modalStickyHeader flex justify-between items-start gap-3 px-8 py-6 shrink-0 border-b border-white/[0.07]"
+          className="pd-modalStickyHeader flex justify-between items-start gap-3 px-5 py-4 shrink-0 border-b border-white/[0.07]"
           style={{ background: 'var(--pd-surface-strong)', backdropFilter: 'blur(24px)', WebkitBackdropFilter: 'blur(24px)' }}
         >
           <div className="min-w-0 flex-1 pr-2">

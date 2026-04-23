@@ -18,7 +18,7 @@ export const ScrollToTop = () => {
       onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
       aria-label="Naar boven"
       className={
-        'fixed bottom-6 right-5 z-[150] w-11 h-11 rounded-2xl ' +
+        'fixed bottom-6 right-5 z-[90] w-11 h-11 rounded-2xl ' +
         'flex items-center justify-center ' +
         'border border-white/10 bg-[rgba(14,26,52,0.72)] ' +
         'backdrop-blur-xl text-textc/60 ' +
