@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { verify, ADMIN_EMAIL } from '@/lib/session';
 
+export const runtime = 'nodejs';
+
 const COOKIE = 'psy_session';
 
 export function middleware(req: NextRequest) {
