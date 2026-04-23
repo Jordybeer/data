@@ -101,7 +101,7 @@ function HomeInner() {
   return (
     <div className="min-h-screen pb-20">
       <header className="pd-stickyHeader">
-        <div className="container mx-auto px-4 py-4">
+        <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex justify-between items-center mb-3">
             <h1 className="text-xl font-bold">
               <span className="text-textc">Snuff</span>{' '}
@@ -113,7 +113,7 @@ function HomeInner() {
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-6 space-y-5">
+      <main className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-5">
         <DisclaimerSection />
 
         <div className="space-y-2.5">
