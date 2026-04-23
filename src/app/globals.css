@@ -7,9 +7,9 @@
   --pd-bg: #070c1a;
   --pd-surface: rgba(11, 17, 40, 0.76);
   --pd-surface-strong: rgba(10, 14, 36, 0.95);
-  --pd-border: rgba(130, 140, 255, 0.09);
+  --pd-border: rgba(130, 140, 255, 0.14);
   --pd-text: #eef1ff;
-  --pd-subtle: #7c87b0;
+  --pd-subtle: #9aa3c4;
   --pd-blue: #60a5fa;
   --pd-cyan: #67e8f9;
   --pd-green: #34d399;
@@ -109,11 +109,11 @@ html[data-theme="light"] .pd-chip {
   border-color: rgba(0,0,0,0.15);
 }
 
-html[data-theme="light"] [role="group"] button {
+html[data-theme="light"] [role="radiogroup"] button {
   border: 1px solid rgba(0,0,0,0.12);
 }
 
-html[data-theme="light"] [role="group"] button[aria-checked="false"] {
+html[data-theme="light"] [role="radiogroup"] button[aria-checked="false"] {
   color: rgba(12,25,41,0.62);
 }
 
@@ -134,7 +134,7 @@ html[data-theme="light"] .pd-modalStickyHeader h2 {
 
 /* .card — DrugItem, DisclaimerSection */
 html[data-theme="light"] .card {
-  background: rgba(255, 255, 255, 0.52);
+  background: rgba(255, 255, 255, 0.70);
   border-color: rgba(255, 255, 255, 0.36);
   box-shadow:
     0 1px 0 rgba(255, 255, 255, 0.75) inset,
@@ -251,13 +251,13 @@ html[data-theme="light"] .pd-disclaimer {
 }
 
 /* Category segment bar */
-html[data-theme="light"] [role="group"] {
+html[data-theme="light"] [role="radiogroup"] {
   background: rgba(255, 255, 255, 0.30);
   border-color: rgba(255, 255, 255, 0.30);
 }
 
 /* Active segment button override */
-html[data-theme="light"] [role="group"] button[aria-checked="true"] {
+html[data-theme="light"] [role="radiogroup"] button[aria-checked="true"] {
   color: var(--pd-text);
 }
 
