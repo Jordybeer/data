@@ -123,6 +123,7 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
   const [tripsitOpen, setTripsitOpen] = useState(false);
   const [interactions, setInteractions] = useState<Interaction[] | null>(null);
   const [interactionsOpen, setInteractionsOpen] = useState(false);
+  const [notesOpen, setNotesOpen] = useState(false);
 
   useEffect(() => {
     const prev = document.body.style.overflow;
@@ -150,7 +151,6 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
           setWiki({ url: match.url, source: 'psychonautwiki' });
           setRoas(match.roas ?? []);
           matched = true;
-          // fetch interactions separately so a failure here doesn't affect the main result
           fetch(`/api/psychonautwiki?name=${encodeURIComponent(drug.name)}&interactions=1`)
             .then((r) => r.json())
             .then((j) => {
@@ -230,6 +230,8 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
     }
   };
 
+  const hasNotes = !!(drug.notes?.trim() || tripsit?.summary);
+
   return (
     <motion.div
       className="pd-modalOverlay"
@@ -247,11 +249,9 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
         exit={{ opacity: 0, scale: 0.94 }}
         transition={{ type: 'spring' as const, stiffness: 400, damping: 30 }}
       >
-        {/* Header — outside scroll container so content can never bleed above it */}
-        <div
-          className="pd-modalStickyHeader flex justify-between items-start gap-3 px-5 py-4 shrink-0 border-b border-white/[0.07]"
-        >
-          <div className="min-w-0 flex-1 pr-2">
+        {/* Header */}
+        <div className="pd-modalStickyHeader flex justify-between items-start gap-3 px-5 py-4 shrink-0 border-b border-white/[0.07]">
+          <div className="min-w-0 flex-1">
             <h2 className="text-2xl font-bold text-primary leading-snug">{drug.name}</h2>
             <div className="flex flex-wrap gap-1.5 mt-2">
               <span className="text-sm font-medium text-primary/80 bg-primary/10 border border-primary/20 px-3 py-1 rounded-full">
@@ -264,70 +264,96 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
               )}
             </div>
           </div>
-          <button
-            onClick={onClose}
-            className="pd-closeButton flex-shrink-0"
-            aria-label="Sluiten"
-          >
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-              <path d="M2 2l12 12M14 2L2 14" />
-            </svg>
-          </button>
         </div>
+
         <div className="flex-1 min-h-0 overflow-y-auto p-8 pt-6 pb-6">
 
-        {/* Notes — always visible, no API dependency */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.55, ease: [0.25, 0.46, 0.45, 0.94] as const }}
-          className="bg-bg/40 p-5 mt-3 rounded-2xl border border-borderc/50"
-        >
-                <div className="flex justify-between items-center mb-3">
-                  <h3 className="text-xs font-bold text-textc/60 uppercase tracking-widest">Notities</h3>
-                  {isAdmin && !isEditing && (
-                    <button onClick={() => setIsEditing(true)} className="btn text-xs px-3 min-h-[44px]">
-                      Bewerken
-                    </button>
-                  )}
-                </div>
-                <AnimatePresence mode="wait">
-                  {isEditing ? (
-                    <motion.div key="editing" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.15 }} className="flex flex-col gap-3">
-                      <textarea
-                        className="input w-full min-h-[140px] p-3"
-                        value={editNote}
-                        onChange={(e) => setEditNote(e.target.value)}
-                        placeholder="Notities hier invoeren..."
-                        autoFocus
-                      />
-                      {saveError && <p className="text-sm text-red-400">{saveError}</p>}
-                      <div className="flex justify-end gap-2">
-                        <button onClick={() => { setIsEditing(false); setEditNote(drug.notes || ''); setSaveError(''); }} className="btn">Annuleren</button>
-                        <button onClick={handleSave} disabled={isSaving} className="btn btn-primary">{isSaving ? 'Opslaan...' : 'Opslaan'}</button>
-                      </div>
-                    </motion.div>
-                  ) : (
-                    <motion.p key="viewing" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.15 }} className="text-textc leading-relaxed whitespace-pre-wrap text-sm">
-                      {drug.notes || (tripsit?.summary
-                        ? tripsit.summary
-                        : <span className="text-textc/40 italic">Geen notities voor deze stof.</span>)}
-                    </motion.p>
-                  )}
-                </AnimatePresence>
-        </motion.div>
+          {/* Notes — collapsible */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.55, ease: [0.25, 0.46, 0.45, 0.94] as const }}
+            className="rounded-2xl border border-borderc/50 overflow-hidden"
+          >
+            <button
+              onClick={() => setNotesOpen((o) => !o)}
+              className="w-full flex items-center justify-between px-4 py-3 min-h-[44px] text-left bg-bg/40"
+              aria-expanded={notesOpen}
+            >
+              <span className="text-xs font-bold text-textc/60 uppercase tracking-widest">Notities</span>
+              <div className="flex items-center gap-2">
+                {isAdmin && !isEditing && (
+                  <span
+                    role="button"
+                    tabIndex={0}
+                    onClick={(e) => { e.stopPropagation(); setIsEditing(true); setNotesOpen(true); }}
+                    onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.stopPropagation(); setIsEditing(true); setNotesOpen(true); } }}
+                    className="btn text-xs px-3 min-h-[32px] h-8"
+                  >
+                    Bewerken
+                  </span>
+                )}
+                <motion.svg
+                  className="w-4 h-4 text-textc/40 flex-shrink-0"
+                  fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                  animate={{ rotate: notesOpen ? 180 : 0 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </motion.svg>
+              </div>
+            </button>
+            <AnimatePresence initial={false}>
+              {notesOpen && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: 'auto', opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.22, ease: 'easeInOut' }}
+                  className="overflow-hidden"
+                >
+                  <div className="px-4 pb-4 pt-3 bg-bg/40">
+                    <AnimatePresence mode="wait">
+                      {isEditing ? (
+                        <motion.div key="editing" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.15 }} className="flex flex-col gap-3">
+                          <textarea
+                            className="input w-full min-h-[140px] p-3"
+                            value={editNote}
+                            onChange={(e) => setEditNote(e.target.value)}
+                            placeholder="Notities hier invoeren..."
+                            autoFocus
+                          />
+                          {saveError && <p className="text-sm text-red-400">{saveError}</p>}
+                          <div className="flex justify-end gap-2">
+                            <button onClick={() => { setIsEditing(false); setEditNote(drug.notes || ''); setSaveError(''); }} className="btn">Annuleren</button>
+                            <button onClick={handleSave} disabled={isSaving} className="btn btn-primary">{isSaving ? 'Opslaan...' : 'Opslaan'}</button>
+                          </div>
+                        </motion.div>
+                      ) : (
+                        <motion.p key="viewing" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.15 }} className="text-textc leading-relaxed whitespace-pre-wrap text-sm">
+                          {hasNotes
+                            ? (drug.notes || tripsit?.summary)
+                            : <span className="text-textc/40 italic">Geen notities voor deze stof.</span>}
+                        </motion.p>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </motion.div>
 
-        {/* Skeleton while API loads */}
-        {(wiki === null || interactions === null) && (
-          <div className="mt-3 space-y-3 animate-pulse">
-            <div className="h-12 rounded-2xl bg-white/5" />
-            <div className="h-12 rounded-2xl bg-white/5" />
-          </div>
-        )}
+          {/* Skeleton while API loads */}
+          {(wiki === null || interactions === null) && (
+            <div className="mt-3 space-y-3 animate-pulse">
+              <div className="h-12 rounded-2xl bg-white/5" />
+              <div className="h-12 rounded-2xl bg-white/5" />
+            </div>
+          )}
 
-        {/* API sections — fade in once wiki + interactions resolve */}
-        {wiki !== null && interactions !== null && (
-          <motion.div variants={containerVariants} initial="hidden" animate="visible">
+          {/* API sections */}
+          {wiki !== null && interactions !== null && (
+            <motion.div variants={containerVariants} initial="hidden" animate="visible">
 
               {/* Dosage & duration — PsychonautWiki */}
               {roas !== null && roas.length > 0 && (
@@ -483,10 +509,11 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
                 </svg>
               </motion.a>
 
-          </motion.div>
-        )}
+            </motion.div>
+          )}
         </div>
-        {/* Footer — always visible at bottom */}
+
+        {/* Footer */}
         <div className="flex justify-end px-7 py-4 shrink-0 border-t border-white/[0.08]">
           <button onClick={onClose} className="btn">Sluiten</button>
         </div>

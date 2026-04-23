@@ -650,7 +650,7 @@ button {
 .pd-modal {
   position: relative;
   width: 100%;
-  max-width: 600px;
+  max-width: 720px;
   overflow-y: auto;
   border-radius: 28px;
   background: var(--pd-surface-strong);
