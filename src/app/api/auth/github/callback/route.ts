@@ -38,6 +38,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.redirect(new URL('/admin', req.url));
   } catch (e) {
     console.error('GitHub callback error:', e);
-    return NextResponse.redirect(new URL('/?auth=error', req.url));
+    const reason = e instanceof Error ? e.message : String(e);
+    return NextResponse.redirect(new URL(`/?auth=error&reason=${encodeURIComponent(reason)}`, req.url));
   }
 }
