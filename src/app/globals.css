@@ -329,7 +329,7 @@ body {
     radial-gradient(ellipse 50% 60% at 50% 100%, rgba(79, 70, 229, 0.08), transparent),
     linear-gradient(180deg, #0a0f22 0%, #08101f 35%, #070c1c 65%, #070c1a 100%);
   color: var(--pd-text);
-  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Inter', 'Segoe UI', sans-serif;
+  font-family: var(--font-geist), -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Inter', 'Segoe UI', sans-serif;
 }
 
 /* Slow-drifting ambient orbs */
@@ -438,7 +438,7 @@ button {
   }
 
   .btn-primary {
-    background: linear-gradient(180deg, #818cf8 0%, #6366f1 100%);
+    background: #6366f1;
     border-color: transparent;
     color: #fff;
     box-shadow: 0 8px 24px rgba(99, 102, 241, 0.30);
@@ -656,7 +656,7 @@ button {
 .pd-primaryButton {
   min-height: 52px;
   border-radius: 18px;
-  background: linear-gradient(180deg, #818cf8 0%, #6366f1 100%);
+  background: #6366f1;
   color: white;
   font-size: 16px;
   font-weight: 700;
