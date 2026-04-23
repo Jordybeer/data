@@ -10,3 +10,10 @@ coverage
 pnpm-lock.yaml
 yarn.lock
 package-lock.json
+public
+*.png
+*.jpg
+*.svg
+*.ico
+*.woff*
+*.ttf
