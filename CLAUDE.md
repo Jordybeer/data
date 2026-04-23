@@ -17,3 +17,6 @@ Next.js 16 (App Router) · TypeScript · Tailwind CSS v3 · Supabase · Framer M
 - Server components do NOT import client hooks
 - All Supabase queries go through `src/lib/` helpers, not inline
 - Diffs only — no explanations unless fix is ambiguous
+- `TASKS.md` is session-only — never commit it
+- Agents self-assign from TASKS.md, mark `in_progress` before starting
+- Merge order: DB → Auth → PWA → UI → Wildcard
