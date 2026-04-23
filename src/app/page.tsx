@@ -76,16 +76,18 @@ function HomeInner() {
   const categories = Array.from(new Set(drugs.map((d) => d.category)));
   const categories2 = Array.from(new Set(drugs.map((d) => d.category2).filter(Boolean))) as string[];
 
-  const filteredDrugs = drugs.filter((drug) => {
-    const q = search.toLowerCase();
-    const matchesSearch =
-      drug.name.toLowerCase().includes(q) ||
-      drug.category.toLowerCase().includes(q) ||
-      (drug.category2 ?? '').toLowerCase().includes(q);
-    const matchesCategory = !category || drug.category === category;
-    const matchesCategory2 = !category2 || drug.category2 === category2;
-    return matchesSearch && matchesCategory && matchesCategory2;
-  });
+  const filteredDrugs = drugs
+    .filter((drug) => {
+      const q = search.toLowerCase();
+      const matchesSearch =
+        drug.name.toLowerCase().includes(q) ||
+        drug.category.toLowerCase().includes(q) ||
+        (drug.category2 ?? '').toLowerCase().includes(q);
+      const matchesCategory = !category || drug.category === category;
+      const matchesCategory2 = !category2 || drug.category2 === category2;
+      return matchesSearch && matchesCategory && matchesCategory2;
+    })
+    .sort((a, b) => a.name.localeCompare(b.name));
 
   if (isLoading) return <LoadingScreen />;
 
