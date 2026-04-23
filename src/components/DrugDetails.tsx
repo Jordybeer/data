@@ -242,7 +242,7 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
       transition={{ duration: 0.2 }}
     >
       <motion.div
-        className="pd-modal flex flex-col max-h-[75dvh] overflow-hidden p-0"
+        className="pd-modal flex flex-col max-h-[95dvh] overflow-hidden p-0"
         onClick={(e) => e.stopPropagation()}
         initial={{ opacity: 0, scale: 0.94 }}
         animate={{ opacity: 1, scale: 1 }}
