@@ -22,7 +22,7 @@ export const DrugItem: React.FC<DrugItemProps> = ({ drug, onClick }) => (
         {drug.category}
       </span>
       {drug.category2 && (
-        <span className="text-[11px] font-medium text-cyan-300/80 bg-cyan-400/10 border border-cyan-400/20 px-2 py-0.5 rounded-md">
+        <span className="text-[11px] font-medium text-sky-300/80 bg-sky-400/10 border border-sky-400/20 px-2 py-0.5 rounded-md">
           {drug.category2}
         </span>
       )}

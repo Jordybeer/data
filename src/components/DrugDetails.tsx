@@ -232,7 +232,7 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
 
   return (
     <motion.div
-      className="modal-overlay"
+      className="pd-modalOverlay"
       onClick={onClose}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
@@ -240,27 +240,26 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
       transition={{ duration: 0.2 }}
     >
       <motion.div
-        className="modal"
+        className="pd-modal flex flex-col max-h-[75dvh] overflow-hidden p-0"
         onClick={(e) => e.stopPropagation()}
         initial={{ opacity: 0, scale: 0.94 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.94 }}
         transition={{ type: 'spring' as const, stiffness: 400, damping: 30 }}
-        style={{ padding: 0, overflow: 'hidden', display: 'flex', flexDirection: 'column', height: '75dvh' }}
       >
         {/* Header — outside scroll container so content can never bleed above it */}
         <div
-          className="pd-modalStickyHeader flex justify-between items-start gap-3 pb-4 border-b border-borderc/40"
-          style={{ padding: '20px 28px', flexShrink: 0, background: 'rgba(15,23,42,0.98)' }}
+          className="pd-modalStickyHeader flex justify-between items-start gap-3 px-7 py-5 shrink-0 border-b border-borderc/40"
+          style={{ background: 'rgba(15,23,42,0.98)' }}
         >
-          <div className="min-w-0 flex-1">
+          <div className="min-w-0 flex-1 pr-2">
             <h2 className="text-2xl font-bold text-primary leading-snug">{drug.name}</h2>
             <div className="flex flex-wrap gap-1.5 mt-2">
               <span className="text-sm font-medium text-primary/80 bg-primary/10 border border-primary/20 px-2.5 py-1 rounded-md">
                 {drug.category}
               </span>
               {drug.category2 && (
-                <span className="text-sm font-medium text-cyan-300/80 bg-cyan-400/10 border border-cyan-400/20 px-2.5 py-1 rounded-md">
+                <span className="text-sm font-medium text-sky-300/80 bg-sky-400/10 border border-sky-400/20 px-2.5 py-1 rounded-md">
                   {drug.category2}
                 </span>
               )}
@@ -270,14 +269,13 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
             onClick={onClose}
             className="pd-closeButton flex-shrink-0"
             aria-label="Sluiten"
-            style={{ marginTop: 2 }}
           >
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
               <path d="M2 2l12 12M14 2L2 14" />
             </svg>
           </button>
         </div>
-        <div className="overflow-y-auto p-7 pt-5 pb-4" style={{ flex: '1 1 0', minHeight: 0 }}>
+        <div className="flex-1 min-h-0 overflow-y-auto p-7 pt-5 pb-4">
 
         {/* Notes — always visible, no API dependency */}
         <motion.div
@@ -491,7 +489,7 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
         </div>
         {/* Footer — always visible at bottom */}
         <div style={{ padding: '16px 28px', flexShrink: 0, borderTop: '1px solid rgba(255,255,255,0.08)' }} className="flex justify-end">
-          <button onClick={onClose} className="btn btn-primary" style={{ minHeight: 44 }}>Sluiten</button>
+          <button onClick={onClose} className="btn">Sluiten</button>
         </div>
       </motion.div>
     </motion.div>

@@ -90,15 +90,16 @@ function HomeInner() {
 
   if (fetchError) {
     return (
-      <div className="min-h-screen flex items-center justify-center text-textc/60">
-        Kon stoffen niet laden — database niet beschikbaar.
+      <div className="min-h-screen flex flex-col items-center justify-center gap-4 text-textc/60">
+        <p>Kon stoffen niet laden — database niet beschikbaar.</p>
+        <button className="btn" onClick={() => window.location.reload()}>Opnieuw proberen</button>
       </div>
     );
   }
 
   return (
     <div className="min-h-screen pb-20">
-      <header className="card rounded-none border-x-0 border-t-0 sticky top-0 z-10">
+      <header className="pd-stickyHeader">
         <div className="container mx-auto px-4 py-4">
           <div className="flex justify-between items-center mb-3">
             <h1 className="text-2xl font-bold">
