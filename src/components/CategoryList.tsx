@@ -42,7 +42,7 @@ export const CategoryList: React.FC<CategoryListProps> = ({
   if (variant === 'segment') {
     return (
       <div
-        role="group"
+        role="radiogroup"
         aria-label={label ?? 'Filter op categorie'}
         className="flex rounded-[14px] bg-white/[0.05] border border-white/[0.07] p-[3px] gap-[3px]"
       >
@@ -72,7 +72,7 @@ export const CategoryList: React.FC<CategoryListProps> = ({
 
   return (
     <div
-      role="group"
+      role="radiogroup"
       aria-label={label ?? 'Filter op subcategorie'}
       className="flex flex-wrap gap-1.5"
     >
@@ -86,10 +86,10 @@ export const CategoryList: React.FC<CategoryListProps> = ({
             aria-checked={isActive}
             onClick={() => onSelect(cat)}
             className={
-              'h-6 px-2.5 rounded-full text-[11px] font-medium transition-all duration-150 border ' +
+              'h-6 px-2.5 rounded-full text-xs font-medium transition-all duration-150 border ' +
               (isActive
                 ? (CHIP_ACTIVE[key] ?? 'bg-primary/[0.18] border-primary/30 text-primary')
-                : 'border-black/[0.12] dark:border-white/[0.09] text-textc/50 active:bg-black/[0.04] dark:active:bg-white/[0.05]')
+                : 'border-black/[0.12] dark:border-white/[0.09] text-textc/65 active:bg-black/[0.04] dark:active:bg-white/[0.05]')
             }
           >
             {displayLabel(cat)}
