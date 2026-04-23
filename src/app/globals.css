@@ -94,8 +94,8 @@ html[data-theme="light"] [role="radiogroup"] button[aria-checked="false"] {
 }
 
 html[data-theme="light"] .pd-modalStickyHeader {
-  background: rgba(255, 255, 255, 0.98) !important;
-  border-bottom-color: rgba(0, 0, 0, 0.10);
+  background: rgba(238, 242, 255, 0.98) !important;
+  border-bottom-color: rgba(99, 102, 241, 0.14);
 }
 
 html[data-theme="light"] .pd-modalStickyHeader h2 {
@@ -149,11 +149,12 @@ html[data-theme="light"] .pd-stickyHeader::after {
 }
 
 html[data-theme="light"] .pd-modal {
-  background: rgba(255, 255, 255, 0.88);
-  border-color: rgba(255, 255, 255, 0.46);
+  background: rgba(238, 242, 255, 0.94);
+  border-color: rgba(99, 102, 241, 0.22);
   box-shadow:
-    0 24px 64px rgba(8, 20, 48, 0.18),
-    0 1px 2px rgba(255, 255, 255, 0.90) inset;
+    0 0 0 1px rgba(99, 102, 241, 0.10) inset,
+    0 32px 80px rgba(8, 20, 48, 0.20),
+    0 0 80px rgba(99, 102, 241, 0.08);
 }
 
 html[data-theme="light"] .pd-card {
@@ -653,13 +654,14 @@ button {
   max-width: 720px;
   overflow-y: auto;
   border-radius: 28px;
-  background: var(--pd-surface-strong);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(12, 15, 44, 0.97);
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
+  border: 1px solid rgba(130, 140, 255, 0.22);
   box-shadow:
-    0 24px 64px rgba(0, 0, 0, 0.5),
-    0 1px 2px rgba(255, 255, 255, 0.1) inset;
+    0 0 0 1px rgba(99, 102, 241, 0.08) inset,
+    0 32px 80px rgba(0, 0, 0, 0.55),
+    0 0 100px rgba(99, 102, 241, 0.10);
   padding: 32px;
 }
 
@@ -698,9 +700,9 @@ button {
 }
 
 .pd-modalStickyHeader {
-  background: var(--pd-surface-strong);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
+  background: rgba(12, 15, 44, 0.97);
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
 }
 
 .pd-section {
@@ -798,8 +800,8 @@ button {
   }
 
   .pd-modal {
-    padding: 24px;
-    border-radius: 24px;
+    padding: 20px;
+    border-radius: 22px;
   }
 
   .pd-grid {
