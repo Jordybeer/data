@@ -249,17 +249,17 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
       >
         {/* Header — outside scroll container so content can never bleed above it */}
         <div
-          className="pd-modalStickyHeader flex justify-between items-start gap-3 px-7 py-5 shrink-0 border-b border-borderc/40"
-          style={{ background: 'rgba(15,23,42,0.98)' }}
+          className="pd-modalStickyHeader flex justify-between items-start gap-3 px-8 py-6 shrink-0 border-b border-white/[0.07]"
+          style={{ background: 'var(--pd-surface-strong)', backdropFilter: 'blur(24px)', WebkitBackdropFilter: 'blur(24px)' }}
         >
           <div className="min-w-0 flex-1 pr-2">
             <h2 className="text-2xl font-bold text-primary leading-snug">{drug.name}</h2>
             <div className="flex flex-wrap gap-1.5 mt-2">
-              <span className="text-sm font-medium text-primary/80 bg-primary/10 border border-primary/20 px-2.5 py-1 rounded-md">
+              <span className="text-sm font-medium text-primary/80 bg-primary/10 border border-primary/20 px-3 py-1 rounded-full">
                 {drug.category}
               </span>
               {drug.category2 && (
-                <span className="text-sm font-medium text-sky-300/80 bg-sky-400/10 border border-sky-400/20 px-2.5 py-1 rounded-md">
+                <span className="text-sm font-medium text-sky-300/80 bg-sky-400/10 border border-sky-400/20 px-3 py-1 rounded-full">
                   {drug.category2}
                 </span>
               )}
@@ -275,7 +275,7 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
             </svg>
           </button>
         </div>
-        <div className="flex-1 min-h-0 overflow-y-auto p-7 pt-5 pb-4">
+        <div className="flex-1 min-h-0 overflow-y-auto p-8 pt-6 pb-6">
 
         {/* Notes — always visible, no API dependency */}
         <motion.div
