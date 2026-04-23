@@ -6,6 +6,7 @@ import Link from 'next/link';
 import type { Drug } from '@/data/drugs';
 import { useSession } from '@/components/SessionProvider';
 import { Button } from '@/components/Button';
+import ThemeToggle from '@/components/ThemeToggle';
 
 type Row = Drug & {
   _notesDirty?: string;
@@ -167,7 +168,8 @@ export default function AdminPage() {
               {stats.total} stoffen · {stats.withNotes} met notities · {stats.categories} categorieën
             </p>
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-2 items-center">
+            <ThemeToggle />
             <Link href="/" className="btn">← Terug</Link>
             <Button
               variant="danger"
