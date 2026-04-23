@@ -90,7 +90,7 @@ function HomeInner() {
 
   if (fetchError) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center gap-4 text-textc/60">
+      <div className="min-h-screen flex flex-col items-center justify-center gap-4 text-textc/72">
         <p>Kon stoffen niet laden — database niet beschikbaar.</p>
         <button className="btn" onClick={() => window.location.reload()}>Opnieuw proberen</button>
       </div>
@@ -102,7 +102,7 @@ function HomeInner() {
       <header className="pd-stickyHeader">
         <div className="container mx-auto px-4 py-4">
           <div className="flex justify-between items-center mb-3">
-            <h1 className="text-2xl font-bold">
+            <h1 className="text-xl font-bold">
               <span className="text-textc">Snuff</span>{' '}
               <span className="text-primary">DB</span>
             </h1>
@@ -131,7 +131,7 @@ function HomeInner() {
         </div>
 
         {(search || category || category2) && filteredDrugs.length > 0 && (
-          <p className="text-xs text-textc/40 -mb-1">{filteredDrugs.length} resultaten</p>
+          <p className="text-xs text-textc/55 -mb-1">{filteredDrugs.length} resultaten</p>
         )}
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -142,7 +142,7 @@ function HomeInner() {
 
         {filteredDrugs.length === 0 && (
           <div className="text-center py-12 space-y-3">
-            <p className="text-textc/60">Geen stoffen gevonden.</p>
+            <p className="text-textc/72">Geen stoffen gevonden.</p>
             {(search || category || category2) && (
               <button
                 onClick={() => { setSearch(''); setCategory(null); setCategory2(null); }}
