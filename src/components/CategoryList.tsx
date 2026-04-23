@@ -59,7 +59,7 @@ export const CategoryList: React.FC<CategoryListProps> = ({
                 'flex-1 h-8 rounded-[11px] text-[13px] font-medium transition-all duration-150 ' +
                 (isActive
                   ? (SEGMENT_ACTIVE[key] ?? SEGMENT_ACTIVE.__all__)
-                  : 'text-textc/50 active:bg-black/[0.04] dark:active:bg-white/[0.05]')
+                  : 'text-textc/65 active:bg-black/[0.04] dark:active:bg-white/[0.05]')
               }
             >
               {displayLabel(cat)}

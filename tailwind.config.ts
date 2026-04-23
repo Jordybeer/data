@@ -16,7 +16,7 @@ const config: Config = {
         card:     'rgba(15, 23, 42, 0.78)',
         textc:    'rgb(var(--tw-color-textc) / <alpha-value>)',
         borderc:  'rgba(255, 255, 255, 0.08)',
-        primary:  'rgb(167 139 250 / <alpha-value>)',
+        primary:  'rgb(129 140 248 / <alpha-value>)',
         'bg-hover': 'rgba(255, 255, 255, 0.08)',
         warning:  '#fbbf24',
         // legacy aliases

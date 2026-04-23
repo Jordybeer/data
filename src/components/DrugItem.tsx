@@ -28,7 +28,7 @@ export const DrugItem: React.FC<DrugItemProps> = ({ drug, onClick }) => (
       )}
     </div>
     {drug.notes && (
-      <p className="text-sm text-textc/55 line-clamp-2 mt-2">{drug.notes}</p>
+      <p className="text-sm text-textc/65 line-clamp-2 mt-2">{drug.notes}</p>
     )}
   </button>
 );

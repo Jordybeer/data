@@ -25,12 +25,16 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'name and category required' }, { status: 400 });
   }
 
-  const { data, error } = await supabaseAdmin
-    .from('drugs')
-    .insert({ name: name.trim(), category: category.trim(), notes: notes ?? '' })
-    .select()
-    .single();
+  try {
+    const { data, error } = await supabaseAdmin
+      .from('drugs')
+      .insert({ name: name.trim(), category: category.trim(), notes: notes ?? '' })
+      .select()
+      .single();
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
-  return NextResponse.json(data);
+    if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json(data);
+  } catch (err) {
+    return NextResponse.json({ error: err instanceof Error ? err.message : String(err) }, { status: 500 });
+  }
 }

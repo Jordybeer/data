@@ -253,7 +253,7 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
           className="pd-modalStickyHeader flex justify-between items-start gap-3 pb-4 border-b border-borderc/40"
           style={{ padding: '20px 28px', flexShrink: 0, background: 'rgba(15,23,42,0.98)' }}
         >
-          <div className="min-w-0">
+          <div className="min-w-0 flex-1">
             <h2 className="text-2xl font-bold text-primary leading-snug">{drug.name}</h2>
             <div className="flex flex-wrap gap-1.5 mt-2">
               <span className="text-sm font-medium text-primary/80 bg-primary/10 border border-primary/20 px-2.5 py-1 rounded-md">
@@ -266,6 +266,16 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
               )}
             </div>
           </div>
+          <button
+            onClick={onClose}
+            className="pd-closeButton flex-shrink-0"
+            aria-label="Sluiten"
+            style={{ marginTop: 2 }}
+          >
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+              <path d="M2 2l12 12M14 2L2 14" />
+            </svg>
+          </button>
         </div>
         <div className="overflow-y-auto p-7 pt-5 pb-4" style={{ flex: '1 1 0', minHeight: 0 }}>
 
@@ -347,7 +357,7 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
                                   <div className="space-y-1 mb-3">
                                     {doseRows.map((l) => (
                                       <div key={l.key} className="flex items-center justify-between">
-                                        <span className="text-xs text-textc/50 w-16 flex-shrink-0">{l.label}</span>
+                                        <span className="text-xs text-textc/45 w-16 flex-shrink-0">{l.label}</span>
                                         <div className="flex-1 mx-2 h-px bg-borderc/30" />
                                         <span className={`text-xs font-semibold tabular-nums ${l.color}`}>{l.value}</span>
                                       </div>
@@ -358,9 +368,9 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
                                   <div className="space-y-1">
                                     {durRows.map((f) => (
                                       <div key={f.key} className="flex items-center justify-between">
-                                        <span className="text-xs text-textc/50 w-16 flex-shrink-0">{f.label}</span>
+                                        <span className="text-xs text-textc/45 w-16 flex-shrink-0">{f.label}</span>
                                         <div className="flex-1 mx-2 h-px bg-borderc/30" />
-                                        <span className="text-xs font-semibold tabular-nums text-textc/70">{f.value}</span>
+                                        <span className="text-xs font-semibold tabular-nums text-textc/85">{f.value}</span>
                                       </div>
                                     ))}
                                   </div>
@@ -394,9 +404,9 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
                               <div className="space-y-1">
                                 {Object.entries(levels).map(([level, value]) => (
                                   <div key={level} className="flex items-center justify-between">
-                                    <span className="text-xs text-textc/50 w-16 flex-shrink-0">{level}</span>
+                                    <span className="text-xs text-textc/45 w-16 flex-shrink-0">{level}</span>
                                     <div className="flex-1 mx-2 h-px bg-borderc/30" />
-                                    <span className="text-xs font-semibold tabular-nums text-textc/70">{value}</span>
+                                    <span className="text-xs font-semibold tabular-nums text-textc/85">{value}</span>
                                   </div>
                                 ))}
                               </div>
@@ -408,16 +418,16 @@ const DrugDetails = ({ drug, onClose, isAdmin, onNoteUpdate }: DrugDetailsProps)
                               <div className="space-y-1">
                                 {tripsit.onset && Object.entries(tripsit.onset).filter(([k]) => k !== '_unit').map(([route, val]) => (
                                   <div key={`onset-${route}`} className="flex items-center justify-between">
-                                    <span className="text-xs text-textc/50 w-24 flex-shrink-0">Onset {route}</span>
+                                    <span className="text-xs text-textc/45 w-24 flex-shrink-0">Onset {route}</span>
                                     <div className="flex-1 mx-2 h-px bg-borderc/30" />
-                                    <span className="text-xs font-semibold tabular-nums text-textc/70">{val} {tripsit.onset!['_unit'] ?? 'min'}</span>
+                                    <span className="text-xs font-semibold tabular-nums text-textc/85">{val} {tripsit.onset!['_unit'] ?? 'min'}</span>
                                   </div>
                                 ))}
                                 {tripsit.duration && Object.entries(tripsit.duration).filter(([k]) => k !== '_unit').map(([route, val]) => (
                                   <div key={`dur-${route}`} className="flex items-center justify-between">
-                                    <span className="text-xs text-textc/50 w-24 flex-shrink-0">Duur {route}</span>
+                                    <span className="text-xs text-textc/45 w-24 flex-shrink-0">Duur {route}</span>
                                     <div className="flex-1 mx-2 h-px bg-borderc/30" />
-                                    <span className="text-xs font-semibold tabular-nums text-textc/70">{val} {tripsit.duration!['_unit'] ?? 'u'}</span>
+                                    <span className="text-xs font-semibold tabular-nums text-textc/85">{val} {tripsit.duration!['_unit'] ?? 'u'}</span>
                                   </div>
                                 ))}
                               </div>

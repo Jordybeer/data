@@ -36,6 +36,11 @@ export default function AdminPage() {
   const [bulkRows, setBulkRows] = useState<BulkRow[]>([]);
   const [bulkBusy, setBulkBusy] = useState(false);
 
+  const apiErr = async (r: Response) => {
+    const b = await r.json().catch(() => ({})) as { error?: string };
+    return b.error ?? '';
+  };
+
   const flash = (msg: string, ok = true) => {
     if (toastTimer.current) clearTimeout(toastTimer.current);
     setToast({ msg, ok });
@@ -77,7 +82,7 @@ export default function AdminPage() {
       body: JSON.stringify(payload),
     });
     setBusy(null);
-    if (!r.ok) { flash('Opslaan mislukt', false); return false; }
+    if (!r.ok) { const e = await apiErr(r); flash(`Opslaan mislukt${e ? `: ${e}` : ''}`, false); return false; }
     flash('Opgeslagen');
     return true;
   };
@@ -101,7 +106,7 @@ export default function AdminPage() {
     setBusy(`del-${id}`);
     const r = await fetch(`/api/drugs/${id}`, { method: 'DELETE' });
     setBusy(null);
-    if (!r.ok) { flash('Verwijderen mislukt', false); return; }
+    if (!r.ok) { const e = await apiErr(r); flash(`Verwijderen mislukt${e ? `: ${e}` : ''}`, false); return; }
     setDrugs((cur) => cur.filter((d) => d.id !== id));
     flash('Verwijderd');
   };
@@ -116,7 +121,7 @@ export default function AdminPage() {
       body: JSON.stringify({ name: newRow.name.trim(), category: newRow.category.trim() || 'Street drugs' }),
     });
     setBusy(null);
-    if (!r.ok) { flash('Toevoegen mislukt', false); return; }
+    if (!r.ok) { const e = await apiErr(r); flash(`Toevoegen mislukt${e ? `: ${e}` : ''}`, false); return; }
     const created = (await r.json()) as Drug;
     setDrugs((cur) => [created, ...cur]);
     setNewRow({ name: '', category: newRow.category });
