@@ -15,7 +15,7 @@ export const DrugItem: React.FC<DrugItemProps> = ({ drug, onClick }) => (
       'card p-4 text-left w-full transition-all duration-200 group min-h-[88px] ' +
       /* Hover bg raised from white/6 → white/10; border raised from white/14 → white/22 */
       'hover:bg-white/[0.10] hover:border-white/[0.22] ' +
-      'active:scale-[0.98] active:brightness-95'
+      'active:scale-[0.98]'
     }
   >
     <h3 className="font-semibold text-base text-textc mb-2 leading-snug">
