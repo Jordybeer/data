@@ -4,12 +4,18 @@
 
 :root {
   color-scheme: dark;
-  --pd-bg: #0d1120;
-  --pd-surface: rgba(15, 22, 48, 0.76);
-  --pd-surface-strong: rgba(13, 18, 40, 0.95);
-  --pd-border: rgba(130, 140, 255, 0.14);
+  /* Base background lifted from #0d1120 → #141b2e so surfaces have room to layer above it */
+  --pd-bg: #141b2e;
+  /* Surface raised from rgba(15,22,48,.76) → rgba(30,40,72,.80) — clearly lighter than the base */
+  --pd-surface: rgba(30, 40, 72, 0.80);
+  /* Surface-strong raised from rgba(13,18,40,.95) (was darker than surface!) → rgba(36,48,84,.96) */
+  --pd-surface-strong: rgba(36, 48, 84, 0.96);
+  /* Border raised from 0.14 → 0.24 opacity so structure is actually visible */
+  --pd-border: rgba(130, 140, 255, 0.24);
+  /* Body text kept near-white */
   --pd-text: #eef1ff;
-  --pd-subtle: #9aa3c4;
+  /* Subtle text lightened from #9aa3c4 → #b4bcd8 — better contrast on darker surfaces */
+  --pd-subtle: #b4bcd8;
   --pd-blue: #60a5fa;
   --pd-cyan: #67e8f9;
   --pd-green: #34d399;
@@ -17,7 +23,8 @@
   --pd-purple: #818cf8;
   --pd-shadow: 0 30px 80px rgba(2, 4, 20, 0.55);
   --tw-color-textc: 238 241 255;
-  --tw-color-bg: 13 17 32;
+  /* bg token updated to match new --pd-bg */
+  --tw-color-bg: 20 27 46;
 }
 
 /* ===========================
@@ -44,37 +51,37 @@ body,
 
 html[data-theme="light"] {
   color-scheme: light;
-  --pd-bg: #7e9bbc;
-  --pd-surface: rgba(255, 255, 255, 0.52);
-  --pd-surface-strong: rgba(255, 255, 255, 0.84);
-  --pd-border: rgba(255, 255, 255, 0.32);
+  --pd-bg: #f0f4ff;
+  --pd-surface: rgba(255, 255, 255, 0.80);
+  --pd-surface-strong: rgba(255, 255, 255, 0.97);
+  --pd-border: rgba(99, 102, 241, 0.14);
   --pd-text: #0c1929;
-  --pd-subtle: #2d4160;
+  --pd-subtle: #3b4f70;
   --pd-blue: #1d6fa8;
   --pd-cyan: #0b7fa6;
   --pd-green: #0f7a52;
   --pd-red: #c4243a;
   --pd-purple: #4f46e5;
-  --pd-shadow: 0 20px 60px rgba(8, 20, 48, 0.16);
+  --pd-shadow: 0 20px 60px rgba(8, 20, 48, 0.10);
   --tw-color-textc: 12 25 41;
-  --tw-color-bg: 126 155 188;
+  --tw-color-bg: 240 244 255;
 }
 
 html[data-theme="light"] body {
   background:
-    radial-gradient(ellipse 70% 50% at 15% 0%,   rgba(56, 189, 248, 0.28),  transparent),
-    radial-gradient(ellipse 60% 45% at 85% 5%,   rgba(167, 139, 250, 0.26), transparent),
-    radial-gradient(ellipse 50% 60% at 50% 100%, rgba(99, 102, 241, 0.18),  transparent),
-    linear-gradient(180deg, #6b8fb0 0%, #7898ba 35%, #7a9abf 65%, #7e9bbc 100%);
+    radial-gradient(ellipse 70% 50% at 15% 0%,   rgba(56, 189, 248, 0.12),  transparent),
+    radial-gradient(ellipse 60% 45% at 85% 5%,   rgba(167, 139, 250, 0.10), transparent),
+    radial-gradient(ellipse 50% 60% at 50% 100%, rgba(99, 102, 241, 0.07),  transparent),
+    linear-gradient(180deg, #eef2ff 0%, #f0f4ff 35%, #f2f5ff 65%, #f0f4ff 100%);
   color: var(--pd-text);
 }
 
 html[data-theme="light"] body::before {
-  background: rgba(56, 189, 248, 0.22);
+  background: rgba(56, 189, 248, 0.08);
 }
 
 html[data-theme="light"] body::after {
-  background: rgba(167, 139, 250, 0.20);
+  background: rgba(167, 139, 250, 0.07);
 }
 
 html[data-theme="light"] .pd-substanceName {
@@ -94,8 +101,8 @@ html[data-theme="light"] [role="radiogroup"] button[aria-checked="false"] {
 }
 
 html[data-theme="light"] .pd-modalStickyHeader {
-  background: rgba(238, 242, 255, 0.98) !important;
-  border-bottom-color: rgba(99, 102, 241, 0.14);
+  background: rgba(255, 255, 255, 0.98) !important;
+  border-bottom-color: rgba(99, 102, 241, 0.12);
 }
 
 html[data-theme="light"] .pd-modalStickyHeader h2 {
@@ -103,11 +110,11 @@ html[data-theme="light"] .pd-modalStickyHeader h2 {
 }
 
 html[data-theme="light"] .card {
-  background: rgba(255, 255, 255, 0.70);
-  border-color: rgba(255, 255, 255, 0.36);
+  background: rgba(255, 255, 255, 0.90);
+  border-color: rgba(99, 102, 241, 0.14);
   box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.75) inset,
-    0 8px 32px rgba(8, 20, 48, 0.12);
+    0 1px 0 rgba(255, 255, 255, 1) inset,
+    0 4px 20px rgba(8, 20, 48, 0.08);
 }
 
 html[data-theme="light"] .btn {
@@ -117,8 +124,8 @@ html[data-theme="light"] .btn {
 }
 
 html[data-theme="light"] .input {
-  background: rgba(255, 255, 255, 0.68);
-  border-color: rgba(255, 255, 255, 0.42);
+  background: rgba(255, 255, 255, 0.95);
+  border-color: rgba(99, 102, 241, 0.22);
   color: var(--pd-text);
 }
 
@@ -132,45 +139,45 @@ html[data-theme="light"] .input:focus {
 }
 
 html[data-theme="light"] .modal {
-  background: rgba(255, 255, 255, 0.88);
-  border-color: rgba(255, 255, 255, 0.50);
+  background: rgba(255, 255, 255, 0.97);
+  border-color: rgba(99, 102, 241, 0.18);
   box-shadow:
-    0 32px 80px rgba(8, 20, 48, 0.20),
-    0 1px 0 rgba(255, 255, 255, 0.90) inset;
+    0 16px 48px rgba(8, 20, 48, 0.12),
+    0 1px 0 rgba(255, 255, 255, 1) inset;
 }
 
 html[data-theme="light"] .pd-stickyHeader {
-  background: rgba(110, 145, 180, 0.72);
-  border-bottom-color: rgba(255, 255, 255, 0.22);
+  background: rgba(240, 244, 255, 0.88);
+  border-bottom-color: rgba(99, 102, 241, 0.12);
 }
 
 html[data-theme="light"] .pd-stickyHeader::after {
-  background: linear-gradient(to bottom, rgba(110, 145, 180, 0.40), transparent);
+  background: linear-gradient(to bottom, rgba(240, 244, 255, 0.40), transparent);
 }
 
 html[data-theme="light"] .pd-modal {
-  background: rgba(238, 242, 255, 0.94);
-  border-color: rgba(99, 102, 241, 0.22);
+  background: rgba(255, 255, 255, 0.98);
+  border-color: rgba(99, 102, 241, 0.20);
   box-shadow:
-    0 0 0 1px rgba(99, 102, 241, 0.10) inset,
-    0 32px 80px rgba(8, 20, 48, 0.20),
-    0 0 80px rgba(99, 102, 241, 0.08);
+    0 0 0 1px rgba(99, 102, 241, 0.08) inset,
+    0 16px 56px rgba(8, 20, 48, 0.12),
+    0 0 60px rgba(99, 102, 241, 0.05);
 }
 
 html[data-theme="light"] .pd-card {
-  background: rgba(255, 255, 255, 0.56);
-  border-color: rgba(255, 255, 255, 0.38);
+  background: rgba(255, 255, 255, 0.92);
+  border-color: rgba(99, 102, 241, 0.14);
 }
 
 html[data-theme="light"] .pd-substanceCard {
-  background: rgba(255, 255, 255, 0.48);
-  border-color: rgba(255, 255, 255, 0.32);
+  background: rgba(255, 255, 255, 0.88);
+  border-color: rgba(99, 102, 241, 0.14);
 }
 
 html[data-theme="light"] .pd-input,
 html[data-theme="light"] .pd-textarea {
-  background: rgba(255, 255, 255, 0.72);
-  border-color: rgba(255, 255, 255, 0.42);
+  background: rgba(255, 255, 255, 0.95);
+  border-color: rgba(99, 102, 241, 0.22);
   color: var(--pd-text);
 }
 
@@ -186,21 +193,21 @@ html[data-theme="light"] .pd-textarea:focus {
 }
 
 html[data-theme="light"] .pd-authButton {
-  background: rgba(255, 255, 255, 0.52);
-  border-color: rgba(255, 255, 255, 0.40);
+  background: rgba(255, 255, 255, 0.92);
+  border-color: rgba(99, 102, 241, 0.22);
   color: var(--pd-text);
-  box-shadow: 0 4px 16px rgba(8, 20, 48, 0.10);
+  box-shadow: 0 4px 16px rgba(8, 20, 48, 0.08);
 }
 
 html[data-theme="light"] .pd-secondaryButton {
-  background: rgba(255, 255, 255, 0.48);
-  border-color: rgba(255, 255, 255, 0.36);
+  background: rgba(255, 255, 255, 0.88);
+  border-color: rgba(99, 102, 241, 0.20);
   color: var(--pd-text);
 }
 
 html[data-theme="light"] .pd-closeButton {
-  background: rgba(255, 255, 255, 0.48);
-  border-color: rgba(255, 255, 255, 0.36);
+  background: rgba(255, 255, 255, 0.88);
+  border-color: rgba(99, 102, 241, 0.16);
   color: var(--pd-subtle);
 }
 
@@ -211,8 +218,8 @@ html[data-theme="light"] .pd-disclaimer {
 }
 
 html[data-theme="light"] [role="radiogroup"] {
-  background: rgba(255, 255, 255, 0.30);
-  border-color: rgba(255, 255, 255, 0.30);
+  background: rgba(255, 255, 255, 0.75);
+  border-color: rgba(99, 102, 241, 0.14);
 }
 
 html[data-theme="light"] [role="radiogroup"] button[aria-checked="true"] {
@@ -235,7 +242,7 @@ html[data-theme="light"] .pd-label {
 }
 
 html[data-theme="light"] .pd-chip {
-  background: rgba(255, 255, 255, 0.40);
+  background: rgba(255, 255, 255, 0.85);
 }
 
 html[data-theme="light"] .pd-chip.is-active {
@@ -274,11 +281,14 @@ html,
 body {
   margin: 0;
   min-height: 100%;
+  /* Gradient lightened: stops raised so bottom stays visually dark but gives layering room.
+     Old stops: #111827 → #0f172a → #0e1623 → #0d1120 (all near-black, no separation)
+     New stops: #1a2440 → #161e36 → #14192e → #141b2e (consistent dark navy with slight depth) */
   background:
-    radial-gradient(ellipse 70% 50% at 15% 0%,  rgba(120, 140, 255, 0.05), transparent),
-    radial-gradient(ellipse 60% 45% at 85% 5%,  rgba(148, 163, 248, 0.05), transparent),
-    radial-gradient(ellipse 50% 60% at 50% 100%, rgba(99, 120, 220, 0.04),  transparent),
-    linear-gradient(180deg, #111827 0%, #0f172a 35%, #0e1623 65%, #0d1120 100%);
+    radial-gradient(ellipse 70% 50% at 15% 0%,  rgba(120, 140, 255, 0.07), transparent),
+    radial-gradient(ellipse 60% 45% at 85% 5%,  rgba(148, 163, 248, 0.07), transparent),
+    radial-gradient(ellipse 50% 60% at 50% 100%, rgba(99, 120, 220, 0.05),  transparent),
+    linear-gradient(180deg, #1a2440 0%, #161e36 35%, #14192e 65%, #141b2e 100%);
   color: var(--pd-text);
   font-family: var(--font-geist), -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Inter', 'Segoe UI', sans-serif;
 }
@@ -299,7 +309,8 @@ body::before {
   height: 55vw;
   top: -20vw;
   left: -10vw;
-  background: rgba(110, 130, 240, 0.05);
+  /* Orb raised from 0.05 → 0.08 opacity — still subtle but contributes depth */
+  background: rgba(110, 130, 240, 0.08);
   animation: driftA 22s ease-in-out infinite alternate;
 }
 
@@ -308,7 +319,8 @@ body::after {
   height: 45vw;
   top: -15vw;
   right: -15vw;
-  background: rgba(140, 155, 245, 0.05);
+  /* Orb raised from 0.05 → 0.08 opacity */
+  background: rgba(140, 155, 245, 0.08);
   animation: driftB 26s ease-in-out infinite alternate;
 }
 
@@ -352,13 +364,14 @@ button {
 
 @layer components {
   .card {
-    border: 1px solid rgba(130, 140, 255, 0.09);
-    background: rgba(15, 22, 48, 0.44);
+    /* Border raised from 0.09 → 0.20 opacity; background raised from rgba(15,22,48,.44) → rgba(32,44,76,.60) */
+    border: 1px solid rgba(130, 140, 255, 0.20);
+    background: rgba(32, 44, 76, 0.60);
     backdrop-filter: blur(28px);
     -webkit-backdrop-filter: blur(28px);
     border-radius: 24px;
     box-shadow:
-      0 1px 0 rgba(255, 255, 255, 0.06) inset,
+      0 1px 0 rgba(255, 255, 255, 0.09) inset,
       0 16px 48px rgba(2, 6, 23, 0.35);
   }
 
@@ -403,8 +416,9 @@ button {
 
   .input {
     display: block;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    /* Background raised from rgba(255,255,255,.05) → rgba(255,255,255,.09); border from .10 → .18 */
+    background: rgba(255, 255, 255, 0.09);
+    border: 1px solid rgba(255, 255, 255, 0.18);
     border-radius: 14px;
     color: #e5eefc;
     outline: none;
@@ -418,8 +432,9 @@ button {
     box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.15);
   }
 
+  /* Placeholder raised from 35% → 45% opacity for better legibility */
   .input::placeholder {
-    color: rgba(229, 238, 252, 0.35);
+    color: rgba(229, 238, 252, 0.45);
   }
 }
 
@@ -511,7 +526,8 @@ button {
   overflow: hidden;
   border-radius: 22px;
   border: 1px solid var(--pd-border);
-  background: rgba(255, 255, 255, 0.04);
+  /* Background raised from rgba(255,255,255,.04) → rgba(255,255,255,.07) for perceptible lift */
+  background: rgba(255, 255, 255, 0.07);
   padding: 20px;
   transition: all 0.2s ease;
   cursor: pointer;
@@ -551,7 +567,8 @@ button {
   min-height: 44px;
   padding: 10px 16px;
   border-radius: 16px;
-  background: rgba(255, 255, 255, 0.04);
+  /* Background raised from rgba(255,255,255,.04) → rgba(255,255,255,.08) */
+  background: rgba(255, 255, 255, 0.08);
   border: 1px solid var(--pd-border);
   color: var(--pd-text);
   transition: 160ms ease;
@@ -569,7 +586,8 @@ button {
   min-height: 52px;
   padding: 0 16px;
   border-radius: 18px;
-  background: rgba(255, 255, 255, 0.05);
+  /* Background raised from rgba(255,255,255,.05) → rgba(255,255,255,.09) */
+  background: rgba(255, 255, 255, 0.09);
   border: 1px solid var(--pd-border);
   color: var(--pd-text);
   outline: none;
@@ -585,7 +603,8 @@ button {
   width: 100%;
   padding: 14px;
   border-radius: 18px;
-  background: rgba(255, 255, 255, 0.05);
+  /* Background raised from rgba(255,255,255,.05) → rgba(255,255,255,.09) */
+  background: rgba(255, 255, 255, 0.09);
   border: 1px solid var(--pd-border);
   color: var(--pd-text);
   resize: vertical;
@@ -629,7 +648,8 @@ button {
 .pd-secondaryButton {
   min-height: 52px;
   border-radius: 18px;
-  background: rgba(255, 255, 255, 0.06);
+  /* Background raised from rgba(255,255,255,.06) → rgba(255,255,255,.10) */
+  background: rgba(255, 255, 255, 0.10);
   border: 1px solid var(--pd-border);
   color: var(--pd-text);
   font-size: 16px;
@@ -671,14 +691,16 @@ button {
   max-width: 720px;
   overflow-y: auto;
   border-radius: 28px;
-  background: rgba(12, 15, 44, 0.97);
+  /* Background raised from rgba(12,15,44,.97) → rgba(24,33,62,.98) so modal clearly floats above page */
+  background: rgba(24, 33, 62, 0.98);
   backdrop-filter: blur(28px);
   -webkit-backdrop-filter: blur(28px);
-  border: 1px solid rgba(130, 140, 255, 0.22);
+  /* Border raised from 0.22 → 0.30 opacity for visible modal edge */
+  border: 1px solid rgba(130, 140, 255, 0.30);
   box-shadow:
-    0 0 0 1px rgba(99, 102, 241, 0.08) inset,
+    0 0 0 1px rgba(99, 102, 241, 0.10) inset,
     0 32px 80px rgba(0, 0, 0, 0.55),
-    0 0 100px rgba(99, 102, 241, 0.10);
+    0 0 100px rgba(99, 102, 241, 0.12);
   padding: 0;
 }
 
@@ -704,7 +726,8 @@ button {
   width: 44px;
   height: 44px;
   border-radius: 12px;
-  background: rgba(255, 255, 255, 0.06);
+  /* Background raised from rgba(255,255,255,.06) → rgba(255,255,255,.11) */
+  background: rgba(255, 255, 255, 0.11);
   border: 1px solid var(--pd-border);
   color: var(--pd-subtle);
   transition: all 0.2s ease;
@@ -712,12 +735,13 @@ button {
 }
 
 .pd-closeButton:hover {
-  background: rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.18);
   color: white;
 }
 
 .pd-modalStickyHeader {
-  background: rgba(12, 15, 44, 0.97);
+  /* Matched to new modal bg: rgba(12,15,44,.97) → rgba(24,33,62,.98) */
+  background: rgba(24, 33, 62, 0.98);
   backdrop-filter: blur(28px);
   -webkit-backdrop-filter: blur(28px);
 }
@@ -775,10 +799,12 @@ button {
   position: sticky;
   top: 0;
   z-index: 10;
-  background: rgba(13, 17, 32, 0.60);
+  /* Background raised from rgba(13,17,32,.60) → rgba(20,27,46,.80) — matches new base, less see-through */
+  background: rgba(20, 27, 46, 0.80);
   backdrop-filter: blur(48px) saturate(1.4);
   -webkit-backdrop-filter: blur(48px) saturate(1.4);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  /* Border raised from rgba(255,255,255,.06) → rgba(255,255,255,.12) so the header edge is visible */
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
 }
 
 .pd-stickyHeader::after {
@@ -788,7 +814,8 @@ button {
   left: 0;
   right: 0;
   height: 28px;
-  background: linear-gradient(to bottom, rgba(13, 17, 32, 0.18), transparent);
+  /* Colour updated to match new base #141b2e */
+  background: linear-gradient(to bottom, rgba(20, 27, 46, 0.18), transparent);
   pointer-events: none;
   z-index: -1;
 }

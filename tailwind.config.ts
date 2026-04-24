@@ -13,16 +13,16 @@ const config: Config = {
       colors: {
         // design-system tokens used throughout components
         bg:       'rgb(var(--tw-color-bg) / <alpha-value>)',
-        card:     'rgba(15, 23, 42, 0.78)',
+        card:     'var(--pd-surface)',
         textc:    'rgb(var(--tw-color-textc) / <alpha-value>)',
-        borderc:  'rgba(255, 255, 255, 0.08)',
+        borderc:  'var(--pd-border)',
         primary:  'rgb(129 140 248 / <alpha-value>)',
         'bg-hover': 'rgba(255, 255, 255, 0.08)',
         warning:  '#fbbf24',
         // legacy aliases
         background: 'var(--pd-bg)',
         foreground: 'var(--pd-text)',
-        surface:    'rgba(15, 23, 42, 0.92)',
+        surface:    'var(--pd-surface-strong)',
       },
       zIndex: {
         nav:           '100',

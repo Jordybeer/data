@@ -44,7 +44,8 @@ export const CategoryList: React.FC<CategoryListProps> = ({
       <div
         role="radiogroup"
         aria-label={label ?? 'Filter op categorie'}
-        className="flex rounded-[14px] bg-white/[0.05] border border-white/[0.07] p-[3px] gap-[3px]"
+        /* Segment track: bg raised from white/5 → white/9; border from white/7 → white/14 */
+        className="flex rounded-[14px] bg-white/[0.09] border border-white/[0.14] p-[3px] gap-[3px]"
       >
         {options.map((cat) => {
           const key = cat ?? '__all__';
@@ -89,7 +90,8 @@ export const CategoryList: React.FC<CategoryListProps> = ({
               'h-6 px-2.5 rounded-full text-xs font-medium transition-all duration-150 border ' +
               (isActive
                 ? (CHIP_ACTIVE[key] ?? 'bg-primary/[0.18] border-primary/30 text-primary')
-                : 'border-black/[0.12] dark:border-white/[0.09] text-textc/65 active:bg-black/[0.04] dark:active:bg-white/[0.05]')
+                /* Inactive chip border raised from dark:white/9 → dark:white/16 for visibility */
+                : 'border-black/[0.12] dark:border-white/[0.16] text-textc/65 active:bg-black/[0.04] dark:active:bg-white/[0.07]')
             }
           >
             {displayLabel(cat)}
