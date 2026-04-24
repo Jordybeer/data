@@ -7,6 +7,10 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   if (!guard.ok) return guard.response;
 
   const { id } = await params;
+  const numId = parseInt(id, 10)
+  if (isNaN(numId)) {
+    return NextResponse.json({ error: 'invalid id' }, { status: 400 })
+  }
   const body = (await req.json().catch(() => ({}))) as {
     name?: string;
     category?: string;
@@ -25,7 +29,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   const { data, error } = await supabaseAdmin
     .from('drugs')
     .update(update)
-    .eq('id', id)
+    .eq('id', numId)
     .select()
     .single();
 
@@ -38,7 +42,11 @@ export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ 
   if (!guard.ok) return guard.response;
 
   const { id } = await params;
-  const { error } = await supabaseAdmin.from('drugs').delete().eq('id', id);
+  const numId = parseInt(id, 10)
+  if (isNaN(numId)) {
+    return NextResponse.json({ error: 'invalid id' }, { status: 400 })
+  }
+  const { error } = await supabaseAdmin.from('drugs').delete().eq('id', numId);
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
   return NextResponse.json({ ok: true });
 }
