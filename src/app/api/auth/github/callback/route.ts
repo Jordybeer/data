@@ -25,8 +25,8 @@ export async function GET(req: NextRequest) {
 
     const { data, error } = await supabase.auth.exchangeCodeForSession(code);
     if (error) {
-      console.error('exchangeCodeForSession error:', error.message);
-      return NextResponse.redirect(new URL(`/?auth=invalid&reason=${encodeURIComponent(error.message)}`, req.url));
+      console.error('[github-callback]', error);
+      return NextResponse.redirect(new URL('/?auth=invalid&reason=auth_failed', req.url));
     }
     if (!data.user) return NextResponse.redirect(new URL('/?auth=invalid', req.url));
 
@@ -37,8 +37,7 @@ export async function GET(req: NextRequest) {
     await setSessionCookie(data.user.email!);
     return NextResponse.redirect(new URL('/admin', req.url));
   } catch (e) {
-    console.error('GitHub callback error:', e);
-    const reason = e instanceof Error ? e.message : String(e);
-    return NextResponse.redirect(new URL(`/?auth=error&reason=${encodeURIComponent(reason)}`, req.url));
+    console.error('[github-callback]', e);
+    return NextResponse.redirect(new URL('/?auth=error&reason=auth_failed', req.url));
   }
 }
