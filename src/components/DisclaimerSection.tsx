@@ -32,7 +32,17 @@ export const DisclaimerSection = () => {
   const [open, setOpen] = useState(false);
 
   return (
-    <div className="card overflow-hidden">
+    <motion.div
+      className="card overflow-hidden"
+      animate={{
+        boxShadow: [
+          '0 16px 48px rgba(2,6,23,0.35)',
+          '0 0 0 1px rgba(251,113,133,0.55), 0 0 28px rgba(251,113,133,0.28), 0 16px 48px rgba(2,6,23,0.35)',
+          '0 16px 48px rgba(2,6,23,0.35)',
+        ],
+      }}
+      transition={{ duration: 3, ease: 'easeInOut', times: [0, 0.2, 1] }}
+    >
       <button
         onClick={() => setOpen((o) => !o)}
         className="w-full flex items-center justify-between p-5 text-left"
@@ -94,6 +104,6 @@ export const DisclaimerSection = () => {
           </motion.div>
         )}
       </AnimatePresence>
-    </div>
+    </motion.div>
   );
 };
