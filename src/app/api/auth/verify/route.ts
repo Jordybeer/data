@@ -7,7 +7,9 @@ export async function GET(req: NextRequest) {
   const payload = verify<{ email: string; kind: string }>(token);
 
   if (!payload || payload.kind !== 'magic' || payload.email.toLowerCase() !== ADMIN_EMAIL) {
-    return NextResponse.redirect(new URL('/?auth=invalid', req.url));
+    return NextResponse.redirect(new URL('/?auth=invalid', req.url), {
+      headers: { 'Cache-Control': 'no-store' },
+    });
   }
 
   const hash = tokenHash(token);
@@ -21,11 +23,15 @@ export async function GET(req: NextRequest) {
     .single();
 
   if (error || !data) {
-    return NextResponse.redirect(new URL('/?auth=invalid', req.url));
+    return NextResponse.redirect(new URL('/?auth=invalid', req.url), {
+      headers: { 'Cache-Control': 'no-store' },
+    });
   }
 
   await db.from('magic_tokens').delete().eq('hash', hash);
 
   await setSessionCookie(payload.email);
-  return NextResponse.redirect(new URL('/admin', req.url));
+  return NextResponse.redirect(new URL('/admin', req.url), {
+    headers: { 'Cache-Control': 'no-store' },
+  });
 }
