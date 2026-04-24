@@ -1,20 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { supabase, supabaseAdmin } from '@/lib/supabase';
+import { supabaseAdmin } from '@/lib/supabase';
 import { requireAdmin } from '@/lib/auth';
-
-export async function GET() {
-  const { data, error } = await supabase
-    .from('drugs')
-    .select('id, notes')
-    .neq('notes', '');
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
-  return NextResponse.json(
-    (data ?? []).map((r: { id: number | string; notes: string }) => ({
-      drug_id: String(r.id),
-      content: r.notes,
-    })),
-  );
-}
 
 export async function POST(req: NextRequest) {
   const guard = await requireAdmin();
