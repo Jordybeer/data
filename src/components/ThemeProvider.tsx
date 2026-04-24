@@ -24,8 +24,10 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const toggle = () => {
     setTheme((t: Theme) => {
       const next: Theme = t === 'dark' ? 'light' : 'dark';
-      localStorage.setItem('pd-theme', next);
-      document.documentElement.setAttribute('data-theme', next);
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('pd-theme', next);
+        document.documentElement.setAttribute('data-theme', next);
+      }
       return next;
     });
   };
