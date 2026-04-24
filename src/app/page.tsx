@@ -164,6 +164,7 @@ function HomeInner() {
       <AnimatePresence>
         {selectedDrug && (
           <DrugDetails
+            key={selectedDrug.id}
             drug={selectedDrug}
             onClose={() => setSelectedDrug(null)}
             isAdmin={isAdmin}
