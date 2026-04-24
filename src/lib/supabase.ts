@@ -1,15 +1,14 @@
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 
+export const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL ?? 'https://xopixygydpqnswsqwyum.supabase.co';
+export const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhvcGl4eWd5ZHBxbnN3c3F3eXVtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3ODU5NTAsImV4cCI6MjA5MjM2MTk1MH0.Hy0WdRwqzFcVu-ginoCMUk7IyUaUyeUDvz3HkAp03AU';
+
 let _supabase: SupabaseClient | null = null;
 let _supabaseAdmin: SupabaseClient | null = null;
 
 export function getSupabase() {
   if (!_supabase) {
-    const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-    if (!url) throw new Error('Missing env var: NEXT_PUBLIC_SUPABASE_URL');
-    if (!key) throw new Error('Missing env var: NEXT_PUBLIC_SUPABASE_ANON_KEY');
-    _supabase = createClient(url, key, {
+    _supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
       auth: { persistSession: false, autoRefreshToken: false },
     });
   }
@@ -20,9 +19,7 @@ export function getSupabaseAdmin() {
   if (!_supabaseAdmin) {
     const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
     if (!key) throw new Error('SUPABASE_SERVICE_ROLE_KEY env var is required');
-    const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    if (!url) throw new Error('Missing env var: NEXT_PUBLIC_SUPABASE_URL');
-    _supabaseAdmin = createClient(url, key, {
+    _supabaseAdmin = createClient(SUPABASE_URL, key, {
       auth: { persistSession: false, autoRefreshToken: false },
     });
   }
