@@ -5,6 +5,8 @@ import { getSupabaseAdmin } from '@/lib/supabase';
 
 const RATE_WINDOW_MS = 60_000;
 const RATE_MAX = 3;
+// NOTE: This in-memory rate limiter resets on cold starts and is advisory-only on serverless.
+// Move to Upstash Redis or Supabase KV for production-grade rate limiting.
 const ipBuckets = new Map<string, { count: number; resetAt: number }>();
 
 function checkRateLimit(ip: string): boolean {
