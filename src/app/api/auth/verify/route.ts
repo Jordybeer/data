@@ -24,6 +24,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.redirect(new URL('/?auth=invalid', req.url));
   }
 
+  // TODO: add pg_cron job to purge expired rows: DELETE FROM magic_tokens WHERE expires_at < now()
   await db.from('magic_tokens').delete().eq('hash', hash);
 
   await setSessionCookie(payload.email);
