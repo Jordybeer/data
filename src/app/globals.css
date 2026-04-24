@@ -368,8 +368,9 @@ button {
     -webkit-backdrop-filter: blur(28px);
     border-radius: 24px;
     box-shadow:
-      0 1px 0 rgba(255, 255, 255, 0.09) inset,
-      0 16px 48px rgba(2, 6, 23, 0.35);
+      0 1px 0 rgba(255, 255, 255, 0.13) inset,
+      0 2px 8px rgba(2, 6, 23, 0.28),
+      0 16px 48px rgba(2, 6, 23, 0.45);
   }
 
   .btn {
@@ -473,7 +474,10 @@ button {
   background: var(--pd-surface);
   backdrop-filter: blur(22px);
   -webkit-backdrop-filter: blur(22px);
-  box-shadow: var(--pd-shadow);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.10) inset,
+    0 2px 8px rgba(2, 6, 23, 0.25),
+    0 24px 64px rgba(2, 4, 20, 0.50);
   border-radius: 28px;
   padding: 24px;
   margin-bottom: 20px;
@@ -523,8 +527,10 @@ button {
   overflow: hidden;
   border-radius: 22px;
   border: 1px solid var(--pd-border);
-  /* Background raised from rgba(255,255,255,.04) → rgba(255,255,255,.07) for perceptible lift */
   background: rgba(255, 255, 255, 0.07);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.08) inset,
+    0 2px 12px rgba(2, 6, 23, 0.20);
   padding: 20px;
   transition: all 0.2s ease;
   cursor: pointer;
@@ -690,9 +696,8 @@ button {
   border-radius: 28px;
   /* Background raised from rgba(12,15,44,.97) → rgba(24,33,62,.98) so modal clearly floats above page */
   background: rgba(24, 33, 62, 0.98);
-  backdrop-filter: blur(28px);
-  -webkit-backdrop-filter: blur(28px);
-  /* Border raised from 0.22 → 0.30 opacity for visible modal edge */
+  backdrop-filter: blur(40px);
+  -webkit-backdrop-filter: blur(40px);
   border: 1px solid rgba(130, 140, 255, 0.30);
   box-shadow:
     0 0 0 1px rgba(99, 102, 241, 0.10) inset,
